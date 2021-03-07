@@ -1,0 +1,30 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+.headrow{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding:5px 10px;
+    align-items: center;
+    background-color: rgb(1, 40, 53);
+    min-height: 7vh;
+    color: whitesmoke;
+}
+
+.nav{
+    width: 35%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+    text-decoration: none;
+    font-size: small;
+}
+.navli{
+    color: whitesmoke;
+    text-decoration: none;
+}
+
