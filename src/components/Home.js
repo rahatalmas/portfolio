@@ -5,7 +5,7 @@ import Header from './HomeParts/Header';
 import {BrowserRouter,Switch,Route,Link} from 'react-router-dom';
 import About from './HomeParts/About';
 import Contact from './HomeParts/Contact';
-
+import './HomeParts/Gallarycs.css';
 const Home = () => {
     return (
      <div>
@@ -17,7 +17,9 @@ const Home = () => {
           <Route path="/contact" component={Contact}/>
           </Switch> 
        </BrowserRouter>
-
+       <div className="editor">
+           <p> @ Rahat Almas</p>
+       </div>
      </div>
     );
 };

@@ -6,6 +6,17 @@ const Aboutone =(props)=>{
             <div className="rowabout">
            <div className="cabout" className="c1about">
            <img src={props.imgsrc} className="imageabout"/>
+           <div>
+              <h4>skills :</h4><br/>
+              <ul>
+                 <li>c++</li>
+                 <li>java</li>
+                 <li>javascript</li>
+                 <li>react</li>
+                 <li>python</li>
+
+              </ul>
+           </div>
            </div> 
            <div className="cabout">
               <div>

@@ -16,7 +16,7 @@ const About = () =>{
           skateboarding are my hobby. I always try to learn new technology. I want to 
           work with AI. Life is a journey and i am enjoying my adventure. May Allah bless
           me. "/>
-
+          
 
       </div>
     );

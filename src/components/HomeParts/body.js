@@ -1,8 +1,10 @@
 import React from 'react';
 import {useState,useEffect} from 'react';
+import Gallary from './Gallary';
 import "./body.css"
 const Body = () => {
     return (
+        <div>
      < div className="row">
           <div className="cl" class="t1">
                  <div className="t1text">
@@ -30,6 +32,11 @@ const Body = () => {
           </div>
 
           
+     </div>
+     <div className="editor">
+       <p>Favourite Captures</p>
+       </div>
+       <Gallary/>
      </div>
     );
 };
