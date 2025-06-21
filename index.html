@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en" class="transition-colors duration-500">
+  <!-- --scrollbar-thumb: #d8d400; -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>B.M. Rahat Almas – Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            light: {
+              bg: '#ffffff',
+              primary: '#472D2D',
+              secondary: '#553939',
+              text: '#1D1616',
+              accent: 'var(--color-border)',
+            },
+            dark: {
+              bg: '#1f1f1f',
+              primary: '#2c2c2c',
+              secondary: '#373737',
+              text: '#ffffff',
+              accent: 'var(--color-border)',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --color-primary: #EEEEEE;
+      --color-secondary: #ffffff;
+      --scrollbar-thumb: var(--color-border);
+      --scrollbar-track: #EEEEEE;
+      --color-text: #1f1f1f;
+      --color-border: #22C55E;
+      
+    }
+
+    html.dark {
+      --color-primary: #1f1f1f;
+      --color-secondary: #2c2c2c;
+      --scrollbar-track: #1f1f1f;
+      --scrollbar-thumb: var(--color-border);
+      --color-text: #ffffff;
+      --color-border: #d8d400;
+    }
+
+    aside.lg\:overflow-y-auto,
+    section.lg\:overflow-y-auto {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    aside.lg\:overflow-y-auto::-webkit-scrollbar,
+    section.lg\:overflow-y-auto::-webkit-scrollbar {
+      width: 0px;
+      background: transparent;
+    }
+
+    aside.lg\:overflow-y-auto:hover::-webkit-scrollbar,
+    section.lg\:overflow-y-auto:hover::-webkit-scrollbar {
+      width: 8px;
+      background: var(--scrollbar-track);
+    }
+
+    aside.lg\:overflow-y-auto:hover::-webkit-scrollbar-track,
+    section.lg\:overflow-y-auto:hover::-webkit-scrollbar-track {
+      background: var(--scrollbar-track);
+    }
+
+    aside.lg\:overflow-y-auto:hover::-webkit-scrollbar-thumb,
+    section.lg\:overflow-y-auto:hover::-webkit-scrollbar-thumb {
+      background-color: var(--scrollbar-thumb);
+      border-radius: 10px;
+      border: 2px solid var(--scrollbar-track);
+    }
+
+    aside.lg\:overflow-y-auto:hover,
+    section.lg\:overflow-y-auto:hover {
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    }
+  </style>
+</head>
+<body class=" max-w-[1400px] mx-auto bg-[var(--color-primary)] text-[var(--color-text)] transition-colors duration-500">
+ 
+  <nav class="bg-white dark:bg-[#1f1f1f] text-black dark:text-white shadow-md p-4 sticky top-0 z-50 transition-colors duration-500">
+  <div class="container mx-auto flex items-center justify-between">
+    <h1 class="font-bold text-lg">B.M. Rahat Almas</h1>
+
+    <!-- Desktop menu -->
+    <ul id="nav-links" class="hidden md:flex gap-6 text-sm items-center">
+      <li><a href="#profile" class="hover:text-[var(--color-border)]">Profile</a></li>
+      <li><a href="#projects" class="hover:text-[var(--color-border)]">Projects</a></li>
+      <li><a href="#experience" class="hover:text-[var(--color-border)]">Experience</a></li>
+      <li>
+        <button id="theme-toggle" class="text-xl ml-4" title="Toggle Dark Mode">🌙</button>
+      </li>
+    </ul>
+
+    <!-- Mobile menu button and dark mode toggle -->
+    <div class="flex items-center gap-4 md:hidden">
+      <button id="theme-toggle-mobile" class="text-xl" title="Toggle Dark Mode">🌙</button>
+      <button id="menu-toggle" class="text-2xl" aria-label="Toggle Menu">☰</button>
+    </div>
+  </div>
+
+  <!-- Mobile menu links -->
+  <ul id="mobile-menu" class="hidden flex-col gap-4 text-sm p-4 bg-white dark:bg-[#1f1f1f] text-black dark:text-white md:hidden">
+    <li><a href="#profile" class="block hover:text-[var(--color-border)]">Profile</a></li>
+    <li><a href="#projects" class="block hover:text-[var(--color-border)]">Projects</a></li>
+    <li><a href="#experience" class="block hover:text-[var(--color-border)]">Experience</a></li>
+  </ul>
+</nav>
+
+
+
+  <main class="flex flex-col lg:flex-row lg:h-[calc(100vh-64px)] lg:overflow-hidden">
+    <!-- Left Column -->
+    <aside class="w-full lg:w-[35%] p-4 space-y-2 lg:overflow-y-auto lg:h-full" style="background-color: var(--color-primary);">
+      <!-- Profile Card -->
+  <div class="bg-[var(--color-secondary)] p-4 sm:p-4 rounded-lg shadow flex sm:flex-row items-center sm:items-center justify-start gap-4 sm:gap-6">
+  <div class="flex flex-col items-center sm:items-center">
+    <div class="relative rounded-full outline outline-4 outline-[var(--color-border)]">
+      <img src="https://i.pinimg.com/736x/c1/ca/5f/c1ca5fde80eda3b8d33fbb833db0dd71.jpg" alt="Profile" class="rounded-full w-20 h-20 sm:w-24 sm:h-24 object-cover" />
+    </div>
+    <p class="mt-3 sm:mt-4 bg-[var(--color-border)] text-black text-[10px] sm:text-xs font-semibold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
+      Software Engineer
+    </p>
+  </div>
+  <div>
+    <h2 class="font-bold text-lg sm:text-2xl mb-1 sm:mb-2">B.M. Rahat Almas</h2>
+    <ul class="space-y-0.5 sm:space-y-1 text-sm sm:text-sm">
+      <li class="flex items-center gap-2">📞 +8801733783039</li>
+      <li class="flex items-center gap-2">📧 bmrahatalmas@gmail.com</li>
+      <li class="flex items-center gap-2">📍 Dhaka, Bangladesh</li>
+    </ul>
+  </div>
+</div>
+
+      <!-- Sections: Skills, Expertise, etc. -->
+
+      <!-- Skills Section -->
+        <!-- <div class="bg-[var(--color-secondary)] p-4 rounded-lg shadow">
+          <h2 class="font-bold text-lg mb-3 border-l-4 border-[var(--color-border)] pl-3">Skills</h2>
+          <div class="grid grid-cols-2 gap-2 text-sm">
+            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">Python</span>
+            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">Golang</span>
+            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">JavaScript</span>
+            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">C++</span>
+            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">Django</span>
+            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">Flutter</span>
+            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">React</span>
+            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">ExpressJS</span>
+            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">PHP</span>
+            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">MySQL</span>
+          </div>
+        </div> -->
+
+
+        <!-- Skills Section updated-->
+<div class="bg-[var(--color-secondary)] p-4 rounded-lg shadow">
+  <h2 class="font-bold text-lg mb-3 border-l-4 border-[var(--color-border)] pl-3">Skills</h2>
+  <div class="space-y-2">
+
+    <!-- Skill: Python -->
+    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2">
+      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
+          <span class="text-sm">Python</span>
+        </div>
+        <span class="text-xl font-bold">+</span>
+      </div>
+      <p class="mt-2 hidden text-xs text-gray-600">Used for scripting, automation, web development, and AI/ML applications.</p>
+    </div>
+
+    <!-- Skill: Golang -->
+    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2">
+      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
+          <span class="text-sm">Golang</span>
+        </div>
+        <span class="text-xl font-bold">+</span>
+      </div>
+      <p class="mt-2 hidden text-xs text-gray-600">Efficient systems programming language ideal for high-performance backend services.</p>
+    </div>
+
+    <!-- Skill: React -->
+    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2">
+      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
+          <span class="text-sm">React</span>
+        </div>
+        <span class="text-xl font-bold">+</span>
+      </div>
+      <p class="mt-2 hidden text-xs text-gray-600">Frontend JavaScript library for building interactive UIs and SPAs.</p>
+    </div>
+
+    <!-- Skill: Flutter -->
+    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2">
+      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
+          <span class="text-sm">Flutter</span>
+        </div>
+        <span class="text-xl font-bold">+</span>
+      </div>
+      <p class="mt-2 hidden text-xs text-gray-600">Cross-platform mobile development framework by Google using Dart.</p>
+    </div>
+
+    <!-- Skill: C++ -->
+    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2">
+      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
+          <span class="text-sm">C++</span>
+        </div>
+        <span class="text-xl font-bold">+</span>
+      </div>
+      <p class="mt-2 hidden text-xs text-gray-600">Object-oriented language used for performance-critical software and game engines.</p>
+    </div>
+
+    <!-- Skill: HTML/CSS -->
+    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2">
+      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
+          <span class="text-sm">HTML/CSS</span>
+        </div>
+        <span class="text-xl font-bold">+</span>
+      </div>
+      <p class="mt-2 hidden text-xs text-gray-600">Core technologies for building and styling the structure of web pages.</p>
+    </div>
+
+    <!-- Skill: JavaScript -->
+    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2">
+      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
+          <span class="text-sm">JavaScript</span>
+        </div>
+        <span class="text-xl font-bold">+</span>
+      </div>
+      <p class="mt-2 hidden text-xs text-gray-600">Essential scripting language for client-side interactivity and logic.</p>
+    </div>
+
+    <!-- Skill: TypeScript -->
+    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2">
+      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
+          <span class="text-sm">TypeScript</span>
+        </div>
+        <span class="text-xl font-bold">+</span>
+      </div>
+      <p class="mt-2 hidden text-xs text-gray-600">Superset of JavaScript that adds static typing for more robust applications.</p>
+    </div>
+
+  </div>
+</div>
+
+
+        <div class="bg-[var(--color-secondary)] p-4 rounded-lg shadow">
+        <h2 class="font-bold text-lg mb-3 border-l-4 border-[var(--color-border)] pl-3">Expertise</h2>
+        <ul class="text-sm list-disc list-inside space-y-1">
+          <li>Web & Mobile App Development</li>
+          <li>Backend API Design</li>
+          <li>Cloud & DevOps</li>
+          <li>Database Optimization</li>
+        </ul>
+      </div>
+
+      <div class="bg-[var(--color-secondary)] p-4 rounded-lg shadow">
+        <h2 class="font-bold text-lg mb-3 border-l-4 border-[var(--color-border)] pl-3">Education</h2>
+        <p class="text-sm">2020 - 2024<br />B.Sc. Computer Science And Engineering <br/> Daffodil International University</p>
+      </div>
+
+      <div class="bg-[var(--color-secondary)] p-4 rounded-lg shadow">
+        <h2 class="font-bold text-lg mb-3 border-l-4 border-[var(--color-border)] pl-3">Certifications</h2>
+        <ul class="text-sm">
+          <li><strong>2022:</strong> HackerRank, Problem Solving</li>
+          <li><strong>2021:</strong> Python, Coursera</li>
+        </ul>
+      </div>
+
+      <div class="bg-[var(--color-secondary)] p-4 rounded-lg shadow">
+        <h2 class="font-bold text-lg mb-3 border-l-4 border-[var(--color-border)] pl-3">Hobbies</h2>
+        <div class="flex flex-wrap gap-3 text-sm">
+          <span>⚽ Football</span>
+          <span>🎨 Gaming</span>
+          <span>📚 Skateboarding</span>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Right Column -->
+         <section
+      class="w-full lg:w-[65%] p-4 space-y-4
+             lg:h-full lg:overflow-y-auto"
+      style="background-color: var(--color-primary);"
+    >
+      <!-- Profile & QR -->
+      <!-- <div class="bg-[var(--color-secondary)] p-6 rounded-lg shadow flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-sm space-y-2">
+          <a href="#" class="block hover:underline font-semibold">GitHub</a>
+          <a href="#" class="block hover:underline font-semibold">LeetCode</a>
+          <a href="#" class="block hover:underline font-semibold">Codeforces</a>
+          <a href="#" class="block hover:underline font-semibold">HackerRank</a>
+        </div>
+        <div class="w-[4px] h-16 bg-gray-300 mx-2 hidden sm:block"></div>
+        <div class="flex flex-col items-center">
+          <img
+            src="https://api.qrserver.com/v1/create-qr-code/?data=https://www.behance.net/samdans&size=80x80"
+            alt="QR Code"
+            class="rounded"
+          />
+          <p class="text-xs mt-1 font-semibold">App Store</p>
+        </div>
+      </div> -->
+
+      <!-- Intro -->
+      <div id="profile" class="bg-[var(--color-secondary)] p-4 rounded-lg shadow">
+        <h2 class="font-bold text-lg mb-3 border-l-4 border-[var(--color-border)] pl-3">Intro</h2>
+        <p class="text-sm leading-relaxed">
+          I am a highly skilled software engineer with experience in full-stack
+          development. I specialize in building scalable web and mobile
+          applications using Python, Golang, JavaScript, C++, Django, React,
+          Flutter, and more.
+        </p>
+      </div>
+
+      <!-- Projects -->
+      <div id="projects" class="bg-[var(--color-secondary)] p-4 rounded-lg shadow">
+        <h2 class="font-bold text-lg mb-3 border-l-4 border-[var(--color-border)] pl-3">Projects</h2>
+        <div class="grid sm:grid-cols-2 gap-4 text-sm">
+          <!-- Project Cards (6 identical example cards) -->
+          <div class="border rounded-lg overflow-hidden bg-[var(--color-secondary)] border-[var(--color-primary)]">
+            <img
+              src="https://i.pinimg.com/736x/c1/ca/5f/c1ca5fde80eda3b8d33fbb833db0dd71.jpg"
+              class="w-full h-32 object-cover"
+              alt="Project"
+            />
+            <div class="p-3">
+              <h3 class="font-semibold">Portfolio Website</h3>
+              <p class="text-xs text-gray-500">HTML, Tailwind CSS</p>
+              <p class="mt-1">
+                Modern responsive portfolio with animations and contact form.
+              </p>
+            </div>
+          </div>
+          <div class="border rounded-lg overflow-hidden bg-[var(--color-secondary)] border-[var(--color-primary)]">
+            <img
+              src="https://i.pinimg.com/736x/c1/ca/5f/c1ca5fde80eda3b8d33fbb833db0dd71.jpg"
+              class="w-full h-32 object-cover"
+              alt="Project"
+            />
+            <div class="p-3">
+              <h3 class="font-semibold">Portfolio Website</h3>
+              <p class="text-xs text-gray-500">HTML, Tailwind CSS</p>
+              <p class="mt-1">
+                Modern responsive portfolio with animations and contact form.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="text-center text-xs text-gray-500 mt-6 py-4">
+        &copy; 2025 B.M. Rahat Almas. All rights reserved.
+      </footer>
+    </section>
+  </main>
+
+  <script>
+    const html = document.documentElement;
+
+// Dark mode toggles for desktop and mobile buttons
+const toggle = document.getElementById('theme-toggle');
+const toggleMobile = document.getElementById('theme-toggle-mobile');
+
+function setTheme(theme) {
+  if (theme === 'dark') {
+    html.classList.add('dark');
+    toggle.textContent = '☀️';
+    toggleMobile.textContent = '☀️';
+  } else {
+    html.classList.remove('dark');
+    toggle.textContent = '🌙';
+    toggleMobile.textContent = '🌙';
+  }
+  localStorage.setItem('theme', theme);
+}
+
+toggle.addEventListener('click', () => {
+  const currentTheme = html.classList.contains('dark') ? 'dark' : 'light';
+  setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+});
+
+toggleMobile.addEventListener('click', () => {
+  const currentTheme = html.classList.contains('dark') ? 'dark' : 'light';
+  setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+});
+
+// Mobile menu toggle
+const menuToggle = document.getElementById('menu-toggle');
+const mobileMenu = document.getElementById('mobile-menu');
+
+menuToggle.addEventListener('click', () => {
+  mobileMenu.classList.toggle('hidden');
+});
+
+// Load theme on page load
+window.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  setTheme(savedTheme);
+});
+
+  </script>
+  <script>
+  function toggleSkill(header) {
+    const para = header.nextElementSibling;
+    para.classList.toggle('hidden');
+
+    const icon = header.querySelector('span.text-xl');
+    icon.textContent = para.classList.contains('hidden') ? '+' : '−';
+  }
+</script>
+</body>
+</html>
