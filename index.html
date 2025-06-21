@@ -147,131 +147,34 @@
   </div>
 </div>
 
-      <!-- Sections: Skills, Expertise, etc. -->
-
-      <!-- Skills Section -->
-        <!-- <div class="bg-[var(--color-secondary)] p-4 rounded-lg shadow">
-          <h2 class="font-bold text-lg mb-3 border-l-4 border-[var(--color-border)] pl-3">Skills</h2>
-          <div class="grid grid-cols-2 gap-2 text-sm">
-            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">Python</span>
-            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">Golang</span>
-            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">JavaScript</span>
-            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">C++</span>
-            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">Django</span>
-            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">Flutter</span>
-            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">React</span>
-            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">ExpressJS</span>
-            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">PHP</span>
-            <span class="bg-[var(--color-primary)] px-3 py-1 rounded">MySQL</span>
-          </div>
-        </div> -->
-
-
-        <!-- Skills Section updated-->
-<div class="bg-[var(--color-secondary)] p-4 rounded-lg shadow">
-  <h2 class="font-bold text-lg mb-3 border-l-4 border-[var(--color-border)] pl-3">Skills</h2>
-  <div class="space-y-2">
-
-    <!-- Skill: Python -->
-    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2">
-      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
-          <span class="text-sm">Python</span>
-        </div>
-        <span class="text-xl font-bold">+</span>
+      <!-- Intro -->
+      <div id="profile" class="bg-[var(--color-secondary)] p-4 rounded-lg shadow">
+        <h2 class="font-bold text-lg mb-3 border-l-4 border-[var(--color-border)] pl-3">Intro</h2>
+        <p class="text-sm leading-relaxed">
+          I am a highly skilled software engineer with experience in full-stack
+          development. I specialize in building scalable web and mobile
+          applications using Python, Golang, JavaScript, C++, Django, React,
+          Flutter, and more.
+        </p>
       </div>
-      <p class="mt-2 hidden text-xs text-gray-600">Used for scripting, automation, web development, and AI/ML applications.</p>
-    </div>
-
-    <!-- Skill: Golang -->
-    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2">
-      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
-          <span class="text-sm">Golang</span>
+      <!-- Profile & QR -->
+      <div class="bg-[var(--color-secondary)] p-6 rounded-lg shadow flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-sm space-y-2">
+          <a href="#" class="block hover:underline font-semibold">GitHub</a>
+          <a href="#" class="block hover:underline font-semibold">LeetCode</a>
+          <a href="#" class="block hover:underline font-semibold">Codeforces</a>
+          <a href="#" class="block hover:underline font-semibold">HackerRank</a>
         </div>
-        <span class="text-xl font-bold">+</span>
-      </div>
-      <p class="mt-2 hidden text-xs text-gray-600">Efficient systems programming language ideal for high-performance backend services.</p>
-    </div>
-
-    <!-- Skill: React -->
-    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2">
-      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
-          <span class="text-sm">React</span>
+        <div class="w-[4px] h-16 bg-gray-300 mx-2 hidden sm:block"></div>
+        <div class="flex flex-col items-center">
+          <img
+            src="https://api.qrserver.com/v1/create-qr-code/?data=https://www.behance.net/samdans&size=80x80"
+            alt="QR Code"
+            class="rounded"
+          />
+          <p class="text-xs mt-1 font-semibold">App Store</p>
         </div>
-        <span class="text-xl font-bold">+</span>
       </div>
-      <p class="mt-2 hidden text-xs text-gray-600">Frontend JavaScript library for building interactive UIs and SPAs.</p>
-    </div>
-
-    <!-- Skill: Flutter -->
-    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2">
-      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
-          <span class="text-sm">Flutter</span>
-        </div>
-        <span class="text-xl font-bold">+</span>
-      </div>
-      <p class="mt-2 hidden text-xs text-gray-600">Cross-platform mobile development framework by Google using Dart.</p>
-    </div>
-
-    <!-- Skill: C++ -->
-    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2">
-      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
-          <span class="text-sm">C++</span>
-        </div>
-        <span class="text-xl font-bold">+</span>
-      </div>
-      <p class="mt-2 hidden text-xs text-gray-600">Object-oriented language used for performance-critical software and game engines.</p>
-    </div>
-
-    <!-- Skill: HTML/CSS -->
-    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2">
-      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
-          <span class="text-sm">HTML/CSS</span>
-        </div>
-        <span class="text-xl font-bold">+</span>
-      </div>
-      <p class="mt-2 hidden text-xs text-gray-600">Core technologies for building and styling the structure of web pages.</p>
-    </div>
-
-    <!-- Skill: JavaScript -->
-    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2">
-      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
-          <span class="text-sm">JavaScript</span>
-        </div>
-        <span class="text-xl font-bold">+</span>
-      </div>
-      <p class="mt-2 hidden text-xs text-gray-600">Essential scripting language for client-side interactivity and logic.</p>
-    </div>
-
-    <!-- Skill: TypeScript -->
-    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2">
-      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
-          <span class="text-sm">TypeScript</span>
-        </div>
-        <span class="text-xl font-bold">+</span>
-      </div>
-      <p class="mt-2 hidden text-xs text-gray-600">Superset of JavaScript that adds static typing for more robust applications.</p>
-    </div>
-
-  </div>
-</div>
-
-
         <div class="bg-[var(--color-secondary)] p-4 rounded-lg shadow">
         <h2 class="font-bold text-lg mb-3 border-l-4 border-[var(--color-border)] pl-3">Expertise</h2>
         <ul class="text-sm list-disc list-inside space-y-1">
@@ -307,40 +210,122 @@
     </aside>
 
     <!-- Right Column -->
-         <section
+    <section
       class="w-full lg:w-[65%] p-4 space-y-4
              lg:h-full lg:overflow-y-auto"
       style="background-color: var(--color-primary);"
     >
-      <!-- Profile & QR -->
-      <!-- <div class="bg-[var(--color-secondary)] p-6 rounded-lg shadow flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div class="text-sm space-y-2">
-          <a href="#" class="block hover:underline font-semibold">GitHub</a>
-          <a href="#" class="block hover:underline font-semibold">LeetCode</a>
-          <a href="#" class="block hover:underline font-semibold">Codeforces</a>
-          <a href="#" class="block hover:underline font-semibold">HackerRank</a>
-        </div>
-        <div class="w-[4px] h-16 bg-gray-300 mx-2 hidden sm:block"></div>
-        <div class="flex flex-col items-center">
-          <img
-            src="https://api.qrserver.com/v1/create-qr-code/?data=https://www.behance.net/samdans&size=80x80"
-            alt="QR Code"
-            class="rounded"
-          />
-          <p class="text-xs mt-1 font-semibold">App Store</p>
-        </div>
-      </div> -->
 
-      <!-- Intro -->
-      <div id="profile" class="bg-[var(--color-secondary)] p-4 rounded-lg shadow">
-        <h2 class="font-bold text-lg mb-3 border-l-4 border-[var(--color-border)] pl-3">Intro</h2>
-        <p class="text-sm leading-relaxed">
-          I am a highly skilled software engineer with experience in full-stack
-          development. I specialize in building scalable web and mobile
-          applications using Python, Golang, JavaScript, C++, Django, React,
-          Flutter, and more.
-        </p>
+      
+      <!-- Skills Section updated -->
+<div class="bg-[var(--color-secondary)] p-4 rounded-lg shadow">
+  <h2 class="font-bold text-lg mb-3 border-l-4 border-[var(--color-border)] pl-3">Skills</h2>
+
+  <!-- Grid container with two columns -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    
+    <!-- Skill: Python -->
+    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2 flex flex-col justify-between h-full">
+      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
+          <span class="text-sm">Python</span>
+        </div>
+        <span class="text-xl font-bold">+</span>
       </div>
+      <p class="mt-2 hidden text-xs text-gray-600">Used for scripting, automation, web development, and AI/ML applications.</p>
+    </div>
+
+    <!-- Skill: Golang -->
+    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2 flex flex-col justify-between h-full">
+      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
+          <span class="text-sm">Golang</span>
+        </div>
+        <span class="text-xl font-bold">+</span>
+      </div>
+      <p class="mt-2 hidden text-xs text-gray-600">Efficient systems programming language ideal for high-performance backend services.</p>
+    </div>
+
+    <!-- Skill: React -->
+    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2 flex flex-col justify-between h-full">
+      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
+          <span class="text-sm">React</span>
+        </div>
+        <span class="text-xl font-bold">+</span>
+      </div>
+      <p class="mt-2 hidden text-xs text-gray-600">Frontend JavaScript library for building interactive UIs and SPAs.</p>
+    </div>
+
+    <!-- Skill: Flutter -->
+    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2 flex flex-col justify-between h-full">
+      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
+          <span class="text-sm">Flutter</span>
+        </div>
+        <span class="text-xl font-bold">+</span>
+      </div>
+      <p class="mt-2 hidden text-xs text-gray-600">Cross-platform mobile development framework by Google using Dart.</p>
+    </div>
+
+    <!-- Skill: C++ -->
+    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2 flex flex-col justify-between h-full">
+      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
+          <span class="text-sm">C++</span>
+        </div>
+        <span class="text-xl font-bold">+</span>
+      </div>
+      <p class="mt-2 hidden text-xs text-gray-600">Object-oriented language used for performance-critical software and game engines.</p>
+    </div>
+
+    <!-- Skill: HTML/CSS -->
+    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2 flex flex-col justify-between h-full">
+      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
+          <span class="text-sm">HTML/CSS</span>
+        </div>
+        <span class="text-xl font-bold">+</span>
+      </div>
+      <p class="mt-2 hidden text-xs text-gray-600">Core technologies for building and styling the structure of web pages.</p>
+    </div>
+
+    <!-- Skill: JavaScript -->
+    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2 flex flex-col justify-between h-full">
+      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
+          <span class="text-sm">JavaScript</span>
+        </div>
+        <span class="text-xl font-bold">+</span>
+      </div>
+      <p class="mt-2 hidden text-xs text-gray-600">Essential scripting language for client-side interactivity and logic.</p>
+    </div>
+
+    <!-- Skill: TypeScript -->
+    <div class="border border-[--color-primary] bg-[var(--color-primary)] rounded p-2 flex flex-col justify-between h-full">
+      <div class="flex justify-between items-center cursor-pointer" onclick="toggleSkill(this)">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-[var(--color-border)] rounded-full"></span>
+          <span class="text-sm">TypeScript</span>
+        </div>
+        <span class="text-xl font-bold">+</span>
+      </div>
+      <p class="mt-2 hidden text-xs text-gray-600">Superset of JavaScript that adds static typing for more robust applications.</p>
+    </div>
+
+  </div>
+</div>
+
+
+
+
 
       <!-- Projects -->
       <div id="projects" class="bg-[var(--color-secondary)] p-4 rounded-lg shadow">
