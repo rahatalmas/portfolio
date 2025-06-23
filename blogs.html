@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" class="transition-colors duration-500">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blogs – B.M. Rahat Almas</title>
+  <meta name="description" content="Explore insightful blog articles on development, trends, and engineering solutions by B.M. Rahat Almas." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            light: {
+              bg: '#ffffff',
+              primary: '#472D2D',
+              secondary: '#553939',
+              text: '#1D1616',
+              accent: 'var(--color-border)',
+            },
+            dark: {
+              bg: '#1f1f1f',
+              primary: '#2c2c2c',
+              secondary: '#373737',
+              text: '#ffffff',
+              accent: 'var(--color-border)',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --color-primary: #EEEEEE;
+      --color-secondary: #ffffff;
+      --scrollbar-thumb: var(--color-border);
+      --scrollbar-track: #EEEEEE;
+      --color-text: #1f1f1f;
+      --color-border: #22C55E;
+      
+    }
+
+    html.dark {
+      --color-primary: #1f1f1f;
+      --color-secondary: #2c2c2c;
+      --scrollbar-track: #1f1f1f;
+      --scrollbar-thumb: var(--color-border);
+      --color-text: #ffffff;
+      --color-border: #d8d400;
+    }
+
+    aside.lg\:overflow-y-auto,
+    section.lg\:overflow-y-auto {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    aside.lg\:overflow-y-auto::-webkit-scrollbar,
+    section.lg\:overflow-y-auto::-webkit-scrollbar {
+      width: 0px;
+      background: transparent;
+    }
+
+    aside.lg\:overflow-y-auto:hover::-webkit-scrollbar,
+    section.lg\:overflow-y-auto:hover::-webkit-scrollbar {
+      width: 8px;
+      background: var(--scrollbar-track);
+    }
+
+    aside.lg\:overflow-y-auto:hover::-webkit-scrollbar-track,
+    section.lg\:overflow-y-auto:hover::-webkit-scrollbar-track {
+      background: var(--scrollbar-track);
+    }
+
+    aside.lg\:overflow-y-auto:hover::-webkit-scrollbar-thumb,
+    section.lg\:overflow-y-auto:hover::-webkit-scrollbar-thumb {
+      background-color: var(--scrollbar-thumb);
+      border-radius: 10px;
+      border: 2px solid var(--scrollbar-track);
+    }
+
+    aside.lg\:overflow-y-auto:hover,
+    section.lg\:overflow-y-auto:hover {
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    }
+  </style>
+</head>
+<body class="bg-[var(--color-primary)] text-[var(--color-text)] transition-colors duration-500">
+  <header class="sticky top-0 bg-[var(--color-primary)] shadow z-50">
+    <div class="max-w-[1400px] mx-auto flex items-center justify-between p-4">
+      <a href="/" class="text-lg font-bold text-[var(--color-border)]">B.M. Rahat Almas</a>
+      <nav id="main-nav" class="hidden md:flex gap-6 text-sm">
+        <a href="/" class="hover:text-[var(--color-border)] font-semibold">Home</a>
+        <a href="/#projects" class="hover:text-[var(--color-border)] font-semibold">Projects</a>
+        <a href="#contact" class="hover:text-[var(--color-border)] font-semibold">Contact</a>
+        <a href="/blogs.html" class="text-[var(--color-border)] font-semibold">Blogs</a>
+      </nav>
+      <div class="flex items-center md:ml-4 gap-3">
+        <button id="theme-toggle" class="text-xl">🌙</button>
+        <button id="menu-toggle" class="md:hidden text-xl">☰</button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="md:hidden hidden px-4 pb-4">
+      <nav class="flex flex-col gap-2 text-sm">
+        <a href="/" class="hover:text-[var(--color-border)] font-semibold">Home</a>
+        <a href="/#projects" class="hover:text-[var(--color-border)] font-semibold">Projects</a>
+        <a href="#contact" class="hover:text-[var(--color-border)] font-semibold">Contact</a>
+        <a href="/blogs.html" class="text-[var(--color-border)] font-semibold">Blogs</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-[1400px] mx-auto p-4">
+    <!-- Banner Section -->
+    <section class="bg-[var(--color-secondary)] rounded-lg p-4 grid grid-cols-1 lg:grid-cols-2 items-center gap-4 animate-fade-in-up">
+      <div>
+        <img src="https://mymodernmet.com/wp/wp-content/uploads/2020/12/studio-ghibli-more-free-images-thumbnail.jpg" alt="Banner" class="w-full h-64 lg:h-full object-cover rounded-lg">
+      </div>
+      <div>
+        <h1 class="text-3xl sm:text-4xl font-bold">!!! This Page is under development</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+          We share common trends and strategies for improving your rental making sure in high demand of service unique blocks.
+        </p>
+        <a href="#" class="inline-block mt-4 text-sm text-[var(--color-border)] font-semibold hover:underline">Learn More →</a>
+      </div>
+    </section>
+
+    <section class="my-6 animate-fade-in-up">
+      <h2 class="text-2xl font-bold mb-2">Articles</h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+        Explore recent posts that are trending among the tech community.
+      </p>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Blog Cards -->
+        <article class="bg-[var(--color-secondary)] rounded-lg shadow-md overflow-hidden hover:scale-[1.02] transition-transform duration-300">
+          <img src="https://mymodernmet.com/wp/wp-content/uploads/2020/12/studio-ghibli-more-free-images-thumbnail.jpg" alt="Blog 1" class="w-full h-40 object-cover">
+          <div class="p-4">
+            <h3 class="font-semibold text-lg mb-1">Delivery is reschedule for the next available time slot.</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Lorem ipsum dolor sit amet consectetur.</p>
+            <a href="#" class="text-[var(--color-border)] text-sm font-medium hover:underline">Learn more →</a>
+          </div>
+        </article>
+        <article class="bg-[var(--color-secondary)] rounded-lg shadow-md overflow-hidden hover:scale-[1.02] transition-transform duration-300">
+          <img src="https://mymodernmet.com/wp/wp-content/uploads/2020/12/studio-ghibli-more-free-images-thumbnail.jpg" alt="Blog 2" class="w-full h-40 object-cover">
+          <div class="p-4">
+            <h3 class="font-semibold text-lg mb-1">Delivery is reschedule for the next available time slot.</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Lorem ipsum dolor sit amet consectetur.</p>
+            <a href="#" class="text-[var(--color-border)] text-sm font-medium hover:underline">Learn more →</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="my-6 animate-fade-in-up">
+      <div class="flex flex-col lg:flex-row justify-between gap-6">
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold mb-4">Have a question?<br>We are here to answer.</h2>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            We share trends and strategies for improving services.
+          </p>
+          <div class="space-y-2">
+            <details class="bg-[var(--color-secondary)] p-4 rounded shadow">
+              <summary class="cursor-pointer font-semibold">Risk Assessment?</summary>
+              <p class="text-sm mt-2">Lorem ipsum is simply dummy text of the printing.</p>
+            </details>
+            <details class="bg-[var(--color-secondary)] p-4 rounded shadow">
+              <summary class="cursor-pointer font-semibold">Who is companies be impacted by eudr?</summary>
+              <p class="text-sm mt-2">Lorem ipsum is simply dummy text of the printing.</p>
+            </details>
+          </div>
+        </div>
+        <div class="flex-1">
+          <img src="https://mymodernmet.com/wp/wp-content/uploads/2020/12/studio-ghibli-more-free-images-thumbnail.jpg" alt="Support" class="rounded-lg shadow w-full h-64 object-cover" />
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-[var(--color-primary)] text-[var(--color-text)] dark:text-gray-400 border-t mt-4 py-10">
+    <div class="max-w-[1400px] mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+      <div>
+        <h3 class="text-xl font-bold text-[var(--color-border)] mb-2">B.M. Rahat Almas</h3>
+        <p class="text-sm mb-2">Aspiring Software Engineer</p>
+        <p class="text-sm">📧 bmrahatalmas@gmail.com</p>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-2">Navigation</h4>
+        <ul class="text-sm space-y-1">
+          <li><a href="#" class="hover:underline">Home</a></li>
+          <li><a href="#" class="hover:underline">profile</a></li>
+          <li><a href="#" class="hover:underline">Blogs</a></li>
+          <li><a href="#" class="hover:underline">Terms</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-2">Support</h4>
+        <ul class="text-sm space-y-1">
+          <li><a href="#" class="hover:underline">How it works</a></li>
+          <li><a href="#" class="hover:underline">Contact</a></li>
+          <li><a href="#" class="hover:underline">Discussion</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-2">Newsletter</h4>
+        <form class="flex items-center gap-2">
+          <input type="email" placeholder="Enter your email here" class="w-full px-3 py-2 rounded border border-gray-300 text-sm">
+          <button type="submit" class="bg-[var(--color-border)] text-white text-sm px-3 py-2 rounded">→</button>
+        </form>
+        <div class="flex gap-3 mt-3">
+          <a href="#" class="text-sm hover:underline">📘</a>
+          <a href="#" class="text-sm hover:underline">🐦</a>
+          <a href="#" class="text-sm hover:underline">💼</a>
+        </div>
+      </div>
+    </div>
+    <div class="text-center text-xs mt-6">&copy; 2025 B.M. Rahat Almas | All rights reserved.</div>
+  </footer>
+
+ <script>
+    const html = document.documentElement;
+    const toggle = document.getElementById('theme-toggle');
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+
+    function setTheme(theme) {
+      if (theme === 'dark') {
+        html.classList.add('dark');
+        toggle.textContent = '☀️';
+      } else {
+        html.classList.remove('dark');
+        toggle.textContent = '🌙';
+      }
+      localStorage.setItem('theme', theme);
+    }
+
+    toggle.addEventListener('click', () => {
+      const currentTheme = html.classList.contains('dark') ? 'dark' : 'light';
+      setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      setTheme(savedTheme);
+    });
+
+    menuToggle.addEventListener('click', () => {
+      mobileNav.classList.toggle('hidden');
+    });
+  </script>
+</body>
+</html>
