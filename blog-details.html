@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" class="transition-colors duration-500">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog Details – B.M. Rahat Almas</title>
+  <meta name="description" content="Read in-depth blog content by B.M. Rahat Almas on tech, development, and trends." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --color-primary: #EEEEEE;
+      --color-secondary: #ffffff;
+      --color-border: #22C55E;
+      --color-text: #1f1f1f;
+    }
+    html.dark {
+      --color-primary: #1f1f1f;
+      --color-secondary: #2c2c2c;
+      --color-border: #d8d400;
+      --color-text: #ffffff;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    @keyframes fade-in-up {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-up {
+      animation: fade-in-up 0.6s ease-out;
+    }
+  </style>
+</head>
+<body class="bg-[var(--color-primary)] text-[var(--color-text)] transition-colors duration-500">
+  <header class="sticky top-0 bg-[var(--color-primary)] shadow z-50">
+    <div class="max-w-[1400px] mx-auto flex items-center justify-between p-4">
+      <a href="/" class="text-lg font-bold text-[var(--color-border)]">B.M. Rahat Almas</a>
+      <nav class="hidden md:flex gap-6 text-sm">
+        <a href="/" class="hover:text-[var(--color-border)]">Home</a>
+        <a href="#about" class="hover:text-[var(--color-border)]">About</a>
+        <a href="#service" class="hover:text-[var(--color-border)]">Service</a>
+        <a href="#projects" class="hover:text-[var(--color-border)]">Projects</a>
+        <a href="#experience" class="hover:text-[var(--color-border)]">Experience</a>
+        <a href="/blogs.html" class="text-[var(--color-border)] font-semibold">Blogs</a>
+      </nav>
+      <button id="theme-toggle" class="text-xl md:ml-4">🌙</button>
+    </div>
+  </header>
+
+  <main class="max-w-[900px] mx-auto p-4 animate-fade-in-up">
+    <article id="blog-article" class="prose lg:prose-lg dark:prose-invert max-w-none"></article>
+  </main>
+
+  <script>
+    const html = document.documentElement;
+    const toggle = document.getElementById('theme-toggle');
+
+    function setTheme(theme) {
+      if (theme === 'dark') {
+        html.classList.add('dark');
+        toggle.textContent = '☀️';
+      } else {
+        html.classList.remove('dark');
+        toggle.textContent = '🌙';
+      }
+      localStorage.setItem('theme', theme);
+    }
+
+    toggle.addEventListener('click', () => {
+      const currentTheme = html.classList.contains('dark') ? 'dark' : 'light';
+      setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      setTheme(savedTheme);
+
+      const params = new URLSearchParams(window.location.search);
+      const blogId = params.get('id');
+
+      fetch('/blogs.json')
+        .then(res => res.json())
+        .then(data => {
+          const blog = data.find(b => b.id === blogId);
+          if (!blog) {
+            document.getElementById('blog-article').innerHTML = '<h1>Blog not found</h1>';
+            return;
+          }
+          document.title = `${blog.title} – B.M. Rahat Almas`;
+          document.querySelector('meta[name="description"]').setAttribute('content', blog.description);
+          document.getElementById('blog-article').innerHTML = `
+            <h1 class="text-4xl font-bold mb-4">${blog.title}</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Published on ${blog.created_at} · Updated on ${blog.updated_at}</p>
+            <img src="${blog.image}" alt="${blog.title}" class="w-full rounded-lg shadow mb-8">
+            ${blog.content}
+            <a href="/blogs.html" class="inline-block mt-10 text-sm text-[var(--color-border)] font-semibold hover:underline">← Back to Blogs</a>
+          `;
+        })
+        .catch(() => {
+          document.getElementById('blog-article').innerHTML = '<h1>Error loading blog</h1>';
+        });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "1",
+    "createdAt": "2025-06-22T10:00:00+0600",
+    "updatedAt": "2025-06-22T10:00:00+0600",
+    "title": "What is an API?",
+    "description": "Learn what an API is, its types, REST APIs, and how they differ.",
+    "image": "https://media.geeksforgeeks.org/wp-content/uploads/20230216170349/What-is-an-API.png",
+    "content": "<h2>Definition</h2><p>API stands for <strong>Application Programming Interface</strong>. It's a set of rules that allow one software program to interact with another. APIs define the methods and data formats programs can use to communicate with each other.</p><h2>Types of API</h2><ul><li><strong>Open APIs (Public APIs):</strong> Available to developers and users with minimal restrictions.</li><li><strong>Internal APIs (Private APIs):</strong> Used within a company to improve services and products.</li><li><strong>Partner APIs:</strong> Shared externally but only with specific business partners.</li><li><strong>Composite APIs:</strong> Combine multiple APIs into one call, useful in microservice architecture.</li></ul><h2>What is a REST API?</h2><p>REST (Representational State Transfer) API is a web API based on HTTP. It uses standard HTTP methods like GET, POST, PUT, DELETE and works with resources represented in formats like JSON or XML. REST is stateless, scalable, and cacheable.</p><h2>API vs REST API</h2><ul><li><strong>API:</strong> A general interface allowing two applications to talk.</li><li><strong>REST API:</strong> A type of API that uses REST architecture and HTTP protocol.</li><li>All REST APIs are APIs, but not all APIs are RESTful.</li></ul><h2>Popular Languages & Frameworks for REST API</h2><ul><li><strong>Python:</strong> FastAPI, Flask, Django REST Framework</li><li><strong>JavaScript/Node.js:</strong> Express.js, NestJS</li><li><strong>Go (Golang):</strong> Gin, Echo, Fiber</li><li><strong>Java:</strong> Spring Boot</li><li><strong>Ruby:</strong> Ruby on Rails</li></ul>"
+  },
+  {
+    "id": "2",
+    "createdAt": "2025-06-22T10:30:00+0600",
+    "updatedAt": "2025-06-22T10:30:00+0600",
+    "title": "FastAPI – The Fastest Python API Framework",
+    "description": "A quick introduction to FastAPI, why it's so fast, and how it's used.",
+    "image": "https://fastapi.tiangolo.com/assets/images/social/index.png",
+    "content": "<h2>What is FastAPI?</h2><p>FastAPI is a modern, high-performance web framework for building APIs with Python 3.7+ based on standard Python type hints. It is built on top of Starlette for web handling and Pydantic for data validation.</p><h2>Key Features</h2><ul><li><strong>Fast:</strong> One of the fastest Python frameworks due to async support and performance optimizations.</li><li><strong>Type Hints:</strong> Uses Python type annotations for request/response validation.</li><li><strong>Automatic Docs:</strong> Generates Swagger and ReDoc UI automatically.</li><li><strong>Async Support:</strong> Built-in async and await support for handling concurrency.</li><li><strong>Easy to Learn:</strong> Simple syntax and clear structure make it beginner friendly.</li></ul><h2>Why Use FastAPI?</h2><ul><li>High performance (comparable to Node.js and Go)</li><li>Automatic request validation</li><li>Excellent developer experience</li><li>Fast to code and easy to test</li></ul><h2>Use Cases</h2><ul><li>Microservices and REST APIs</li><li>ML model deployment (e.g., with TensorFlow or PyTorch)</li><li>Backend for web or mobile apps</li></ul>"
+  }
+]
