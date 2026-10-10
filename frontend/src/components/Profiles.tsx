@@ -51,7 +51,7 @@ export default function Profiles() {
                   href={p.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 text-sm hover:text-accent"
+                  className="inline-flex items-center gap-1.5 text-sm"
                 >
                   <span className="text-muted">
                     <Icon size={15} />

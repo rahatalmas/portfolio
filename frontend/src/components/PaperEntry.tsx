@@ -1,7 +1,7 @@
 import { usePortfolio } from "../api/PortfolioContext";
 import type { Paper } from "../api/types";
 
-const linkClass = "text-accent hover:underline";
+const linkClass = "text-accent";
 
 /** One compact row: title + year, then authors · venue · links on a single line. */
 export default function PaperEntry({ paper }: { paper: Paper }) {
@@ -30,7 +30,7 @@ export default function PaperEntry({ paper }: { paper: Paper }) {
         <span> · </span>
         <span className="italic">{venue}</span>
         {status !== "published" && (
-          <span className="ml-1.5 rounded bg-accent-soft px-1.5 py-px font-mono text-[10px] not-italic text-accent">{status}</span>
+          <span className="ml-1.5 rounded border border-line px-1 py-px font-mono text-[10px] not-italic">{status}</span>
         )}
         {linkList.map((l) => (
           <span key={l.label}>

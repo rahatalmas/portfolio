@@ -3,10 +3,8 @@ import { usePortfolio } from "../api/PortfolioContext";
 import Portrait from "./Portrait";
 import ExperienceCard from "./ExperienceCard";
 
-const primary =
-  "inline-flex items-center gap-2 rounded-md bg-accent px-3.5 py-1.5 text-sm font-medium text-white shadow-[0_6px_16px_-6px_var(--color-accent)] hover:opacity-90";
-const secondary =
-  "inline-flex items-center gap-2 rounded-md border border-line bg-card px-3.5 py-1.5 text-sm hover:border-accent hover:text-accent";
+const primary = "inline-flex items-center gap-2 rounded-md bg-accent px-3.5 py-1.5 text-sm font-medium text-white";
+const secondary = "inline-flex items-center gap-2 rounded-md border border-line bg-card px-3.5 py-1.5 text-sm";
 
 export default function Hero() {
   const { site, experience } = usePortfolio();
@@ -15,7 +13,7 @@ export default function Hero() {
   const githubPrimary = !site.cv_url;
 
   return (
-    <section id="top" className="hero-glow">
+    <section id="top">
       <div
         className={`mx-auto grid w-full max-w-[960px] items-stretch gap-8 px-6 pt-20 pb-6 md:gap-10 md:pt-24 ${
           showCard ? "md:grid-cols-[1fr_280px]" : ""

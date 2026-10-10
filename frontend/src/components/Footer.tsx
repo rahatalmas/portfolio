@@ -2,7 +2,7 @@ import { ArrowUp, Mail, MapPin } from "lucide-react";
 import { usePortfolio } from "../api/PortfolioContext";
 import { ICONS } from "./Profiles";
 
-const iconLink = "text-muted hover:text-accent";
+const iconLink = "text-muted";
 
 /** Icon keys shown in the footer, in order, when a matching profile exists. */
 const FOOTER_ICONS = ["github", "linkedin", "scholar"];
@@ -25,7 +25,7 @@ export default function Footer() {
                   <dt className="sr-only">{site.contact_email_label}</dt>
                   <Mail size={14} className="text-muted" aria-hidden />
                   <dd>
-                    <a href={`mailto:${site.email}`} className="font-medium text-accent hover:underline">
+                    <a href={`mailto:${site.email}`} className="font-medium text-accent">
                       {site.email}
                     </a>
                   </dd>

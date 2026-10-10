@@ -18,7 +18,7 @@ export default function Work() {
             href={site.work_all_url}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-0.5 text-accent hover:underline"
+            className="inline-flex items-center gap-0.5 text-accent"
           >
             {site.work_all_label} <ArrowUpRight size={14} />
           </a>
@@ -26,8 +26,8 @@ export default function Work() {
       }
     >
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {featured.map((p, i) => (
-          <ProjectCard key={p.id} project={p} index={i} />
+        {featured.map((p) => (
+          <ProjectCard key={p.id} project={p} />
         ))}
       </div>
     </Section>

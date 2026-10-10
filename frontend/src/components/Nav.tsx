@@ -50,7 +50,7 @@ export default function Nav() {
   }, [open]);
 
   const linkClass = (id: string) =>
-    `relative py-0.5 text-[13px] hover:text-fg ${active === id ? "text-fg" : "text-muted"} after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:bg-accent ${
+    `relative py-0.5 text-[13px] ${active === id ? "text-fg" : "text-muted"} after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:bg-accent ${
       active === id ? "after:scale-x-100" : "after:scale-x-0"
     }`;
 
@@ -92,7 +92,7 @@ export default function Nav() {
                 href={site.cv_url}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-md border border-line px-2.5 py-0.5 text-[13px] hover:border-accent hover:text-accent"
+                className="rounded-md border border-line px-2.5 py-0.5 text-[13px]"
               >
                 {site.nav_cv_label}
               </a>
@@ -100,7 +100,7 @@ export default function Nav() {
             <button
               onClick={toggle}
               aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-              className="rounded-md p-0.5 text-muted hover:text-fg"
+              className="rounded-md p-0.5 text-muted"
             >
               {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
             </button>
@@ -121,7 +121,7 @@ export default function Nav() {
             <button
               onClick={toggle}
               aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-              className="rounded-md p-1.5 text-muted hover:text-fg"
+              className="rounded-md p-1.5 text-muted"
             >
               {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
             </button>

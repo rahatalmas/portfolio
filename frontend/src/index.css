@@ -13,7 +13,6 @@
   --color-line: #e2e6ef;
   --color-card: #ffffff;
   --color-accent: #2563eb;
-  --color-accent-soft: #e0e9ff; /* tint behind chips and badges */
 }
 
 .dark {
@@ -24,29 +23,10 @@
   --color-line: #1d2742;
   --color-card: #121932;
   --color-accent: #4f8bff;
-  --color-accent-soft: #172550;
-}
-
-::selection {
-  background: var(--color-accent);
-  color: #ffffff;
 }
 
 html {
-  scroll-behavior: smooth;
   scroll-padding-top: 64px;
-}
-
-/* Soft accent glow behind the hero so the page opens with some colour. */
-.hero-glow {
-  background:
-    radial-gradient(55% 60% at 18% 10%, color-mix(in srgb, var(--color-accent) 16%, transparent), transparent 70%),
-    radial-gradient(40% 50% at 90% 30%, color-mix(in srgb, var(--color-accent) 8%, transparent), transparent 70%);
-}
-.dark .hero-glow {
-  background:
-    radial-gradient(55% 60% at 18% 10%, color-mix(in srgb, var(--color-accent) 22%, transparent), transparent 70%),
-    radial-gradient(40% 50% at 90% 30%, color-mix(in srgb, var(--color-accent) 14%, transparent), transparent 70%);
 }
 
 body {
@@ -58,19 +38,4 @@ body {
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
-}
-
-/* Fade-up on first reveal; disabled for reduced motion. */
-.reveal {
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 400ms ease, transform 400ms ease;
-}
-.reveal.in {
-  opacity: 1;
-  transform: none;
-}
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .reveal { opacity: 1; transform: none; transition: none; }
 }
