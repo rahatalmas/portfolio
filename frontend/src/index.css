@@ -12,6 +12,11 @@
   --color-line: #e5e5e5;
   --color-card: #ffffff;
   --color-accent: #172554;
+
+  /* The inverted band at the bottom of the page (Contact + Footer). */
+  --color-band: #172554;
+  --color-band-deep: #0f1a3d;
+  --color-band-glow: #3b82f6;
 }
 
 .dark {
@@ -21,6 +26,50 @@
   --color-line: #262626;
   --color-card: #161616;
   --color-accent: #2563eb;
+
+  --color-band: #1e3a8a;
+  --color-band-deep: #152b6b;
+  --color-band-glow: #60a5fa;
+}
+
+/*
+ * .band inverts the palette for everything inside it by remapping the theme
+ * tokens, so the existing text-muted / border-line / text-accent utilities
+ * recolor themselves. .panel restores the normal palette for a card that
+ * should sit as a light (or dark) surface on top of the band.
+ */
+.band {
+  --color-bg: var(--color-band);
+  --color-card: var(--color-band-deep);
+  --color-fg: #ffffff;
+  --color-muted: rgba(255, 255, 255, 0.72);
+  --color-line: rgba(255, 255, 255, 0.18);
+  --color-accent: #ffffff;
+  color: var(--color-fg);
+  background-color: var(--color-band);
+}
+.band .panel {
+  --color-bg: #fafafa;
+  --color-fg: #111111;
+  --color-muted: #6b6b6b;
+  --color-line: #e5e5e5;
+  --color-card: #ffffff;
+  --color-accent: #172554;
+  color: var(--color-fg);
+}
+.dark .band .panel {
+  --color-bg: #0f0f0f;
+  --color-fg: #ededed;
+  --color-muted: #9a9a9a;
+  --color-line: #262626;
+  --color-card: #161616;
+  --color-accent: #2563eb;
+}
+/* Soft spotlight in the band's top-right corner. */
+.band-glow {
+  background:
+    radial-gradient(60% 80% at 85% 0%, color-mix(in srgb, var(--color-band-glow) 35%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--color-band), var(--color-band-deep));
 }
 
 html {

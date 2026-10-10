@@ -35,7 +35,7 @@ export default function ContactForm() {
 
   if (status === "sent") {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-2 rounded-2xl border border-line bg-card p-6 text-center">
+      <div className="panel flex h-full flex-col items-center justify-center gap-2 rounded-2xl border border-line bg-card p-6 text-center">
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent/10 text-accent">
           <Check size={18} />
         </span>
@@ -46,11 +46,12 @@ export default function ContactForm() {
   }
 
   return (
-    // White panel: top level with the section heading; the message box grows
-    // so the panel ends level with the last profile row.
+    // Light panel on the band (.panel restores the normal palette): top level
+    // with the section heading; the message box grows so the panel ends level
+    // with the last profile row.
     <form
       onSubmit={onSubmit}
-      className="flex h-full flex-col gap-2.5 rounded-2xl border border-line bg-card p-4 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.12)]"
+      className="panel flex h-full flex-col gap-2.5 rounded-2xl border border-line bg-card p-4 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.5)]"
     >
       <div className="mb-1">
         <h3 className="text-[15px] font-semibold">{site.form_title}</h3>
