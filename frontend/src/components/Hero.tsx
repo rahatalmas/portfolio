@@ -3,12 +3,19 @@ import { usePortfolio } from "../api/PortfolioContext";
 import Portrait from "./Portrait";
 import ExperienceCard from "./ExperienceCard";
 
+const primary =
+  "inline-flex items-center gap-2 rounded-md bg-accent px-3.5 py-1.5 text-sm font-medium text-white shadow-[0_6px_16px_-6px_var(--color-accent)] hover:opacity-90";
+const secondary =
+  "inline-flex items-center gap-2 rounded-md border border-line bg-card px-3.5 py-1.5 text-sm hover:border-accent hover:text-accent";
+
 export default function Hero() {
   const { site, experience } = usePortfolio();
   const showCard = site.show_experience && experience.length > 0;
+  // One filled button: the CV when there is one, otherwise GitHub.
+  const githubPrimary = !site.cv_url;
 
   return (
-    <section id="top">
+    <section id="top" className="hero-glow">
       <div
         className={`mx-auto grid w-full max-w-[960px] items-stretch gap-8 px-6 pt-20 pb-6 md:gap-10 md:pt-24 ${
           showCard ? "md:grid-cols-[1fr_280px]" : ""
@@ -26,30 +33,17 @@ export default function Hero() {
 
           <div className="mt-5 flex flex-wrap gap-2">
             {site.cv_url && (
-              <a
-                href={site.cv_url}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-md bg-accent px-3.5 py-1.5 text-sm font-medium text-white hover:opacity-90"
-              >
+              <a href={site.cv_url} target="_blank" rel="noreferrer" className={primary}>
                 <FileText size={15} /> {site.hero_cv_label}
               </a>
             )}
             {site.github_url && (
-              <a
-                href={site.github_url}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-md border border-line px-3.5 py-1.5 text-sm hover:border-accent hover:text-accent"
-              >
+              <a href={site.github_url} target="_blank" rel="noreferrer" className={githubPrimary ? primary : secondary}>
                 <Github size={15} /> {site.hero_github_label}
               </a>
             )}
             {site.email && (
-              <a
-                href={`mailto:${site.email}`}
-                className="inline-flex items-center gap-2 rounded-md border border-line px-3.5 py-1.5 text-sm hover:border-accent hover:text-accent"
-              >
+              <a href={`mailto:${site.email}`} className={secondary}>
                 <Mail size={15} /> {site.hero_email_label}
               </a>
             )}

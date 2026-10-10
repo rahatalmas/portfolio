@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
 import { useReveal } from "../hooks/useReveal";
 
-export const sectionTitle = "text-[28px] font-semibold tracking-tight";
+// Section titles carry a short accent bar underneath (white inside the band).
+export const sectionTitle =
+  "text-[28px] font-semibold tracking-tight after:mt-2 after:block after:h-[3px] after:w-8 after:rounded-full after:bg-accent";
 
 interface Props {
   id: string;

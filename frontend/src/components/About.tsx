@@ -2,7 +2,7 @@ import { usePortfolio } from "../api/PortfolioContext";
 import Section from "./Section";
 
 function Label({ children }: { children: string }) {
-  return <h3 className="mb-3 font-mono text-xs font-medium uppercase tracking-wider text-muted">{children}</h3>;
+  return <h3 className="mb-3 font-mono text-xs font-medium uppercase tracking-wider text-accent">{children}</h3>;
 }
 
 export default function About() {
@@ -33,7 +33,7 @@ export default function About() {
           <dl className="grid gap-6 sm:grid-cols-3">
             {skills.map((g) => (
               <div key={g.id}>
-                <dt className="mb-1.5 text-sm font-medium">{g.name}</dt>
+                <dt className="mb-1.5 text-sm font-semibold">{g.name}</dt>
                 <dd className="text-sm leading-relaxed text-muted">{g.items.join(" · ")}</dd>
               </div>
             ))}

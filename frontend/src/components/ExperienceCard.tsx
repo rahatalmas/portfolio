@@ -27,8 +27,11 @@ export default function ExperienceCard({ className = "" }: { className?: string 
   ];
 
   return (
-    <div id="experience" className={`flex h-full flex-col rounded-2xl border border-line bg-card p-4 ${className}`}>
-      <h2 className="mb-3 font-mono text-xs font-medium uppercase tracking-wider text-muted">{site.experience_title}</h2>
+    <div
+      id="experience"
+      className={`flex h-full flex-col rounded-2xl border border-line bg-card p-4 shadow-[0_20px_50px_-30px_var(--color-accent)] ${className}`}
+    >
+      <h2 className="mb-3 font-mono text-xs font-medium uppercase tracking-wider text-accent">{site.experience_title}</h2>
       <ol className="relative ml-1 flex flex-col gap-4 border-l border-line">
         {experience.map((r, i) => (
           <li key={r.id} className="relative pl-5">
@@ -53,7 +56,7 @@ export default function ExperienceCard({ className = "" }: { className?: string 
           {stats.map((s) => (
             <div key={s.label}>
               <dt className="sr-only">{s.label}</dt>
-              <dd className="text-lg font-semibold tracking-tight">{s.value}</dd>
+              <dd className="text-lg font-semibold tracking-tight text-accent">{s.value}</dd>
               <dd className="font-mono text-[10px] uppercase tracking-wider text-muted">{s.label}</dd>
             </div>
           ))}
