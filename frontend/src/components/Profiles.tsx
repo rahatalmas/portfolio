@@ -34,27 +34,24 @@ export const ICONS: Record<string, ComponentType<{ size?: number }>> = {
   globe: Globe,
 };
 
-/** Compact grouped list of profile links: icon + name, one row per group. */
+/**
+ * Compact grouped profile links for the hero column: the group name as a
+ * small label, then its links wrapping underneath.
+ */
 export default function Profiles() {
   const { profiles } = usePortfolio();
   return (
     <dl className="space-y-2.5">
       {profiles.map((group) => (
-        <div key={group.name} className="flex flex-col gap-1.5 sm:flex-row sm:gap-3">
-          <dt className="w-24 shrink-0 pt-0.5 text-sm text-muted">{group.name}</dt>
-          <dd className="flex flex-wrap gap-x-5 gap-y-1.5">
+        <div key={group.name}>
+          <dt className="mb-1 text-[11px] text-muted">{group.name}</dt>
+          <dd className="flex flex-wrap gap-x-3.5 gap-y-1">
             {group.items.map((p) => {
               const Icon = ICONS[p.icon] ?? ArrowUpRight;
               return (
-                <a
-                  key={p.id}
-                  href={p.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 text-sm"
-                >
+                <a key={p.id} href={p.href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[13px]">
                   <span className="text-muted">
-                    <Icon size={15} />
+                    <Icon size={13} />
                   </span>
                   {p.label}
                 </a>

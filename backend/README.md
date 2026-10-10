@@ -80,8 +80,8 @@ Environment variables, or a `.env` file in the working directory
 
 * **Dashboard** – counts and quick links.
 * **Settings** – every text, label, image URL and section toggle, grouped
-  (Identity, SEO, Sections, Navbar, Hero, About, Work, Research, Connect,
-  Footer). Media fields offer a dropdown of uploaded files.
+  (Identity, SEO, Sections, Navbar, Hero, About, Work, Research, Footer).
+  Media fields offer a dropdown of uploaded files.
 * **Education / Skills / Profiles / Experience / Projects / Papers** – list,
   create, edit, delete, and ↑/↓ reorder. Forms validate per field and keep
   your input on error.

@@ -31,7 +31,7 @@ const comma = (v: unknown): string[] =>
 const num = (v: unknown): number => Number.parseInt(str(v), 10) || 0;
 
 /** Settings keys the API returns as something other than a string. */
-const BOOL_KEYS = new Set(["show_experience", "show_about", "show_work", "show_research", "show_contact"]);
+const BOOL_KEYS = new Set(["show_experience", "show_about", "show_work", "show_research"]);
 const LINES_KEYS = new Set(["interests"]);
 
 function site(raw: Raw): Site {

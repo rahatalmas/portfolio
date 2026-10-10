@@ -7,15 +7,15 @@ const primary = "inline-flex items-center gap-2 rounded-md bg-accent px-3.5 py-1
 const secondary = "inline-flex items-center gap-2 rounded-md border border-line bg-card px-3.5 py-1.5 text-sm";
 
 export default function Hero() {
-  const { site, experience } = usePortfolio();
-  const showCard = site.show_experience && experience.length > 0;
+  const { site, experience, profiles } = usePortfolio();
+  const showCard = site.show_experience && (experience.length > 0 || profiles.length > 0);
   // One filled button: the CV when there is one, otherwise GitHub.
   const githubPrimary = !site.cv_url;
 
   return (
     <section id="top">
       <div
-        className={`mx-auto grid w-full max-w-[960px] items-start gap-8 px-6 pt-20 pb-6 md:gap-10 md:pt-24 ${
+        className={`mx-auto grid w-full max-w-[960px] items-stretch gap-8 px-6 pt-20 pb-6 md:gap-10 md:pt-24 ${
           showCard ? "md:grid-cols-[1fr_260px]" : ""
         }`}
       >

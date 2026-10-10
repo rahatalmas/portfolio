@@ -75,13 +75,11 @@ A flat object. Keys are the setting keys defined in
   "show_about": true,
   "show_work": true,
   "show_research": true,
-  "show_contact": true,
 
   "nav_about": "About", "nav_work": "Work", "nav_research": "Research",
-  "nav_contact": "Contact", "nav_cv_label": "CV",
 
   "hero_cv_label": "CV", "hero_github_label": "GitHub", "hero_email_label": "Email",
-  "experience_title": "Experience",
+  "experience_title": "Experience", "profiles_title": "Find me on",
   "stat_years_label": "Years", "stat_papers_label": "Papers", "stat_projects_label": "Projects",
 
   "about_title": "About", "education_label": "Education", "skills_label": "Skills",
@@ -95,7 +93,6 @@ A flat object. Keys are the setting keys defined in
   "interests_label": "Interests",
   "interests": ["LLM inference systems", "Retrieval-augmented generation"],
 
-  "contact_title": "Contact",
   "contact_email_label": "Email", "contact_location_label": "Location",
 
   "footer_updated": "October 2026",

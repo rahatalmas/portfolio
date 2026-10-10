@@ -3,7 +3,6 @@ import Hero from "../components/Hero";
 import About from "../components/About";
 import Work from "../components/Work";
 import Research from "../components/Research";
-import Contact from "../components/Contact";
 
 /** The single page. Sections are toggled from the admin's Settings → Sections. */
 export default function Home() {
@@ -14,7 +13,6 @@ export default function Home() {
       {site.show_about && <About />}
       {site.show_work && <Work />}
       {site.show_research && <Research />}
-      {site.show_contact && <Contact />}
     </>
   );
 }

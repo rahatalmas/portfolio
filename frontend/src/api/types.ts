@@ -25,18 +25,17 @@ export interface Site {
   show_about: boolean;
   show_work: boolean;
   show_research: boolean;
-  show_contact: boolean;
   // navbar
   nav_about: string;
   nav_work: string;
   nav_research: string;
-  nav_contact: string;
   nav_cv_label: string;
   // hero
   hero_cv_label: string;
   hero_github_label: string;
   hero_email_label: string;
   experience_title: string;
+  profiles_title: string;
   stat_years_label: string;
   stat_papers_label: string;
   stat_projects_label: string;
@@ -53,8 +52,7 @@ export interface Site {
   research_statement: string;
   interests_label: string;
   interests: string[];
-  // contact
-  contact_title: string;
+  // footer contact details
   contact_email_label: string;
   contact_location_label: string;
   // footer

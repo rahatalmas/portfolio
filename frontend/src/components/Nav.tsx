@@ -17,7 +17,6 @@ export default function Nav() {
         { id: "about", label: site.nav_about, show: site.show_about },
         { id: "work", label: site.nav_work, show: site.show_work },
         { id: "research", label: site.nav_research, show: site.show_research },
-        { id: "contact", label: site.nav_contact, show: site.show_contact },
       ].filter((l) => l.show),
     [site],
   );

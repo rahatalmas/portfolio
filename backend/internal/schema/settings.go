@@ -40,11 +40,10 @@ var SettingsGroups = []Group{
 	{
 		Key: "sections", Title: "Sections", Description: "Show or hide whole sections of the page.",
 		Fields: []Field{
-			{Key: "show_experience", Label: "Show experience card in the hero", Kind: Bool, Default: "1"},
+			{Key: "show_experience", Label: "Show the experience & profiles column in the hero", Kind: Bool, Default: "1"},
 			{Key: "show_about", Label: "Show About", Kind: Bool, Default: "1"},
 			{Key: "show_work", Label: "Show Work", Kind: Bool, Default: "1"},
 			{Key: "show_research", Label: "Show Research", Kind: Bool, Default: "1"},
-			{Key: "show_contact", Label: "Show Connect", Kind: Bool, Default: "1"},
 		},
 	},
 	{
@@ -53,17 +52,17 @@ var SettingsGroups = []Group{
 			{Key: "nav_about", Label: "About link", Kind: Text, Required: true, Default: "About"},
 			{Key: "nav_work", Label: "Work link", Kind: Text, Required: true, Default: "Work"},
 			{Key: "nav_research", Label: "Research link", Kind: Text, Required: true, Default: "Research"},
-			{Key: "nav_contact", Label: "Connect link", Kind: Text, Required: true, Default: "Connect"},
 			{Key: "nav_cv_label", Label: "CV button", Kind: Text, Required: true, Default: "CV"},
 		},
 	},
 	{
-		Key: "hero", Title: "Hero", Description: "Buttons under the bio and the experience card.",
+		Key: "hero", Title: "Hero", Description: "Buttons under the bio, and the experience & profiles column.",
 		Fields: []Field{
 			{Key: "hero_cv_label", Label: "CV button", Kind: Text, Required: true, Default: "CV"},
 			{Key: "hero_github_label", Label: "GitHub button", Kind: Text, Required: true, Default: "GitHub"},
 			{Key: "hero_email_label", Label: "Email button", Kind: Text, Required: true, Default: "Email"},
-			{Key: "experience_title", Label: "Experience card title", Kind: Text, Required: true, Default: "Experience"},
+			{Key: "experience_title", Label: "Experience heading", Kind: Text, Required: true, Default: "Experience"},
+			{Key: "profiles_title", Label: "Profiles heading", Kind: Text, Required: true, Default: "Find me on"},
 			{Key: "stat_years_label", Label: "Stat: years label", Kind: Text, Required: true, Default: "Years"},
 			{Key: "stat_papers_label", Label: "Stat: papers label", Kind: Text, Required: true, Default: "Papers"},
 			{Key: "stat_projects_label", Label: "Stat: projects label", Kind: Text, Required: true, Default: "Projects"},
@@ -95,16 +94,10 @@ var SettingsGroups = []Group{
 		},
 	},
 	{
-		Key: "contact", Title: "Connect section & footer", Description: "The profile-links section, and the email/location shown in the footer.",
+		Key: "footer", Title: "Footer", Description: "Email and location are shown here, under the name.",
 		Fields: []Field{
-			{Key: "contact_title", Label: "Section title", Kind: Text, Required: true, Default: "Connect"},
 			{Key: "contact_email_label", Label: "Email label (screen readers)", Kind: Text, Required: true, Default: "Email"},
 			{Key: "contact_location_label", Label: "Location label (screen readers)", Kind: Text, Required: true, Default: "Location"},
-		},
-	},
-	{
-		Key: "footer", Title: "Footer",
-		Fields: []Field{
 			{Key: "footer_updated", Label: "“Updated” text", Kind: Text, Default: "October 2026", Help: "Shown as “© year · Updated …”; leave empty to hide"},
 			{Key: "footer_back_to_top", Label: "Back-to-top tooltip", Kind: Text, Required: true, Default: "Back to top"},
 		},
