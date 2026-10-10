@@ -15,10 +15,10 @@ export default function About() {
           <ul className="space-y-4">
             {education.map((e) => (
               <li key={e.id} className="flex flex-col gap-0.5 sm:flex-row sm:justify-between sm:gap-6">
-                <div>
-                  <span className="font-medium">{e.degree}</span>
+                <div className="text-sm">
+                  <span className="font-semibold">{e.degree}</span>
                   <span className="text-muted"> · {e.school}</span>
-                  {e.note && <div className="text-sm text-muted">{e.note}</div>}
+                  {e.note && <div className="text-xs text-muted">{e.note}</div>}
                 </div>
                 <span className="shrink-0 font-mono text-xs text-muted sm:pt-1">{e.years}</span>
               </li>
