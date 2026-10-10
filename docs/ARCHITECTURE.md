@@ -44,7 +44,6 @@ portfolio/
 │   ├── public/               Static files (placeholder photo)
 │   ├── index.html, vite.config.ts (dev proxy → :8080), tsconfig.json
 │   └── dist/                 Build output — served by the Go server at /
-├── Dockerfile                One image: builds frontend + backend
 ├── backend/
 │   ├── cmd/server/main.go    Wiring: config → store.Open → routes → serve
 │   ├── data/content.json     THE content, tracked in git (messages.json, admin.json appear at runtime)
@@ -59,7 +58,6 @@ portfolio/
 │       ├── httpx/            JSON helpers + middleware
 │       └── config/           Environment / .env loading
 ├── docs/                     This file + API.md
-├── docker-compose.yml        The server with data + uploads volumes
 └── PLAN.md                   Original design notes
 ```
 

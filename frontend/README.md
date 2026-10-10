@@ -16,8 +16,8 @@ npm run build    # → dist/, which the Go server serves at /
 
 The Go server serves `dist/` itself (`FRONTEND_DIR`, default `../frontend/dist`),
 so a production deploy is just `npm run build` followed by starting the
-backend, or `docker compose up --build` from the repo root, which does both.
-No `VITE_API_BASE` and no CORS: the site and the API share one origin.
+backend. No `VITE_API_BASE` and no CORS: the site and the API share one
+origin.
 
 If you ever want to host the site elsewhere instead, set `VITE_API_BASE` in
 `.env.production` before building and list the site's origin in the backend's

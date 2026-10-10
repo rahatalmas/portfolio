@@ -13,7 +13,6 @@ frontend/   React app — the public site; renders GET /api/v1/portfolio
 backend/    Go server — serves the built site at /, JSON API, admin UI (/admin), uploads
 backend/data/content.json   The content. Tracked in git; edit via /admin or a text editor.
 docs/       API.md (endpoints), ARCHITECTURE.md (how it fits together, how to extend)
-Dockerfile  Builds the site and the server into one image
 ```
 
 One deployment: the Go binary serves the built site, the API and the admin
@@ -43,17 +42,18 @@ cd frontend && npm run dev   # http://localhost:5173 — proxies /api and /uploa
 
 ## Deploying
 
-Easiest: `docker compose up --build` in the repo root. It builds the React
-site and the Go server into one image and starts it on :8080, with the data
-files in a `data` volume and uploads in an `uploads` volume. Change
-`ADMIN_PASSWORD` and `SESSION_SECRET` in `docker-compose.yml` first, and set
-`SECURE_COOKIES=true` once it sits behind an HTTPS proxy (Caddy, nginx).
+It is one binary plus three folders. On any Linux box:
 
-Without Docker: `cd frontend && npm run build`, then
-`cd ../backend && go build -o server ./cmd/server` and run the binary with
-`FRONTEND_DIR` pointing at `frontend/dist`, `DATA_DIR` and `UPLOAD_DIR` on
-persistent storage, and `SESSION_SECRET` set. The site, API and admin are all
-on the same port.
+```sh
+cd frontend && npm run build                                  # → frontend/dist
+cd ../backend && GOOS=linux GOARCH=amd64 go build -o server ./cmd/server
+```
+
+Copy `server`, `frontend/dist`, and `backend/data` to the machine, then run
+the binary with `FRONTEND_DIR` pointing at `dist`, `DATA_DIR` at `data`,
+`UPLOAD_DIR` somewhere persistent, `SESSION_SECRET` set, and
+`SECURE_COOKIES=true` behind an HTTPS reverse proxy (Caddy, nginx). Keep it
+running with a systemd unit. The site, API and admin are all on one port.
 
 Back up by copying the `data` and `uploads` directories.
 

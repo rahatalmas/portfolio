@@ -131,8 +131,25 @@ Build the site (`npm run build` in `../frontend`) and the binary
 (`go build -o server ./cmd/server`), then run the binary with `FRONTEND_DIR`
 pointing at the built `dist/`, `DATA_DIR` and `UPLOAD_DIR` on persistent
 storage, `SESSION_SECRET` set, and `SECURE_COOKIES=true` behind an HTTPS
-reverse proxy (Caddy, nginx). The `Dockerfile` and `docker-compose.yml` in
-the repo root do all of this in one image, with `data` and `uploads` as
-named volumes. The image ships the repo's `content.json`; the `data` volume
-is seeded from it the first time it is created and is the source of truth
-after that.
+reverse proxy (Caddy, nginx). Keep it running with a systemd unit, for
+example:
+
+```ini
+[Unit]
+Description=Portfolio
+After=network.target
+
+[Service]
+User=www-data
+WorkingDirectory=/srv/portfolio
+Environment=FRONTEND_DIR=/srv/portfolio/dist
+Environment=DATA_DIR=/srv/portfolio/data
+Environment=UPLOAD_DIR=/srv/portfolio/uploads
+Environment=SESSION_SECRET=change-me-to-a-long-random-string
+Environment=SECURE_COOKIES=true
+ExecStart=/srv/portfolio/server
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```
