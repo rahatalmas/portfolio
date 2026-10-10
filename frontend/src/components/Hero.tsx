@@ -24,9 +24,9 @@ export default function Hero() {
   };
 
   return (
-    <section id="top">
+    <section id="top" className="border-b border-line">
       <div
-        className={`mx-auto grid w-full max-w-[960px] items-stretch gap-8 px-6 pt-20 pb-6 md:gap-10 md:pt-24 ${
+        className={`mx-auto grid w-full max-w-[960px] items-stretch gap-8 px-6 pt-20 pb-10 md:gap-10 md:pt-24 md:pb-12 ${
           showColumn ? "md:grid-cols-[1fr_260px]" : ""
         }`}
       >
