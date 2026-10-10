@@ -14,10 +14,6 @@
   --color-card: #ffffff;
   --color-accent: #2563eb;
   --color-accent-soft: #e0e9ff; /* tint behind chips and badges */
-
-  /* The inverted band at the bottom of the page (Contact + Footer). */
-  --color-band: #14214d;
-  --color-band-deep: #0d1738;
 }
 
 .dark {
@@ -29,48 +25,11 @@
   --color-card: #121932;
   --color-accent: #4f8bff;
   --color-accent-soft: #172550;
-
-  --color-band: #1e3a8a;
-  --color-band-deep: #152b6b;
 }
 
 ::selection {
   background: var(--color-accent);
   color: #ffffff;
-}
-
-/*
- * .band inverts the palette for everything inside it by remapping the theme
- * tokens, so the existing text-muted / border-line / text-accent utilities
- * recolor themselves. .panel restores the normal palette for a card that
- * should sit as a light (or dark) surface on top of the band.
- */
-.band {
-  --color-bg: var(--color-band);
-  --color-card: var(--color-band-deep);
-  --color-fg: #ffffff;
-  --color-muted: rgba(255, 255, 255, 0.72);
-  --color-line: rgba(255, 255, 255, 0.18);
-  --color-accent: #ffffff;
-  color: var(--color-fg);
-  background-color: var(--color-band);
-}
-.band .panel {
-  --color-bg: #f7f8fc;
-  --color-fg: #0f172a;
-  --color-muted: #5b6578;
-  --color-line: #e2e6ef;
-  --color-card: #ffffff;
-  --color-accent: #2563eb;
-  color: var(--color-fg);
-}
-.dark .band .panel {
-  --color-bg: #0b1020;
-  --color-fg: #e8ecf5;
-  --color-muted: #94a0b8;
-  --color-line: #1d2742;
-  --color-card: #121932;
-  --color-accent: #4f8bff;
 }
 
 html {
@@ -82,7 +41,7 @@ html {
 .hero-glow {
   background:
     radial-gradient(55% 60% at 18% 10%, color-mix(in srgb, var(--color-accent) 16%, transparent), transparent 70%),
-    radial-gradient(40% 50% at 90% 30%, color-mix(in srgb, var(--color-band) 10%, transparent), transparent 70%);
+    radial-gradient(40% 50% at 90% 30%, color-mix(in srgb, var(--color-accent) 8%, transparent), transparent 70%);
 }
 .dark .hero-glow {
   background:

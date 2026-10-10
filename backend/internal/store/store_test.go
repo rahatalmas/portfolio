@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"portfolio/backend/internal/schema"
 )
@@ -225,6 +226,64 @@ func TestUsers(t *testing.T) {
 	}
 	if _, err := s2.UserByUsername(ctx, "nobody"); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("missing user: %v", err)
+	}
+}
+
+// Editing content.json by hand while the server runs is picked up on the
+// next operation, and a later save keeps the hand edit.
+func TestHandEditsAreReloaded(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	s, _ := Open(dir)
+	if _, err := s.CreateRecord(ctx, res(t, "projects"), project("one", "One")); err != nil {
+		t.Fatal(err)
+	}
+
+	// Simulate a hand edit: rewrite the file with a new name and one more project.
+	data, _ := os.ReadFile(filepath.Join(dir, contentFile))
+	var doc map[string]any
+	if err := json.Unmarshal(data, &doc); err != nil {
+		t.Fatal(err)
+	}
+	doc["settings"].(map[string]any)["name"] = "Edited By Hand"
+	doc["projects"] = append(doc["projects"].([]any), map[string]any{"title": "Two", "slug": "two"})
+	out, _ := json.Marshal(doc)
+	// Make sure the mtime differs even on coarse filesystems.
+	future := time.Now().Add(2 * time.Second)
+	if err := os.WriteFile(filepath.Join(dir, contentFile), out, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chtimes(filepath.Join(dir, contentFile), future, future); err != nil {
+		t.Fatal(err)
+	}
+
+	settings, _ := s.Settings(ctx)
+	if settings["name"] != "Edited By Hand" {
+		t.Fatalf("hand edit not reloaded: %q", settings["name"])
+	}
+	list, _ := s.ListRecords(ctx, res(t, "projects"))
+	if len(list) != 2 || list[1].Values["slug"] != "two" || list[1].ID != 2 {
+		t.Fatalf("hand-added row not reloaded: %+v", list)
+	}
+
+	// A save after the edit keeps it.
+	if err := s.SaveSettings(ctx, map[string]string{"role": "Engineer"}); err != nil {
+		t.Fatal(err)
+	}
+	s2, _ := Open(dir)
+	settings2, _ := s2.Settings(ctx)
+	list2, _ := s2.ListRecords(ctx, res(t, "projects"))
+	if settings2["name"] != "Edited By Hand" || settings2["role"] != "Engineer" || len(list2) != 2 {
+		t.Fatalf("save overwrote the hand edit: %v / %d rows", settings2["name"], len(list2))
+	}
+
+	// An invalid file is ignored until it is fixed.
+	later := future.Add(2 * time.Second)
+	os.WriteFile(filepath.Join(dir, contentFile), []byte("{ not json"), 0o644)
+	os.Chtimes(filepath.Join(dir, contentFile), later, later)
+	settings3, _ := s.Settings(ctx)
+	if settings3["name"] != "Edited By Hand" {
+		t.Fatalf("invalid file should keep the last good content: %q", settings3["name"])
 	}
 }
 

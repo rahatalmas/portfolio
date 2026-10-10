@@ -26,8 +26,8 @@ export default function Work() {
       }
     >
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {featured.map((p) => (
-          <ProjectCard key={p.id} project={p} />
+        {featured.map((p, i) => (
+          <ProjectCard key={p.id} project={p} index={i} />
         ))}
       </div>
     </Section>

@@ -31,7 +31,7 @@ If you ever want to host the site elsewhere instead, set `VITE_API_BASE` in
 | `src/api/PortfolioContext.tsx` | Renders the fallback immediately, swaps in API data; exposes `usePortfolio()` |
 | `src/App.tsx` | Page shell; sets title + meta description |
 | `src/pages/Home.tsx` | Section order and visibility toggles |
-| `src/components/` | Nav, Hero, ExperienceCard, About, Work, Research, Contact, ContactForm, Footer… |
+| `src/components/` | Nav, Hero, ExperienceCard, About, Work, Research, Contact (profiles), Footer… |
 | `src/index.css` | Theme tokens (light in `@theme`, dark in `.dark`) |
 | `public/profile.jpg` | Placeholder photo used until you upload your own |
 

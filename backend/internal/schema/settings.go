@@ -44,7 +44,7 @@ var SettingsGroups = []Group{
 			{Key: "show_about", Label: "Show About", Kind: Bool, Default: "1"},
 			{Key: "show_work", Label: "Show Work", Kind: Bool, Default: "1"},
 			{Key: "show_research", Label: "Show Research", Kind: Bool, Default: "1"},
-			{Key: "show_contact", Label: "Show Contact", Kind: Bool, Default: "1"},
+			{Key: "show_contact", Label: "Show Profiles", Kind: Bool, Default: "1"},
 		},
 	},
 	{
@@ -53,7 +53,7 @@ var SettingsGroups = []Group{
 			{Key: "nav_about", Label: "About link", Kind: Text, Required: true, Default: "About"},
 			{Key: "nav_work", Label: "Work link", Kind: Text, Required: true, Default: "Work"},
 			{Key: "nav_research", Label: "Research link", Kind: Text, Required: true, Default: "Research"},
-			{Key: "nav_contact", Label: "Contact link", Kind: Text, Required: true, Default: "Contact"},
+			{Key: "nav_contact", Label: "Profiles link", Kind: Text, Required: true, Default: "Profiles"},
 			{Key: "nav_cv_label", Label: "CV button", Kind: Text, Required: true, Default: "CV"},
 		},
 	},
@@ -96,11 +96,11 @@ var SettingsGroups = []Group{
 		},
 	},
 	{
-		Key: "contact", Title: "Contact section",
+		Key: "contact", Title: "Profiles section & footer", Description: "The profile-links section, and the email/location shown in the footer.",
 		Fields: []Field{
-			{Key: "contact_title", Label: "Section title", Kind: Text, Required: true, Default: "Contact"},
-			{Key: "contact_email_label", Label: "Email row label", Kind: Text, Required: true, Default: "Email"},
-			{Key: "contact_location_label", Label: "Location row label", Kind: Text, Required: true, Default: "Location"},
+			{Key: "contact_title", Label: "Section title", Kind: Text, Required: true, Default: "Profiles"},
+			{Key: "contact_email_label", Label: "Email label (screen readers)", Kind: Text, Required: true, Default: "Email"},
+			{Key: "contact_location_label", Label: "Location label (screen readers)", Kind: Text, Required: true, Default: "Location"},
 		},
 	},
 	{

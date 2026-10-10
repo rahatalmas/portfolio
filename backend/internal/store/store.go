@@ -9,6 +9,11 @@
 // leave a half-written file. A single mutex serialises writers, which is
 // plenty for one admin editing a portfolio.
 //
+// content.json may also be edited by hand while the server runs: every
+// operation first checks the file's modification time and reloads it when
+// it changed, so a hand edit is served immediately and is never overwritten
+// by a later admin save.
+//
 // The method set mirrors what the admin and API handlers need:
 //
 //   - Generic, spec-driven CRUD over any schema.Resource (records.go section)
@@ -27,6 +32,7 @@ import (
 	"sort"
 	"strconv"
 	"sync"
+	"time"
 
 	"portfolio/backend/internal/schema"
 )
@@ -60,6 +66,52 @@ type Store struct {
 	settings map[string]string
 	lists    map[string][]Record // resource key → records in display order
 	users    []user
+
+	// contentStamp is the mtime+size of content.json as last loaded or
+	// written; a mismatch on disk means someone edited the file by hand.
+	contentStamp stamp
+}
+
+type stamp struct {
+	mod  time.Time
+	size int64
+}
+
+func (s *Store) stampContent() {
+	if st, err := os.Stat(s.path(contentFile)); err == nil {
+		s.contentStamp = stamp{mod: st.ModTime(), size: st.Size()}
+	}
+}
+
+// syncContent reloads content.json if it changed on disk since the store
+// last read or wrote it. Called at the start of every public operation; it
+// costs one stat when nothing changed.
+func (s *Store) syncContent() {
+	st, err := os.Stat(s.path(contentFile))
+	if err != nil {
+		return
+	}
+	s.mu.RLock()
+	same := st.ModTime().Equal(s.contentStamp.mod) && st.Size() == s.contentStamp.size
+	s.mu.RUnlock()
+	if same {
+		return
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	// Re-check under the write lock; another goroutine may have reloaded.
+	if st, err := os.Stat(s.path(contentFile)); err == nil &&
+		st.ModTime().Equal(s.contentStamp.mod) && st.Size() == s.contentStamp.size {
+		return
+	}
+	prevSettings, prevLists := s.settings, s.lists
+	s.lists = map[string][]Record{}
+	if err := s.loadContent(); err != nil {
+		// A half-typed or invalid file: keep serving what we have and try
+		// again on the next request rather than failing every page.
+		s.settings, s.lists = prevSettings, prevLists
+		return
+	}
 }
 
 // Open loads the data files from dir, creating the directory and an initial
@@ -192,6 +244,7 @@ func (s *Store) loadContent() error {
 		// First run: materialise the file so it can be edited by hand.
 		return s.saveContent()
 	}
+	s.stampContent()
 	return nil
 }
 
@@ -241,7 +294,11 @@ func (s *Store) saveContent() error {
 	if !json.Valid(b.Bytes()) {
 		return errors.New("internal error: produced invalid content.json")
 	}
-	return writeAtomic(s.path(contentFile), b.Bytes())
+	if err := writeAtomic(s.path(contentFile), b.Bytes()); err != nil {
+		return err
+	}
+	s.stampContent()
+	return nil
 }
 
 func writeKV(b *bytes.Buffer, indent, key string, value any, last bool) {
@@ -305,6 +362,7 @@ func stringify(v any) string {
 // Settings returns every key → value, with schema defaults for keys that
 // have never been saved.
 func (s *Store) Settings(ctx context.Context) (map[string]string, error) {
+	s.syncContent()
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	out := schema.SettingDefaults()
@@ -316,6 +374,7 @@ func (s *Store) Settings(ctx context.Context) (map[string]string, error) {
 
 // SaveSettings stores the given keys.
 func (s *Store) SaveSettings(ctx context.Context, values map[string]string) error {
+	s.syncContent()
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	for k, v := range values {
@@ -336,6 +395,7 @@ func cloneRecord(r Record) Record {
 
 // ListRecords returns every entry of res in display order.
 func (s *Store) ListRecords(ctx context.Context, res *schema.Resource) ([]Record, error) {
+	s.syncContent()
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	recs := s.lists[res.Key]
@@ -348,6 +408,7 @@ func (s *Store) ListRecords(ctx context.Context, res *schema.Resource) ([]Record
 
 // GetRecord returns one entry by id.
 func (s *Store) GetRecord(ctx context.Context, res *schema.Resource, id int64) (Record, error) {
+	s.syncContent()
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	if i := s.index(res, id); i >= 0 {
@@ -358,6 +419,7 @@ func (s *Store) GetRecord(ctx context.Context, res *schema.Resource, id int64) (
 
 // CountRecords returns how many entries res has.
 func (s *Store) CountRecords(ctx context.Context, res *schema.Resource) (int, error) {
+	s.syncContent()
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	return len(s.lists[res.Key]), nil
@@ -366,6 +428,7 @@ func (s *Store) CountRecords(ctx context.Context, res *schema.Resource) (int, er
 // CreateRecord appends an entry and returns its id. values should contain
 // every field of res (use Field.Clean first).
 func (s *Store) CreateRecord(ctx context.Context, res *schema.Resource, values map[string]string) (int64, error) {
+	s.syncContent()
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if err := s.checkUnique(res, values, 0); err != nil {
@@ -391,6 +454,7 @@ func (s *Store) CreateRecord(ctx context.Context, res *schema.Resource, values m
 
 // UpdateRecord overwrites every field of the entry with id.
 func (s *Store) UpdateRecord(ctx context.Context, res *schema.Resource, id int64, values map[string]string) error {
+	s.syncContent()
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	i := s.index(res, id)
@@ -408,6 +472,7 @@ func (s *Store) UpdateRecord(ctx context.Context, res *schema.Resource, id int64
 
 // DeleteRecord removes the entry with id.
 func (s *Store) DeleteRecord(ctx context.Context, res *schema.Resource, id int64) error {
+	s.syncContent()
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	i := s.index(res, id)
@@ -423,6 +488,7 @@ func (s *Store) DeleteRecord(ctx context.Context, res *schema.Resource, id int64
 // MoveRecord swaps the entry with its neighbour. dir is "up" or "down";
 // moving past either end is a no-op.
 func (s *Store) MoveRecord(ctx context.Context, res *schema.Resource, id int64, dir string) error {
+	s.syncContent()
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	i := s.index(res, id)

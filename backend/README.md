@@ -45,7 +45,9 @@ Both files live in `DATA_DIR` (default `./data`):
 | `content.json` | Settings and every list (education, skills, profiles, experience, projects, papers) | Yes — it *is* your content |
 | `admin.json` | Admin accounts (bcrypt hashes) | No |
 
-`content.json` is written by the admin and is safe to edit by hand: values
+`content.json` is written by the admin and is safe to edit by hand, even
+while the server is running: it notices the file changed and reloads it on
+the next request, and a later admin save keeps your edit. Values
 are strings as the admin stores them (`"1"`/`"0"` for checkboxes, one item
 per line for lists, comma-separated tags), but plain JSON booleans and
 numbers are accepted too and rows without an `id` get one on load. Every
@@ -78,7 +80,7 @@ Environment variables, or a `.env` file in the working directory
 
 * **Dashboard** – counts and quick links.
 * **Settings** – every text, label, image URL and section toggle, grouped
-  (Identity, SEO, Sections, Navbar, Hero, About, Work, Research, Contact,
+  (Identity, SEO, Sections, Navbar, Hero, About, Work, Research, Profiles,
   Footer). Media fields offer a dropdown of uploaded files.
 * **Education / Skills / Profiles / Experience / Projects / Papers** – list,
   create, edit, delete, and ↑/↓ reorder. Forms validate per field and keep

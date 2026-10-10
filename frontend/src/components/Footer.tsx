@@ -1,4 +1,4 @@
-import { ArrowUp, Mail } from "lucide-react";
+import { ArrowUp, Mail, MapPin } from "lucide-react";
 import { usePortfolio } from "../api/PortfolioContext";
 import { ICONS } from "./Profiles";
 
@@ -7,17 +7,39 @@ const iconLink = "text-muted hover:text-accent";
 /** Icon keys shown in the footer, in order, when a matching profile exists. */
 const FOOTER_ICONS = ["github", "linkedin", "scholar"];
 
+/** Name, email and location on the left; social icons and back-to-top on the right. */
 export default function Footer() {
   const { site, profiles } = usePortfolio();
   const all = profiles.flatMap((g) => g.items);
   const links = FOOTER_ICONS.map((icon) => all.find((p) => p.icon === icon)).filter((p) => p !== undefined);
 
   return (
-    // Continues the contact band in its deeper shade.
-    <footer className="band border-t border-line bg-band-deep">
-      <div className="mx-auto flex max-w-[960px] flex-col gap-4 px-6 py-6 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+    <footer className="mt-8 border-t border-line">
+      <div className="mx-auto flex max-w-[960px] flex-col gap-5 px-6 py-8 sm:flex-row sm:items-end sm:justify-between">
+        <div className="space-y-1.5">
           <p className="text-sm font-semibold tracking-tight">{site.name}</p>
+          {(site.email || site.location) && (
+            <dl className="flex flex-col gap-1 text-sm sm:flex-row sm:flex-wrap sm:gap-x-5">
+              {site.email && (
+                <div className="flex items-center gap-1.5">
+                  <dt className="sr-only">{site.contact_email_label}</dt>
+                  <Mail size={14} className="text-muted" aria-hidden />
+                  <dd>
+                    <a href={`mailto:${site.email}`} className="font-medium text-accent hover:underline">
+                      {site.email}
+                    </a>
+                  </dd>
+                </div>
+              )}
+              {site.location && (
+                <div className="flex items-center gap-1.5">
+                  <dt className="sr-only">{site.contact_location_label}</dt>
+                  <MapPin size={14} className="text-muted" aria-hidden />
+                  <dd className="text-muted">{site.location}</dd>
+                </div>
+              )}
+            </dl>
+          )}
           <p className="font-mono text-xs text-muted">
             © {new Date().getFullYear()}
             {site.footer_updated && ` · Updated ${site.footer_updated}`}
@@ -33,11 +55,6 @@ export default function Footer() {
               </a>
             );
           })}
-          {site.email && (
-            <a href={`mailto:${site.email}`} aria-label="Email" title="Email" className={iconLink}>
-              <Mail size={17} />
-            </a>
-          )}
           <span className="h-4 w-px bg-line" aria-hidden />
           <button
             onClick={() => window.scrollTo({ top: 0 })}

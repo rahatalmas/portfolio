@@ -107,8 +107,11 @@ Everything else is generic over these specs:
   regenerated in schema order and replaced atomically (temp file + rename).
 * `admin.json` is an array of accounts with bcrypt hashes, written the same
   way.
-* The store keeps both files in memory behind one `sync.RWMutex`; reads
-  never touch the disk.
+* The store keeps both files in memory behind one `sync.RWMutex`. Every
+  operation first stats `content.json` and reloads it if its mtime or size
+  changed, so hand edits made while the server runs are served at once and
+  are never overwritten by a later save. An invalid file is ignored until
+  it is fixed.
 
 ## Request flow
 

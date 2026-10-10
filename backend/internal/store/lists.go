@@ -11,6 +11,7 @@ import (
 
 // snapshot returns a copy of one resource's records in display order.
 func (s *Store) snapshot(key string) []Record {
+	s.syncContent()
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	recs := s.lists[key]
