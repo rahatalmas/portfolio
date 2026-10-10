@@ -6,8 +6,8 @@
     "role": "Software Engineer",
     "bio": "I'm a software engineer and researcher working at the intersection of machine learning and distributed systems. I've shipped production backends serving millions of requests and published work on efficient model serving. I care about systems that are fast, measurable, and simple enough to reason about.",
     "photo": "/profile.jpg",
-    "location": "City, Country",
-    "email": "you@example.com",
+    "location": "Dhaka, Bangladesh",
+    "email": "rahatalmas55@gmail.com",
     "cv_url": "",
     "meta_title": "Rahat Almas — Software Engineer",
     "meta_description": "Portfolio of Rahat Almas: AI and backend engineer, researcher.",
@@ -41,9 +41,9 @@
     {
       "id": 1,
       "degree": "B.Sc. Computer Science",
-      "school": "University Name",
+      "school": "Daffodil International University",
       "years": "2020 – 2024",
-      "note": "GPA 3.9/4.0 · Thesis: Efficient retrieval for long-context LLMs"
+      "note": "Project- Automate MCQ paper examination"
     }
   ],
   "skills": [
