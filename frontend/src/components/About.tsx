@@ -8,7 +8,7 @@ function Label({ children }: { children: string }) {
 export default function About() {
   const { site, education, skills } = usePortfolio();
   return (
-    <Section id="about" title={site.about_title}>
+    <Section id="about">
       {education.length > 0 && (
         <div>
           <Label>{site.education_label}</Label>
