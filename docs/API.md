@@ -77,7 +77,7 @@ A flat object. Keys are the setting keys defined in
 
   "nav_about": "About", "nav_work": "Work", "nav_research": "Research",
 
-  "experience_title": "Experience", "profiles_title": "Also on",
+  "experience_title": "Experience",
 
   "about_title": "About", "education_label": "Education", "skills_label": "Skills",
 

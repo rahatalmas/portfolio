@@ -43,8 +43,7 @@ export default function ExperienceCard({ groups, className = "" }: { groups: Pro
       )}
 
       {groups.length > 0 && (
-        <div className={experience.length > 0 ? "mt-5" : ""}>
-          <h2 className={eyebrow}>{site.profiles_title}</h2>
+        <div className={experience.length > 0 ? "mt-5 border-t border-line pt-4" : ""}>
           <Profiles groups={groups} />
         </div>
       )}

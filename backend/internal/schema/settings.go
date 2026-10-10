@@ -60,7 +60,6 @@ var SettingsGroups = []Group{
 			{Key: "hero_cv_label", Label: "CV button", Kind: Text, Required: true, Default: "CV"},
 			{Key: "hero_email_label", Label: "Email button", Kind: Text, Required: true, Default: "Email"},
 			{Key: "experience_title", Label: "Experience heading", Kind: Text, Required: true, Default: "Experience"},
-			{Key: "profiles_title", Label: "Heading above the remaining profile groups", Kind: Text, Required: true, Default: "Also on"},
 		},
 	},
 	{

@@ -33,7 +33,6 @@ export interface Site {
   hero_cv_label: string;
   hero_email_label: string;
   experience_title: string;
-  profiles_title: string;
   // about
   about_title: string;
   education_label: string;
