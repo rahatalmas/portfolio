@@ -15,7 +15,6 @@ export interface Site {
   photo: string;
   location: string;
   email: string;
-  github_url: string;
   cv_url: string;
   // seo
   meta_title: string;
@@ -32,13 +31,9 @@ export interface Site {
   nav_cv_label: string;
   // hero
   hero_cv_label: string;
-  hero_github_label: string;
   hero_email_label: string;
   experience_title: string;
   profiles_title: string;
-  stat_years_label: string;
-  stat_papers_label: string;
-  stat_projects_label: string;
   // about
   about_title: string;
   education_label: string;

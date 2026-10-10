@@ -1,22 +1,33 @@
-import { FileText, Github, Mail } from "lucide-react";
+import { ArrowUpRight, FileText, Mail } from "lucide-react";
 import { usePortfolio } from "../api/PortfolioContext";
 import Portrait from "./Portrait";
 import ExperienceCard from "./ExperienceCard";
+import { ICONS } from "./Profiles";
 
 const primary = "inline-flex items-center gap-2 rounded-md bg-accent px-3.5 py-1.5 text-sm font-medium text-white";
 const secondary = "inline-flex items-center gap-2 rounded-md border border-line bg-card px-3.5 py-1.5 text-sm";
 
 export default function Hero() {
   const { site, experience, profiles } = usePortfolio();
-  const showCard = site.show_experience && (experience.length > 0 || profiles.length > 0);
-  // One filled button: the CV when there is one, otherwise GitHub.
-  const githubPrimary = !site.cv_url;
+  // The first profile group (e.g. Professional: GitHub, LinkedIn, X) becomes
+  // the button row; the remaining groups live in the column on the right.
+  const [firstGroup, ...rest] = profiles;
+  const showColumn = site.show_experience && (experience.length > 0 || rest.length > 0);
+  // One filled button: the CV when there is one, otherwise the first link.
+  let filled = Boolean(site.cv_url);
+  const buttonClass = () => {
+    if (!filled) {
+      filled = true;
+      return primary;
+    }
+    return secondary;
+  };
 
   return (
     <section id="top">
       <div
         className={`mx-auto grid w-full max-w-[960px] items-stretch gap-8 px-6 pt-20 pb-6 md:gap-10 md:pt-24 ${
-          showCard ? "md:grid-cols-[1fr_260px]" : ""
+          showColumn ? "md:grid-cols-[1fr_260px]" : ""
         }`}
       >
         <div>
@@ -35,20 +46,23 @@ export default function Hero() {
                 <FileText size={15} /> {site.hero_cv_label}
               </a>
             )}
-            {site.github_url && (
-              <a href={site.github_url} target="_blank" rel="noreferrer" className={githubPrimary ? primary : secondary}>
-                <Github size={15} /> {site.hero_github_label}
-              </a>
-            )}
+            {firstGroup?.items.map((p) => {
+              const Icon = ICONS[p.icon] ?? ArrowUpRight;
+              return (
+                <a key={p.id} href={p.href} target="_blank" rel="noreferrer" className={buttonClass()}>
+                  <Icon size={15} /> {p.label}
+                </a>
+              );
+            })}
             {site.email && (
-              <a href={`mailto:${site.email}`} className={secondary}>
+              <a href={`mailto:${site.email}`} className={buttonClass()}>
                 <Mail size={15} /> {site.hero_email_label}
               </a>
             )}
           </div>
         </div>
 
-        {showCard && <ExperienceCard />}
+        {showColumn && <ExperienceCard groups={rest} />}
       </div>
     </section>
   );

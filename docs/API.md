@@ -65,7 +65,6 @@ A flat object. Keys are the setting keys defined in
   "photo": "/uploads/profile-2.jpg",
   "location": "City, Country",
   "email": "you@example.com",
-  "github_url": "https://github.com/yourhandle",
   "cv_url": "/uploads/cv.pdf",
 
   "meta_title": "Rahat Almas — Software Engineer",
@@ -78,9 +77,7 @@ A flat object. Keys are the setting keys defined in
 
   "nav_about": "About", "nav_work": "Work", "nav_research": "Research",
 
-  "hero_cv_label": "CV", "hero_github_label": "GitHub", "hero_email_label": "Email",
-  "experience_title": "Experience", "profiles_title": "Find me on",
-  "stat_years_label": "Years", "stat_papers_label": "Papers", "stat_projects_label": "Projects",
+  "experience_title": "Experience", "profiles_title": "Also on",
 
   "about_title": "About", "education_label": "Education", "skills_label": "Skills",
 

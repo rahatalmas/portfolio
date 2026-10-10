@@ -1,5 +1,5 @@
 import { usePortfolio } from "../api/PortfolioContext";
-import type { Role } from "../api/types";
+import type { ProfileGroup } from "../api/types";
 import Profiles from "./Profiles";
 
 /** "Jun 2024 – Present" -> "2024 – Now", "Jun 2023 – Aug 2023" -> "2023" */
@@ -10,27 +10,15 @@ function shortPeriod(period: string) {
   return from === to || !to ? from : `${from} – ${to}`;
 }
 
-/** Whole years since the earliest role started. */
-function yearsOfExperience(experience: Role[]) {
-  const starts = experience.map((r) => Number(r.period.match(/\d{4}/)?.[0])).filter(Boolean);
-  if (!starts.length) return 0;
-  return new Date().getFullYear() - Math.min(...starts);
-}
-
 const eyebrow = "mb-2 font-mono text-xs font-medium uppercase tracking-wider text-muted";
 
 /**
- * The hero's right-hand column: roles, then the profile links grouped by
- * row, then one line of numbers pinned to the bottom so it ends level with
- * the hero buttons. No box, just a hairline running the full height.
+ * The hero's right-hand column: roles, then the profile groups that are not
+ * already buttons under the bio. No box, just a hairline running the full
+ * height of the hero.
  */
-export default function ExperienceCard({ className = "" }: { className?: string }) {
-  const { site, experience, profiles, papers, projects } = usePortfolio();
-  const stats = [
-    { value: `${yearsOfExperience(experience)}+`, label: site.stat_years_label },
-    { value: String(papers.length), label: site.stat_papers_label },
-    { value: String(projects.length), label: site.stat_projects_label },
-  ];
+export default function ExperienceCard({ groups, className = "" }: { groups: ProfileGroup[]; className?: string }) {
+  const { site, experience } = usePortfolio();
 
   return (
     <div
@@ -54,22 +42,12 @@ export default function ExperienceCard({ className = "" }: { className?: string 
         </>
       )}
 
-      {profiles.length > 0 && (
+      {groups.length > 0 && (
         <div className={experience.length > 0 ? "mt-5" : ""}>
           <h2 className={eyebrow}>{site.profiles_title}</h2>
-          <Profiles />
+          <Profiles groups={groups} />
         </div>
       )}
-
-      <div className="mt-5 flex-1" />
-      <dl className="flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-3 font-mono text-[11px] text-muted">
-        {stats.map((s) => (
-          <div key={s.label} className="flex items-baseline gap-1">
-            <dd className="font-medium text-fg">{s.value}</dd>
-            <dt className="lowercase">{s.label}</dt>
-          </div>
-        ))}
-      </dl>
     </div>
   );
 }

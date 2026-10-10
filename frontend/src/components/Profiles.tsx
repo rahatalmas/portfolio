@@ -15,7 +15,7 @@ import {
   Trophy,
 } from "lucide-react";
 import type { ComponentType } from "react";
-import { usePortfolio } from "../api/PortfolioContext";
+import type { ProfileGroup } from "../api/types";
 
 /** Icon keys the admin can pick for a profile link. Keep in sync with backend schema.ProfileIcons. */
 export const ICONS: Record<string, ComponentType<{ size?: number }>> = {
@@ -38,11 +38,10 @@ export const ICONS: Record<string, ComponentType<{ size?: number }>> = {
  * Compact grouped profile links for the hero column: the group name as a
  * small label, then its links wrapping underneath.
  */
-export default function Profiles() {
-  const { profiles } = usePortfolio();
+export default function Profiles({ groups }: { groups: ProfileGroup[] }) {
   return (
     <dl className="space-y-2.5">
-      {profiles.map((group) => (
+      {groups.map((group) => (
         <div key={group.name}>
           <dt className="mb-1 text-[11px] text-muted">{group.name}</dt>
           <dd className="flex flex-wrap gap-x-3.5 gap-y-1">

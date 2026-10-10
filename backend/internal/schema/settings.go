@@ -26,7 +26,6 @@ var SettingsGroups = []Group{
 			{Key: "photo", Label: "Photo", Kind: Media, Default: "/profile.jpg", Help: "Upload under Media, then pick it here. Portrait crop works best. The default is the placeholder shipped with the frontend"},
 			{Key: "location", Label: "Location", Kind: Text, Default: "City, Country"},
 			{Key: "email", Label: "Email", Kind: Email, Required: true, Default: "you@example.com"},
-			{Key: "github_url", Label: "GitHub profile URL", Kind: URL, Default: "https://github.com/yourhandle"},
 			{Key: "cv_url", Label: "CV file", Kind: Media, Default: "/cv.pdf", Help: "Upload a PDF under Media, then pick it here"},
 		},
 	},
@@ -56,16 +55,12 @@ var SettingsGroups = []Group{
 		},
 	},
 	{
-		Key: "hero", Title: "Hero", Description: "Buttons under the bio, and the experience & profiles column.",
+		Key: "hero", Title: "Hero", Description: "Buttons under the bio (CV, the first profile group, email) and the column on the right.",
 		Fields: []Field{
 			{Key: "hero_cv_label", Label: "CV button", Kind: Text, Required: true, Default: "CV"},
-			{Key: "hero_github_label", Label: "GitHub button", Kind: Text, Required: true, Default: "GitHub"},
 			{Key: "hero_email_label", Label: "Email button", Kind: Text, Required: true, Default: "Email"},
 			{Key: "experience_title", Label: "Experience heading", Kind: Text, Required: true, Default: "Experience"},
-			{Key: "profiles_title", Label: "Profiles heading", Kind: Text, Required: true, Default: "Find me on"},
-			{Key: "stat_years_label", Label: "Stat: years label", Kind: Text, Required: true, Default: "Years"},
-			{Key: "stat_papers_label", Label: "Stat: papers label", Kind: Text, Required: true, Default: "Papers"},
-			{Key: "stat_projects_label", Label: "Stat: projects label", Kind: Text, Required: true, Default: "Projects"},
+			{Key: "profiles_title", Label: "Heading above the remaining profile groups", Kind: Text, Required: true, Default: "Also on"},
 		},
 	},
 	{

@@ -63,7 +63,7 @@ Everything is in the admin, or in `backend/data/content.json`:
 
 | Where | What you control |
 | --- | --- |
-| Settings → Identity | Name, handle, role, bio, photo, email, location, GitHub, CV |
+| Settings → Identity | Name, handle, role, bio, photo, email, location, CV |
 | Settings → SEO | Browser title, meta description |
 | Settings → Sections | Show/hide About, Work, Research and the hero's experience & profiles column |
 | Settings → Navbar / Hero / About / Work / Research / Footer | Every label and micro-text |
