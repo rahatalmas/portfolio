@@ -75,13 +75,13 @@ A flat object. Keys are the setting keys defined in
   "show_work": true,
   "show_research": true,
 
-  "nav_about": "About", "nav_work": "Work", "nav_research": "Research",
+  "nav_about": "About", "nav_work": "Projects", "nav_research": "Research",
 
   "experience_title": "Experience",
 
   "about_title": "About", "education_label": "Education", "skills_label": "Skills",
 
-  "work_title": "Selected work",
+  "work_title": "Projects",
   "work_all_label": "All projects",
   "work_all_url": "https://github.com/yourhandle?tab=repositories",
 

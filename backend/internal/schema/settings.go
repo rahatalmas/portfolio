@@ -41,7 +41,7 @@ var SettingsGroups = []Group{
 		Fields: []Field{
 			{Key: "show_experience", Label: "Show the experience & profiles column in the hero", Kind: Bool, Default: "1"},
 			{Key: "show_about", Label: "Show About", Kind: Bool, Default: "1"},
-			{Key: "show_work", Label: "Show Work", Kind: Bool, Default: "1"},
+			{Key: "show_work", Label: "Show Projects", Kind: Bool, Default: "1"},
 			{Key: "show_research", Label: "Show Research", Kind: Bool, Default: "1"},
 		},
 	},
@@ -49,7 +49,7 @@ var SettingsGroups = []Group{
 		Key: "nav", Title: "Navbar", Description: "Link labels. Hidden sections are dropped from the navbar automatically.",
 		Fields: []Field{
 			{Key: "nav_about", Label: "About link", Kind: Text, Required: true, Default: "About"},
-			{Key: "nav_work", Label: "Work link", Kind: Text, Required: true, Default: "Work"},
+			{Key: "nav_work", Label: "Projects link", Kind: Text, Required: true, Default: "Projects"},
 			{Key: "nav_research", Label: "Research link", Kind: Text, Required: true, Default: "Research"},
 			{Key: "nav_cv_label", Label: "CV button", Kind: Text, Required: true, Default: "CV"},
 		},
@@ -71,9 +71,9 @@ var SettingsGroups = []Group{
 		},
 	},
 	{
-		Key: "work", Title: "Work section",
+		Key: "work", Title: "Projects section",
 		Fields: []Field{
-			{Key: "work_title", Label: "Section title", Kind: Text, Required: true, Default: "Selected work"},
+			{Key: "work_title", Label: "Section title", Kind: Text, Required: true, Default: "Projects"},
 			{Key: "work_all_label", Label: "“All projects” link label", Kind: Text, Default: "All projects", Help: "Leave empty to hide the link"},
 			{Key: "work_all_url", Label: "“All projects” link URL", Kind: URL, Default: "https://github.com/yourhandle?tab=repositories"},
 		},

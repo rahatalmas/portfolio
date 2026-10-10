@@ -168,7 +168,7 @@ func TestLoadTolerantHandEdits(t *testing.T) {
 	}
 	ctx := context.Background()
 	settings, _ := s.Settings(ctx)
-	if settings["name"] != "Hand" || settings["show_about"] != "0" || settings["nav_work"] != "Work" {
+	if settings["name"] != "Hand" || settings["show_about"] != "0" || settings["nav_work"] != "Projects" {
 		t.Fatalf("settings: %v", settings)
 	}
 	list, _ := s.ListRecords(ctx, res(t, "projects"))

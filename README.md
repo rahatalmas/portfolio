@@ -65,8 +65,8 @@ Everything is in the admin, or in `backend/data/content.json`:
 | --- | --- |
 | Settings → Identity | Name, handle, role, bio, photo, email, location, CV |
 | Settings → SEO | Browser title, meta description |
-| Settings → Sections | Show/hide About, Work, Research and the hero's experience & profiles column |
-| Settings → Navbar / Hero / About / Work / Research / Footer | Every label and micro-text |
+| Settings → Sections | Show/hide About, Projects, Research and the hero's experience & profiles column |
+| Settings → Navbar / Hero / About / Projects / Research / Footer | Every label and micro-text |
 | Education, Skills, Profiles, Experience, Projects, Papers | Add, edit, delete, reorder |
 | Media | Upload images and PDFs |
 
