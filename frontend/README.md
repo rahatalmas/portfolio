@@ -6,22 +6,19 @@ backend's `GET /api/v1/portfolio`; it has no content of its own.
 ```sh
 npm install
 npm run dev      # http://localhost:5173, proxies /api and /uploads to http://localhost:8080
-npm run build    # → dist/, deploy to any static host
+npm run build    # → dist/, which the Go server serves at /
 ```
 
 ## Production build
 
-The backend does not serve the site. Point the build at the backend and host
-`dist/` anywhere static:
+The Go server serves `dist/` itself (`FRONTEND_DIR`, default `../frontend/dist`),
+so a production deploy is just `npm run build` followed by starting the
+backend, or `docker compose up --build` from the repo root, which does both.
+No `VITE_API_BASE` and no CORS: the site and the API share one origin.
 
-```sh
-cp .env.example .env.production     # VITE_API_BASE=https://api.your-portfolio.example
-npm run build
-# upload dist/ to Vercel / Netlify / Cloudflare Pages / GitHub Pages / nginx
-```
-
-The backend must list the site's origin in `CORS_ORIGINS`. Upload URLs from
-the API (`/uploads/…`) are prefixed with `VITE_API_BASE` automatically.
+If you ever want to host the site elsewhere instead, set `VITE_API_BASE` in
+`.env.production` before building and list the site's origin in the backend's
+`CORS_ORIGINS`. Upload URLs (`/uploads/…`) are prefixed automatically.
 
 | Path | What |
 | --- | --- |
@@ -34,4 +31,4 @@ the API (`/uploads/…`) are prefixed with `VITE_API_BASE` automatically.
 | `src/index.css` | Theme tokens (light in `@theme`, dark in `.dark`) |
 | `public/profile.jpg` | Placeholder photo used until you upload your own |
 
-`src/api/client.ts` reads `VITE_API_BASE`; leave it unset in development.
+`src/api/client.ts` reads `VITE_API_BASE`; leave it unset unless hosting the site separately.

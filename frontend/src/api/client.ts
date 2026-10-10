@@ -1,11 +1,10 @@
 import type { MessageInput, Portfolio } from "./types";
 
 /**
- * Origin of the Go backend. Empty means same origin, which is right in
- * development (the Vite proxy forwards /api and /uploads to :8080). The site
- * is deployed separately from the backend, so production builds set
- * VITE_API_BASE (see .env.example) and the backend lists the site's origin in
- * CORS_ORIGINS.
+ * Origin of the Go backend. Empty means same origin, which is the normal
+ * case: the Go server serves this built site at /, and in development the
+ * Vite proxy forwards /api and /uploads to :8080. Set VITE_API_BASE only when
+ * hosting the site on another origin (see .env.example).
  */
 const BASE = (import.meta.env.VITE_API_BASE as string | undefined)?.replace(/\/$/, "") ?? "";
 
@@ -14,8 +13,8 @@ const UPLOADS = "/uploads/";
 
 /**
  * Uploaded files (photo, CV, …) come back from the API as backend-relative
- * paths. When the backend lives on another origin, make them absolute so the
- * browser fetches them from the right place. Applied to every string in the
+ * paths. Same-origin they work as-is; only when VITE_API_BASE points at
+ * another origin are they made absolute. Applied to every string in the
  * response, so links in projects/papers that point at uploads work too.
  */
 export function absolutizeUploads<T>(value: T): T {

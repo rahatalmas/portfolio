@@ -1,29 +1,30 @@
 # Architecture
 
 A single-page React portfolio whose content is managed in a Go admin and
-stored in MySQL. The site and the backend are two deployments that talk over
-the API.
+stored in MySQL. One Go process serves everything from a single origin.
 
 ```
-  static host (Vercel, nginx, …)          Go server (backend/cmd/server)
-  ┌───────────────────────────┐           ┌──────────────────────────────────────────┐
-  │  React app (frontend/)    │  GET      │  /api/v1/*   JSON API ─────┐             │
-  │  built with VITE_API_BASE ├──────────▶│  /admin/*    HTML admin ───┼─▶ store ─▶ MySQL
-  │  = backend origin         │  CORS     │  /uploads/*  media on disk │             │
-  └───────────────────────────┘           │  /           → /admin      │             │
-                                          └────────────────────────────┴─────────────┘
+  browser                     Go server (backend/cmd/server)
+  ┌───────────┐               ┌──────────────────────────────────────────────────┐
+  │ React app │  GET /        │  /            built site (FRONTEND_DIR, SPA)      │
+  │           ├──────────────▶│  /api/v1/*    JSON API ─────┐                     │
+  │           │  GET /api/…   │  /admin/*     HTML admin ───┼─▶ store ─▶ MySQL     │
+  └───────────┘  same origin  │  /uploads/*   media on disk │                     │
+                              └─────────────────────────────┴─────────────────────┘
 ```
 
-* The React app (`frontend/`) makes **one** request, `GET /api/v1/portfolio`,
-  and renders from it. It has no content of its own. In development the Vite
-  proxy makes that request same-origin; in production the build is given
-  `VITE_API_BASE` and the backend lists the site's origin in `CORS_ORIGINS`.
+* The React app (`frontend/`) is built to `dist/` and served by the Go server
+  at `/` (`internal/site`: real files as-is, hashed `/assets/*` cached for a
+  year, everything else falls back to `index.html`). It makes **one** request,
+  `GET /api/v1/portfolio`, same-origin, and renders from it. It has no content
+  of its own. In development `npm run dev` serves it from Vite with a proxy to
+  `:8080` instead. If no build is present the server still runs and `/`
+  redirects to `/admin`.
 * The admin (`/admin`) is server-rendered Go templates. Editing there changes
   MySQL; the site reflects it on the next load (API responses are cached for
   30 s by `Cache-Control`).
 * Uploads (photo, CV, images) are files in `UPLOAD_DIR`, served at `/uploads/`.
-  The API returns them as backend-relative paths; the client prefixes them
-  with `VITE_API_BASE` (`absolutizeUploads` in `client.ts`).
+  The API returns them as server-relative paths, which work as-is same-origin.
 
 ## Repository layout
 
@@ -37,9 +38,9 @@ portfolio/
 │   │   └── pages/Home.tsx    Section order and visibility
 │   ├── public/               Static files (placeholder photo)
 │   ├── index.html, vite.config.ts (dev proxy → :8080), tsconfig.json
-│   └── dist/                 Build output — deploy this to a static host
+│   └── dist/                 Build output — served by the Go server at /
+├── Dockerfile                One image: builds frontend + backend
 ├── backend/
-│   ├── Dockerfile            Backend image (API + admin + uploads)
 │   ├── cmd/server/main.go    Wiring: config → db → migrate → seed → routes → serve
 │   └── internal/
 │       ├── schema/           THE content model (fields, resources, settings)
@@ -49,6 +50,7 @@ portfolio/
 │       ├── api/              /api/v1 handlers + contact-form rate limit
 │       ├── admin/            /admin handlers, sessions, templates (web/)
 │       ├── media/            Upload directory
+│       ├── site/             Serves the built React app with SPA fallback
 │       ├── httpx/            JSON helpers + middleware
 │       └── config/           Environment / .env
 ├── docs/                     This file, API.md
@@ -93,9 +95,9 @@ Everything else is generic over these specs:
 ## Request flow
 
 **Site visit**
-Static host serves `index.html` → React boots → `GET {VITE_API_BASE}/api/v1/portfolio`
-→ CORS check → `store.Portfolio` runs seven small queries → JSON → upload
-paths made absolute → components render.
+`GET /` → `site.Handler` serves `index.html` → React boots → `GET /api/v1/portfolio`
+(same origin) → `store.Portfolio` runs seven small queries → JSON → components
+render.
 
 **Admin edit**
 `GET /admin/projects/3` → `auth` middleware verifies the signed session cookie

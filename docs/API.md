@@ -238,14 +238,14 @@ curl -X POST http://localhost:8080/api/v1/messages \
 
 ## CORS
 
-The site is hosted separately from this server, so in production set
-`CORS_ORIGINS` to the site's origin (comma-separated for several, or `*`).
-In development the Vite proxy makes requests same-origin and no CORS is
-involved.
+The site is served by this server, so browser requests are same-origin and no
+CORS is involved (in development the Vite proxy achieves the same). If you
+host a client on another origin, list it in `CORS_ORIGINS` (comma-separated,
+or `*`).
 
 Upload URLs (`photo`, `cv_url`, and any link under `/uploads/`) are returned
-as backend-relative paths; clients on another origin must prefix them with the
-backend origin (the React client does this automatically).
+as server-relative paths; a client on another origin must prefix them with
+this server's origin (the React client does this when `VITE_API_BASE` is set).
 
 ## Admin
 

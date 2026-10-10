@@ -1,17 +1,18 @@
 # Portfolio
 
-Single-page portfolio site (React + Vite + TypeScript + Tailwind v4) with a
-separate Go + MySQL backend that provides the content API and an admin panel
+Single-page portfolio site (React + Vite + TypeScript + Tailwind v4) served
+by a Go + MySQL backend that also provides the content API and an admin panel
 for editing every text, image, project, paper and section.
 
 ```
 frontend/   React app — the public site; renders GET /api/v1/portfolio
-backend/    Go server — JSON API, admin UI (/admin), uploads. Does not serve the site.
+backend/    Go server — serves the built site at /, JSON API, admin UI (/admin), uploads
 docs/       API.md (endpoints), ARCHITECTURE.md (how it fits together, how to extend)
+Dockerfile  Builds the site and the server into one image
 ```
 
-The two are deployed independently: the frontend to any static host, the
-backend wherever MySQL is reachable. They talk over HTTPS via the API.
+One deployment: the Go binary serves the built site, the API and the admin
+from a single origin, so there is no CORS and nothing to host separately.
 
 ## Run locally
 
@@ -35,15 +36,16 @@ reload.
 
 ## Deploying
 
-**Backend** — `cd backend && go build -o server ./cmd/server`, or
-`docker compose up --build` (MySQL + backend on :8080). Set `SESSION_SECRET`,
-`SECURE_COOKIES=true` behind HTTPS, `UPLOAD_DIR` on persistent storage, and
-`CORS_ORIGINS` to the site's origin, e.g. `https://rahat.example`.
+Easiest: `docker compose up --build` in the repo root. It builds the React
+site and the Go server into one image and starts it with MySQL on :8080.
+Change the passwords and `SESSION_SECRET` in `docker-compose.yml` first, and
+set `SECURE_COOKIES=true` once it sits behind an HTTPS proxy (Caddy, nginx).
 
-**Frontend** — in `frontend/`, create `.env.production` with
-`VITE_API_BASE=https://api.rahat.example`, run `npm run build`, and upload
-`dist/` to Vercel, Netlify, Cloudflare Pages, GitHub Pages, nginx — anything
-that serves static files.
+Without Docker: `cd frontend && npm run build`, then
+`cd ../backend && go build -o server ./cmd/server` and run the binary with
+`FRONTEND_DIR` pointing at `frontend/dist`, `UPLOAD_DIR` on persistent
+storage, and `SESSION_SECRET` set. The site, API and admin are all on the
+same port.
 
 ## Editing content
 
@@ -71,5 +73,5 @@ places. The admin uses the same palette
 * [`docs/API.md`](docs/API.md) — every endpoint with examples
 * [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — design, data model, request flows, how to add fields/resources
 * [`backend/README.md`](backend/README.md) — configuration, admin, deployment
-* [`frontend/README.md`](frontend/README.md) — app structure, build, `VITE_API_BASE`
+* [`frontend/README.md`](frontend/README.md) — app structure, build
 * [`PLAN.md`](PLAN.md) — the original design plan

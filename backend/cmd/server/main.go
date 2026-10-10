@@ -1,5 +1,5 @@
-// Command server runs the portfolio backend: the public JSON API, the HTML
-// admin, uploaded media, and (optionally) the built React frontend.
+// Command server runs the whole portfolio from one process: the built React
+// site at /, the public JSON API, the HTML admin, and uploaded media.
 //
 // Configuration comes from the environment or a .env file; see
 // backend/.env.example and backend/README.md.
@@ -26,6 +26,7 @@ import (
 	"portfolio/backend/internal/db"
 	"portfolio/backend/internal/httpx"
 	"portfolio/backend/internal/media"
+	"portfolio/backend/internal/site"
 	"portfolio/backend/internal/store"
 )
 
@@ -96,8 +97,16 @@ func run(log *slog.Logger) error {
 	}
 	apiH := api.New(st, log)
 
+	siteH, err := site.Open(cfg.FrontendDir)
+	if err != nil {
+		return err
+	}
+	if siteH == nil {
+		log.Warn("no built site found; / redirects to /admin (set FRONTEND_DIR or run `npm run build` in frontend/)", "dir", cfg.FrontendDir)
+	}
+
 	// --- routes ------------------------------------------------------------
-	mux := newMux(apiH, adminH, lib)
+	mux := newMux(apiH, adminH, lib, siteH)
 
 	handler := httpx.Chain(mux,
 		httpx.Recover(log),
@@ -167,14 +176,18 @@ func ensureAdminUser(ctx context.Context, st *store.Store, cfg config.Config, lo
 	return nil
 }
 
-// newMux assembles the route table: API, admin, uploads. The React site is
-// deployed separately and talks to this server over the API, so the root
-// simply points at the admin.
-func newMux(apiH *api.Handler, adminH *admin.Handler, lib *media.Library) *http.ServeMux {
+// newMux assembles the route table: API, admin, uploads, and the React site
+// on everything else. When no built site is available (siteH == nil) the
+// root redirects to the admin and other paths are 404.
+func newMux(apiH *api.Handler, adminH *admin.Handler, lib *media.Library, siteH *site.Handler) *http.ServeMux {
 	mux := http.NewServeMux()
 	apiH.Routes(mux)
 	adminH.Routes(mux)
 	mux.Handle("GET "+media.URLPrefix, lib.Handler())
+	if siteH != nil {
+		mux.Handle("/", siteH)
+		return mux
+	}
 	mux.HandleFunc("/{$}", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/admin", http.StatusFound)
 	})
