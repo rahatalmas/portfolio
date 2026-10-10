@@ -14,6 +14,8 @@ type Group struct {
 //
 // Add a setting: append a Field here (with a Default). It is seeded into the
 // database on the next start, editable in the admin, and returned by the API.
+// Mirror the default in frontend/src/api/fallback.ts, which the site renders
+// when the API is unavailable.
 var SettingsGroups = []Group{
 	{
 		Key: "identity", Title: "Identity", Description: "Who the site is about.",

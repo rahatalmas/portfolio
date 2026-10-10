@@ -16,10 +16,12 @@ stored in MySQL. One Go process serves everything from a single origin.
 * The React app (`frontend/`) is built to `dist/` and served by the Go server
   at `/` (`internal/site`: real files as-is, hashed `/assets/*` cached for a
   year, everything else falls back to `index.html`). It makes **one** request,
-  `GET /api/v1/portfolio`, same-origin, and renders from it. It has no content
-  of its own. In development `npm run dev` serves it from Vite with a proxy to
-  `:8080` instead. If no build is present the server still runs and `/`
-  redirects to `/admin`.
+  `GET /api/v1/portfolio`, same-origin, and renders from it. It first paints
+  the built-in placeholder content (`src/api/fallback.ts`, a mirror of the
+  backend's defaults) and swaps in the API response when it arrives; if the
+  API fails, the placeholder stays and no error is shown. In development
+  `npm run dev` serves it from Vite with a proxy to `:8080` instead. If no
+  build is present the server still runs and `/` redirects to `/admin`.
 * The admin (`/admin`) is server-rendered Go templates. Editing there changes
   MySQL; the site reflects it on the next load (API responses are cached for
   30 s by `Cache-Control`).
@@ -95,9 +97,9 @@ Everything else is generic over these specs:
 ## Request flow
 
 **Site visit**
-`GET /` → `site.Handler` serves `index.html` → React boots → `GET /api/v1/portfolio`
-(same origin) → `store.Portfolio` runs seven small queries → JSON → components
-render.
+`GET /` → `site.Handler` serves `index.html` → React boots and renders the
+fallback → `GET /api/v1/portfolio` (same origin) → `store.Portfolio` runs seven
+small queries → JSON → components re-render with the real content.
 
 **Admin edit**
 `GET /admin/projects/3` → `auth` middleware verifies the signed session cookie

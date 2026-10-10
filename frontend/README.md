@@ -1,7 +1,10 @@
 # Frontend
 
 React 19 + Vite + TypeScript + Tailwind v4. Renders everything from the
-backend's `GET /api/v1/portfolio`; it has no content of its own.
+backend's `GET /api/v1/portfolio`. If the API is unreachable or returns an
+error, the page still renders from the built-in placeholder content in
+`src/api/fallback.ts` (the same defaults the backend seeds), so visitors never
+see an error screen. A warning is logged to the console instead.
 
 ```sh
 npm install
@@ -24,8 +27,9 @@ If you ever want to host the site elsewhere instead, set `VITE_API_BASE` in
 | --- | --- |
 | `src/api/types.ts` | TypeScript mirror of the API (see `../docs/API.md`) |
 | `src/api/client.ts` | `fetchPortfolio()`, `sendMessage()` |
-| `src/api/PortfolioContext.tsx` | Loads once, exposes `usePortfolio()` |
-| `src/App.tsx` | Loading / error / page shell; sets title + meta description |
+| `src/api/fallback.ts` | Built-in content used until/unless the API answers; mirrors the backend defaults |
+| `src/api/PortfolioContext.tsx` | Renders the fallback immediately, swaps in API data; exposes `usePortfolio()` |
+| `src/App.tsx` | Page shell; sets title + meta description |
 | `src/pages/Home.tsx` | Section order and visibility toggles |
 | `src/components/` | Nav, Hero, ExperienceCard, About, Work, Research, Contact, ContactForm, Footer… |
 | `src/index.css` | Theme tokens (light in `@theme`, dark in `.dark`) |

@@ -9,7 +9,9 @@ import (
 
 // demoContent is the placeholder content the site ships with. It is inserted
 // once, only when every content table is empty, so a fresh install looks
-// like the finished design instead of a blank page.
+// like the finished design instead of a blank page. The frontend carries the
+// same content in src/api/fallback.ts for when the API is unavailable; keep
+// the two in sync.
 var demoContent = map[string][]map[string]string{
 	"education": {
 		{"degree": "B.Sc. Computer Science", "school": "University Name", "years": "2020 – 2024", "note": "GPA 3.9/4.0 · Thesis: Efficient retrieval for long-context LLMs"},
