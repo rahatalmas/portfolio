@@ -24,7 +24,7 @@ export default function Hero() {
   };
 
   return (
-    <section id="top" className="border-b border-line">
+    <section id="top">
       <div
         className={`mx-auto grid w-full max-w-[960px] items-stretch gap-8 px-6 pt-20 pb-10 md:gap-10 md:pt-24 md:pb-12 ${
           showColumn ? "md:grid-cols-[1fr_260px]" : ""
@@ -63,6 +63,10 @@ export default function Hero() {
         </div>
 
         {showColumn && <ExperienceCard groups={rest} />}
+      </div>
+      {/* Divider kept to the content width, like every other rule on the page. */}
+      <div className="mx-auto max-w-[960px] px-6">
+        <div className="border-b border-line" />
       </div>
     </section>
   );
