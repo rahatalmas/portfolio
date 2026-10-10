@@ -14,8 +14,8 @@ export default function Footer() {
   const links = FOOTER_ICONS.map((icon) => all.find((p) => p.icon === icon)).filter((p) => p !== undefined);
 
   return (
-    <footer className="mt-8">
-      <div className="mx-auto flex max-w-[960px] flex-col gap-5 border-t border-line px-6 py-8 sm:flex-row sm:items-end sm:justify-between">
+    <footer className="mt-8 border-t border-line">
+      <div className="mx-auto flex max-w-[960px] flex-col gap-5 px-6 py-8 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-1.5">
           <p className="text-sm font-semibold tracking-tight">{site.name}</p>
           {(site.email || site.location) && (
