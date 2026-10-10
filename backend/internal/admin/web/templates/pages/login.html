@@ -1,0 +1,17 @@
+{{define "content"}}
+<div class="login-card">
+  <h1><span class="accent">&lt;</span>admin<span class="accent"> /&gt;</span></h1>
+  <p class="muted">Sign in to manage the portfolio.</p>
+  <form method="post" action="/admin/login">
+    <div class="field">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" value="{{with .Data}}{{.Username}}{{end}}" autocomplete="username" autofocus required>
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" autocomplete="current-password" required>
+    </div>
+    <button type="submit" class="btn primary wide">Log in</button>
+  </form>
+</div>
+{{end}}

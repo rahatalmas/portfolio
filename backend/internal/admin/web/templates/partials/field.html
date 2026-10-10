@@ -1,0 +1,44 @@
+{{/* One form input. Receives a fieldView: .F (spec), .Value, .Error, .Checked */}}
+{{define "field"}}
+<div class="field{{if .Error}} has-error{{end}}">
+  {{if eq .F.Kind "bool"}}
+    <label class="check">
+      <input type="checkbox" name="{{.F.Key}}" value="1"{{if eq .Value "1"}} checked{{end}}>
+      {{.F.Label}}
+    </label>
+  {{else}}
+    <label for="f-{{.F.Key}}">{{.F.Label}}{{if .F.Required}} <span class="req" title="Required">*</span>{{end}}</label>
+    {{if eq .F.Kind "textarea"}}
+      <textarea id="f-{{.F.Key}}" name="{{.F.Key}}" rows="4">{{.Value}}</textarea>
+    {{else if eq .F.Kind "lines"}}
+      <textarea id="f-{{.F.Key}}" name="{{.F.Key}}" rows="5" class="mono" placeholder="One per line">{{.Value}}</textarea>
+    {{else if eq .F.Kind "select"}}
+      <select id="f-{{.F.Key}}" name="{{.F.Key}}">
+        {{range .F.Options}}<option value="{{.}}"{{if eq . $.Value}} selected{{end}}>{{.}}</option>{{end}}
+      </select>
+    {{else if eq .F.Kind "tags"}}
+      <div class="tags">
+        {{range .F.Options}}<label class="check"><input type="checkbox" name="{{$.F.Key}}" value="{{.}}"{{if index $.Checked .}} checked{{end}}> {{.}}</label>{{end}}
+      </div>
+    {{else if eq .F.Kind "media"}}
+      <div class="media-input">
+        <input type="text" id="f-{{.F.Key}}" name="{{.F.Key}}" value="{{.Value}}" list="media-files" placeholder="/uploads/… or https://…" autocomplete="off">
+        {{if and .Value (isImage .Value)}}<img class="preview" src="{{.Value}}" alt="">{{end}}
+      </div>
+    {{else if eq .F.Kind "number"}}
+      <input type="number" id="f-{{.F.Key}}" name="{{.F.Key}}" value="{{.Value}}">
+    {{else if eq .F.Kind "email"}}
+      <input type="email" id="f-{{.F.Key}}" name="{{.F.Key}}" value="{{.Value}}">
+    {{else}}
+      <input type="text" id="f-{{.F.Key}}" name="{{.F.Key}}" value="{{.Value}}"{{if eq .F.Kind "slug"}} class="mono" pattern="[a-z0-9]+(-[a-z0-9]+)*"{{end}}>
+    {{end}}
+  {{end}}
+  {{if .F.Help}}<p class="help">{{.F.Help}}</p>{{end}}
+  {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
+</div>
+{{end}}
+
+{{/* Datalist of uploaded files for Media inputs. Receives []string of URLs. */}}
+{{define "media-datalist"}}
+<datalist id="media-files">{{range .}}<option value="{{.}}">{{end}}</datalist>
+{{end}}

@@ -1,0 +1,45 @@
+{{define "layout"}}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>{{.Title}} · Admin</title>
+  <link rel="stylesheet" href="/admin/assets/admin.css">
+</head>
+<body>
+{{if .User}}
+<div class="shell">
+  <aside class="sidebar">
+    <a class="brand" href="/admin"><span class="accent">&lt;</span>{{if .Handle}}{{.Handle}}{{else}}admin{{end}}<span class="accent"> /&gt;</span></a>
+    <nav>
+      <a href="/admin" class="{{if eq .Active "dashboard"}}active{{end}}">Dashboard</a>
+      <a href="/admin/settings" class="{{if eq .Active "settings"}}active{{end}}">Settings</a>
+      <div class="nav-group">Content</div>
+      {{range .Resources}}<a href="/admin/{{.Key}}" class="{{if eq $.Active .Key}}active{{end}}">{{.Plural}}</a>
+      {{end}}
+      <div class="nav-group">Inbox</div>
+      <a href="/admin/messages" class="{{if eq .Active "messages"}}active{{end}}">Messages{{if .Unread}} <span class="badge">{{.Unread}}</span>{{end}}</a>
+      <a href="/admin/media" class="{{if eq .Active "media"}}active{{end}}">Media</a>
+    </nav>
+    <div class="sidebar-foot">
+      <a href="/" target="_blank" rel="noreferrer">View site ↗</a>
+      <a href="/admin/password" class="{{if eq .Active "password"}}active{{end}}">Password</a>
+      <form method="post" action="/admin/logout">{{template "csrf" .}}<button type="submit" class="linklike">Log out ({{.User}})</button></form>
+    </div>
+  </aside>
+  <main class="content">
+    {{if .Flash}}<div class="flash {{.FlashKind}}" role="status">{{.Flash}}</div>{{end}}
+    {{template "content" .}}
+  </main>
+</div>
+{{else}}
+<main class="content narrow">
+  {{if .Flash}}<div class="flash {{.FlashKind}}" role="status">{{.Flash}}</div>{{end}}
+  {{template "content" .}}
+</main>
+{{end}}
+</body>
+</html>{{end}}
+
+{{define "csrf"}}<input type="hidden" name="_csrf" value="{{.CSRF}}">{{end}}

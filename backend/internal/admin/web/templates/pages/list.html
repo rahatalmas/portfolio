@@ -1,0 +1,46 @@
+{{define "content"}}
+<header class="page-head">
+  <h1>{{.Data.Res.Plural}}</h1>
+  <a class="btn primary" href="/admin/{{.Data.Res.Key}}/new">+ New {{.Data.Res.Singular}}</a>
+</header>
+
+{{if .Data.Rows}}
+<table>
+  <thead>
+    <tr>
+      <th class="order">Order</th>
+      {{range .Data.Columns}}<th>{{.Label}}</th>{{end}}
+      <th class="actions-col"></th>
+    </tr>
+  </thead>
+  <tbody>
+  {{range $row := .Data.Rows}}
+    <tr>
+      <td class="order">
+        <form method="post" action="/admin/{{$.Data.Res.Key}}/{{$row.ID}}/move" class="inline">
+          {{template "csrf" $}}
+          <button name="dir" value="up" class="icon" title="Move up"{{if $row.First}} disabled{{end}}>↑</button>
+          <button name="dir" value="down" class="icon" title="Move down"{{if $row.Last}} disabled{{end}}>↓</button>
+        </form>
+      </td>
+      {{range $i, $cell := $row.Cells}}
+        <td>{{if eq $i 0}}<a href="/admin/{{$.Data.Res.Key}}/{{$row.ID}}">{{truncate $cell 70}}</a>{{else}}{{truncate $cell 70}}{{end}}</td>
+      {{end}}
+      <td class="actions-col nowrap">
+        <a class="btn small" href="/admin/{{$.Data.Res.Key}}/{{$row.ID}}">Edit</a>
+        <form method="post" action="/admin/{{$.Data.Res.Key}}/{{$row.ID}}/delete" class="inline" onsubmit="return confirm('Delete this entry?')">
+          {{template "csrf" $}}
+          <button class="btn small danger">Delete</button>
+        </form>
+      </td>
+    </tr>
+  {{end}}
+  </tbody>
+</table>
+{{else}}
+<div class="empty">
+  <p>Nothing here yet.</p>
+  <a class="btn primary" href="/admin/{{.Data.Res.Key}}/new">Add the first {{.Data.Res.Singular}}</a>
+</div>
+{{end}}
+{{end}}

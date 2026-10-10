@@ -1,0 +1,47 @@
+{{define "content"}}
+<header class="page-head">
+  <h1>Dashboard</h1>
+  <a class="btn" href="/" target="_blank" rel="noreferrer">View site ↗</a>
+</header>
+
+<section class="cards">
+  {{range .Data.Counts}}
+  <a class="card stat" href="/admin/{{.Res.Key}}">
+    <span class="stat-value">{{.Count}}</span>
+    <span class="stat-label">{{.Res.Plural}}</span>
+  </a>
+  {{end}}
+  <a class="card stat{{if .Data.Unread}} highlight{{end}}" href="/admin/messages">
+    <span class="stat-value">{{.Data.Unread}}</span>
+    <span class="stat-label">Unread messages</span>
+  </a>
+</section>
+
+<section>
+  <h2>Recent messages</h2>
+  {{if .Data.Messages}}
+  <table>
+    <thead><tr><th>From</th><th>Message</th><th>Received</th></tr></thead>
+    <tbody>
+    {{range .Data.Messages}}
+      <tr class="{{if not .Read}}unread{{end}}">
+        <td><a href="/admin/messages/{{.ID}}">{{.Name}}</a><br><span class="muted small">{{.Email}}</span></td>
+        <td>{{truncate .Body 90}}</td>
+        <td class="muted small nowrap">{{.Created}}</td>
+      </tr>
+    {{end}}
+    </tbody>
+  </table>
+  {{else}}<p class="muted">No messages yet.</p>{{end}}
+</section>
+
+<section>
+  <h2>Quick links</h2>
+  <ul class="links">
+    <li><a href="/admin/settings">Edit texts, labels and section visibility</a></li>
+    <li><a href="/admin/media">Upload a photo or CV</a></li>
+    <li><a href="/admin/projects/new">Add a project</a> · <a href="/admin/papers/new">Add a paper</a></li>
+    <li><a href="/api/v1/portfolio" target="_blank" rel="noreferrer">Inspect the JSON the site renders from ↗</a></li>
+  </ul>
+</section>
+{{end}}

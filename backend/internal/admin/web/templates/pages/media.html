@@ -1,0 +1,33 @@
+{{define "content"}}
+<header class="page-head">
+  <h1>Media</h1>
+</header>
+<p class="muted">Upload your photo, CV (PDF) or any image, then paste its URL into a setting or entry. Allowed: jpg, png, webp, gif, svg, pdf · max 15 MB.</p>
+
+<form method="post" action="/admin/media/upload" enctype="multipart/form-data" class="upload card">
+  {{template "csrf" .}}
+  <input type="file" name="file" required accept=".jpg,.jpeg,.png,.webp,.gif,.svg,.pdf">
+  <button type="submit" class="btn primary">Upload</button>
+</form>
+
+{{if .Data}}
+<ul class="media-grid">
+  {{range .Data}}
+  <li class="card">
+    {{if .IsImage}}<a href="{{.URL}}" target="_blank" rel="noreferrer"><img src="{{.URL}}" alt="{{.Name}}"></a>{{else}}<div class="file-icon">PDF</div>{{end}}
+    <div class="media-meta">
+      <input type="text" readonly value="{{.URL}}" class="mono small" onclick="this.select()" title="Click to select, then copy">
+      <span class="muted small">{{kb .Size}}</span>
+    </div>
+    <form method="post" action="/admin/media/delete" class="inline" onsubmit="return confirm('Delete {{.Name}}? Anything linking to it will break.')">
+      {{template "csrf" $}}
+      <input type="hidden" name="name" value="{{.Name}}">
+      <button class="btn small danger">Delete</button>
+    </form>
+  </li>
+  {{end}}
+</ul>
+{{else}}
+<div class="empty"><p>Nothing uploaded yet.</p></div>
+{{end}}
+{{end}}

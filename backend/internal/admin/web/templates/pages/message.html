@@ -1,0 +1,27 @@
+{{define "content"}}
+<header class="page-head">
+  <h1>Message</h1>
+  <a class="btn" href="/admin/messages">← All messages</a>
+</header>
+
+<article class="card message">
+  <dl class="meta">
+    <dt>From</dt><dd>{{.Data.Name}} &lt;<a href="mailto:{{.Data.Email}}">{{.Data.Email}}</a>&gt;</dd>
+    <dt>Received</dt><dd>{{.Data.Created}}</dd>
+  </dl>
+  <div class="body">{{.Data.Body}}</div>
+  <div class="actions">
+    <a class="btn primary" href="mailto:{{.Data.Email}}?subject=Re:%20your%20message">Reply by email</a>
+    <form method="post" action="/admin/messages/{{.Data.ID}}/read" class="inline">
+      {{template "csrf" .}}
+      <input type="hidden" name="read" value="0">
+      <button class="btn">Mark unread</button>
+    </form>
+    <span class="spacer"></span>
+    <form method="post" action="/admin/messages/{{.Data.ID}}/delete" class="inline" onsubmit="return confirm('Delete this message?')">
+      {{template "csrf" .}}
+      <button class="btn danger">Delete</button>
+    </form>
+  </div>
+</article>
+{{end}}
