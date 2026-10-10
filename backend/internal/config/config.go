@@ -19,8 +19,7 @@ type Config struct {
 	AdminPassword string   // seeded on first run; generated and logged if empty
 	SessionSecret string   // HMAC key for admin session cookies
 	UploadDir     string   // where media uploads are stored
-	FrontendDir   string   // built React app to serve at /; skipped if missing
-	CORSOrigins   []string // allowed origins for the public API; empty = same-origin only
+	CORSOrigins   []string // origins allowed to call the API from a browser (the React site's origin)
 	SecureCookies bool     // set the Secure flag on cookies (enable behind HTTPS)
 	SeedDemo      bool     // insert demo content when the content tables are empty
 }
@@ -36,7 +35,6 @@ func Load() (Config, error) {
 		AdminPassword: os.Getenv("ADMIN_PASSWORD"),
 		SessionSecret: os.Getenv("SESSION_SECRET"),
 		UploadDir:     env("UPLOAD_DIR", "./uploads"),
-		FrontendDir:   env("FRONTEND_DIR", "../frontend/dist"),
 		SecureCookies: envBool("SECURE_COOKIES", false),
 		SeedDemo:      envBool("SEED_DEMO", true),
 	}

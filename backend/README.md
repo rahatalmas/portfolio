@@ -1,9 +1,9 @@
 # Portfolio backend
 
-Go + MySQL server that powers the portfolio: JSON API, HTML admin, media
-uploads, and static hosting for the built React app. No framework — the
-standard library's `net/http`, `database/sql` with the MySQL driver, and
-`bcrypt`.
+Go + MySQL server that powers the portfolio: JSON API, HTML admin and media
+uploads. The React site in `../frontend` is hosted separately and reads from
+this API. No framework — the standard library's `net/http`, `database/sql`
+with the MySQL driver, and `bcrypt`.
 
 ## Quick start
 
@@ -33,9 +33,9 @@ Then open:
 
 | URL | What |
 | --- | --- |
-| `http://localhost:8080/admin` | Admin (log in with the credentials above) |
+| `http://localhost:8080/admin` | Admin (log in with the credentials above); `/` redirects here |
 | `http://localhost:8080/api/v1/portfolio` | The JSON the site renders from |
-| `http://localhost:8080/` | The site, if `FRONTEND_DIR` points at a built app |
+| `http://localhost:8080/uploads/<file>` | Uploaded media |
 
 ## Configuration
 
@@ -52,8 +52,7 @@ Environment variables, or a `.env` file in the working directory
 | `ADMIN_PASSWORD` | generated | First admin's password |
 | `SESSION_SECRET` | random per start | ≥ 16 chars; set it so sessions survive restarts |
 | `UPLOAD_DIR` | `./uploads` | Media storage, served at `/uploads/` |
-| `FRONTEND_DIR` | `../frontend/dist` | Built React app to serve at `/` |
-| `CORS_ORIGINS` | — | Comma-separated origins allowed to call the API cross-origin |
+| `CORS_ORIGINS` | — | Comma-separated origins allowed to call the API from a browser — set to the deployed site's origin |
 | `SECURE_COOKIES` | `false` | Set `true` behind HTTPS |
 | `SEED_DEMO` | `true` | Insert demo content into empty content tables |
 
@@ -110,8 +109,10 @@ order on start; applied versions are tracked in `schema_migrations`.
 
 ## Deploying
 
-Build the frontend (`npm run build` in `../frontend`) and the server
-(`go build -o server ./cmd/server`), then run the binary with `FRONTEND_DIR`
-pointing at `frontend/dist`, `UPLOAD_DIR` on persistent storage, `SESSION_SECRET` set,
-and `SECURE_COOKIES=true` behind an HTTPS reverse proxy (Caddy, nginx).
-The repo's `Dockerfile` and `docker-compose.yml` do exactly this.
+`go build -o server ./cmd/server`, then run the binary with `UPLOAD_DIR` on
+persistent storage, `SESSION_SECRET` set, `SECURE_COOKIES=true` behind an
+HTTPS reverse proxy (Caddy, nginx), and `CORS_ORIGINS` set to the site's
+origin. `Dockerfile` here and `docker-compose.yml` in the repo root do this.
+
+The frontend is deployed on its own: build it with `VITE_API_BASE` pointing at
+this server (see `../frontend/README.md`).

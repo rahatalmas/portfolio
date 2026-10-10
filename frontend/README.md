@@ -6,8 +6,22 @@ backend's `GET /api/v1/portfolio`; it has no content of its own.
 ```sh
 npm install
 npm run dev      # http://localhost:5173, proxies /api and /uploads to http://localhost:8080
-npm run build    # → dist/, which the Go server serves at /
+npm run build    # → dist/, deploy to any static host
 ```
+
+## Production build
+
+The backend does not serve the site. Point the build at the backend and host
+`dist/` anywhere static:
+
+```sh
+cp .env.example .env.production     # VITE_API_BASE=https://api.your-portfolio.example
+npm run build
+# upload dist/ to Vercel / Netlify / Cloudflare Pages / GitHub Pages / nginx
+```
+
+The backend must list the site's origin in `CORS_ORIGINS`. Upload URLs from
+the API (`/uploads/…`) are prefixed with `VITE_API_BASE` automatically.
 
 | Path | What |
 | --- | --- |
@@ -20,5 +34,4 @@ npm run build    # → dist/, which the Go server serves at /
 | `src/index.css` | Theme tokens (light in `@theme`, dark in `.dark`) |
 | `public/profile.jpg` | Placeholder photo used until you upload your own |
 
-To point at a backend on another origin, set `VITE_API_BASE=https://api.example.com`
-at build time and allow that origin with `CORS_ORIGINS` on the server.
+`src/api/client.ts` reads `VITE_API_BASE`; leave it unset in development.

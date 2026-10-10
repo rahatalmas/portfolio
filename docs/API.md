@@ -238,9 +238,14 @@ curl -X POST http://localhost:8080/api/v1/messages \
 
 ## CORS
 
-When the frontend is served by the same Go server (production) or through the
-Vite dev proxy, no CORS is involved. To call the API from another origin, set
-`CORS_ORIGINS=https://example.com,https://other.example` (or `*`).
+The site is hosted separately from this server, so in production set
+`CORS_ORIGINS` to the site's origin (comma-separated for several, or `*`).
+In development the Vite proxy makes requests same-origin and no CORS is
+involved.
+
+Upload URLs (`photo`, `cv_url`, and any link under `/uploads/`) are returned
+as backend-relative paths; clients on another origin must prefix them with the
+backend origin (the React client does this automatically).
 
 ## Admin
 

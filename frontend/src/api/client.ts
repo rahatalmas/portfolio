@@ -1,11 +1,38 @@
 import type { MessageInput, Portfolio } from "./types";
 
 /**
- * Base URL of the backend. Empty means same origin, which is the case both
- * in production (the Go server serves the built app) and in development (the
- * Vite proxy forwards /api and /uploads). Set VITE_API_BASE to point elsewhere.
+ * Origin of the Go backend. Empty means same origin, which is right in
+ * development (the Vite proxy forwards /api and /uploads to :8080). The site
+ * is deployed separately from the backend, so production builds set
+ * VITE_API_BASE (see .env.example) and the backend lists the site's origin in
+ * CORS_ORIGINS.
  */
 const BASE = (import.meta.env.VITE_API_BASE as string | undefined)?.replace(/\/$/, "") ?? "";
+
+/** Path under which the backend serves uploaded media. */
+const UPLOADS = "/uploads/";
+
+/**
+ * Uploaded files (photo, CV, …) come back from the API as backend-relative
+ * paths. When the backend lives on another origin, make them absolute so the
+ * browser fetches them from the right place. Applied to every string in the
+ * response, so links in projects/papers that point at uploads work too.
+ */
+export function absolutizeUploads<T>(value: T): T {
+  if (!BASE) return value;
+  if (typeof value === "string") {
+    return (value.startsWith(UPLOADS) ? BASE + value : value) as T;
+  }
+  if (Array.isArray(value)) {
+    return value.map(absolutizeUploads) as T;
+  }
+  if (value && typeof value === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) out[k] = absolutizeUploads(v);
+    return out as T;
+  }
+  return value;
+}
 
 /** Error raised for non-2xx responses, carrying the server's message. */
 export class ApiError extends Error {
@@ -37,8 +64,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 /** Fetch everything the page renders in one call. */
-export function fetchPortfolio(): Promise<Portfolio> {
-  return request<Portfolio>("/api/v1/portfolio");
+export async function fetchPortfolio(): Promise<Portfolio> {
+  return absolutizeUploads(await request<Portfolio>("/api/v1/portfolio"));
 }
 
 /** Submit the contact form. */

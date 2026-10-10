@@ -1,26 +1,29 @@
 # Architecture
 
 A single-page React portfolio whose content is managed in a Go admin and
-stored in MySQL. One Go binary serves everything.
+stored in MySQL. The site and the backend are two deployments that talk over
+the API.
 
 ```
-                 ┌────────────────────────────────────────────────────┐
-  browser ─────▶ │  Go server (backend/cmd/server)                    │
-                 │                                                    │
-   /             │  SPA files from FRONTEND_DIR (../frontend/dist)    │
-   /api/v1/*     │  JSON API  ──────────┐                             │
-   /admin/*      │  HTML admin ─────────┼──▶ store ──▶ MySQL          │
-   /uploads/*    │  media files on disk │                             │
-                 └──────────────────────┴────────────────────────────┘
+  static host (Vercel, nginx, …)          Go server (backend/cmd/server)
+  ┌───────────────────────────┐           ┌──────────────────────────────────────────┐
+  │  React app (frontend/)    │  GET      │  /api/v1/*   JSON API ─────┐             │
+  │  built with VITE_API_BASE ├──────────▶│  /admin/*    HTML admin ───┼─▶ store ─▶ MySQL
+  │  = backend origin         │  CORS     │  /uploads/*  media on disk │             │
+  └───────────────────────────┘           │  /           → /admin      │             │
+                                          └────────────────────────────┴─────────────┘
 ```
 
 * The React app (`frontend/`) makes **one** request, `GET /api/v1/portfolio`,
-  and renders from it. It has no content of its own.
+  and renders from it. It has no content of its own. In development the Vite
+  proxy makes that request same-origin; in production the build is given
+  `VITE_API_BASE` and the backend lists the site's origin in `CORS_ORIGINS`.
 * The admin (`/admin`) is server-rendered Go templates. Editing there changes
   MySQL; the site reflects it on the next load (API responses are cached for
   30 s by `Cache-Control`).
 * Uploads (photo, CV, images) are files in `UPLOAD_DIR`, served at `/uploads/`.
-  Settings and entries reference them by URL.
+  The API returns them as backend-relative paths; the client prefixes them
+  with `VITE_API_BASE` (`absolutizeUploads` in `client.ts`).
 
 ## Repository layout
 
@@ -34,8 +37,9 @@ portfolio/
 │   │   └── pages/Home.tsx    Section order and visibility
 │   ├── public/               Static files (placeholder photo)
 │   ├── index.html, vite.config.ts (dev proxy → :8080), tsconfig.json
-│   └── dist/                 Build output, served by the backend
+│   └── dist/                 Build output — deploy this to a static host
 ├── backend/
+│   ├── Dockerfile            Backend image (API + admin + uploads)
 │   ├── cmd/server/main.go    Wiring: config → db → migrate → seed → routes → serve
 │   └── internal/
 │       ├── schema/           THE content model (fields, resources, settings)
@@ -48,7 +52,7 @@ portfolio/
 │       ├── httpx/            JSON helpers + middleware
 │       └── config/           Environment / .env
 ├── docs/                     This file, API.md
-├── Dockerfile, docker-compose.yml
+├── docker-compose.yml        MySQL + backend
 └── PLAN.md                   Original design notes
 ```
 
@@ -89,8 +93,9 @@ Everything else is generic over these specs:
 ## Request flow
 
 **Site visit**
-`GET /` → `index.html` from `dist/` → React boots → `GET /api/v1/portfolio`
-→ `store.Portfolio` runs seven small queries → JSON → components render.
+Static host serves `index.html` → React boots → `GET {VITE_API_BASE}/api/v1/portfolio`
+→ CORS check → `store.Portfolio` runs seven small queries → JSON → upload
+paths made absolute → components render.
 
 **Admin edit**
 `GET /admin/projects/3` → `auth` middleware verifies the signed session cookie

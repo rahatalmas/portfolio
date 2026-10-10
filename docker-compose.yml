@@ -1,3 +1,6 @@
+# MySQL + the Go backend (API, admin, uploads) on port 8080.
+# The React site in frontend/ is deployed separately; build it with
+# VITE_API_BASE pointing here and list its origin in CORS_ORIGINS below.
 services:
   db:
     image: mysql:8.4
@@ -15,8 +18,8 @@ services:
       timeout: 3s
       retries: 20
 
-  web:
-    build: .
+  api:
+    build: ./backend
     depends_on:
       db:
         condition: service_healthy
@@ -30,6 +33,7 @@ services:
       ADMIN_USERNAME: admin
       ADMIN_PASSWORD: change-me-admin
       SESSION_SECRET: change-me-to-a-long-random-string
+      CORS_ORIGINS: http://localhost:5173 # add your deployed site's origin
       SECURE_COOKIES: "false" # set "true" behind an HTTPS proxy
     volumes:
       - uploads:/app/uploads
