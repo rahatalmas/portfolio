@@ -13,7 +13,7 @@ import (
 // Config is everything the server needs to start.
 type Config struct {
 	Addr          string   // listen address, e.g. ":8080"
-	DataDir       string   // where content.json, messages.json and admin.json live
+	DataDir       string   // where content.json and admin.json live
 	AdminUsername string   // seeded on first run when no admin user exists
 	AdminPassword string   // seeded on first run; generated and logged if empty
 	SessionSecret string   // HMAC key for admin session cookies

@@ -38,12 +38,11 @@ Then open:
 
 ## Data files
 
-Everything lives in `DATA_DIR` (default `./data`):
+Both files live in `DATA_DIR` (default `./data`):
 
 | File | Holds | In git? |
 | --- | --- | --- |
 | `content.json` | Settings and every list (education, skills, profiles, experience, projects, papers) | Yes — it *is* your content |
-| `messages.json` | Contact-form submissions | No |
 | `admin.json` | Admin accounts (bcrypt hashes) | No |
 
 `content.json` is written by the admin and is safe to edit by hand: values
@@ -77,15 +76,13 @@ Environment variables, or a `.env` file in the working directory
 
 `/admin` is a server-rendered UI with a sidebar:
 
-* **Dashboard** – counts, recent messages, quick links.
+* **Dashboard** – counts and quick links.
 * **Settings** – every text, label, image URL and section toggle, grouped
   (Identity, SEO, Sections, Navbar, Hero, About, Work, Research, Contact,
   Footer). Media fields offer a dropdown of uploaded files.
 * **Education / Skills / Profiles / Experience / Projects / Papers** – list,
   create, edit, delete, and ↑/↓ reorder. Forms validate per field and keep
   your input on error.
-* **Messages** – contact-form inbox with unread badge; open to mark read,
-  reply by email, delete.
 * **Media** – upload jpg/png/webp/gif/svg/pdf (≤ 15 MB); copy the URL into a
   setting (photo, CV) or entry.
 * **Password** – change your password.
@@ -97,10 +94,10 @@ CSRF tokens on every form, `SameSite=Lax`.
 
 ```
 cmd/server/main.go         wiring and startup
-data/content.json          the content (tracked); messages.json and admin.json appear at runtime
+data/content.json          the content (tracked); admin.json appears at runtime
 internal/
   schema/                  content model: fields, resources, settings (edit here to add fields)
-  store/                   JSON files in memory: generic CRUD, typed reads, messages, users
+  store/                   JSON files in memory: generic CRUD, typed reads, users
   models/                  API response types
   api/                     /api/v1 handlers, rate limiter
   admin/                   /admin handlers, auth, renderer, web/templates, web/static

@@ -1,16 +1,10 @@
-// Package api serves the public JSON API under /api/v1. All endpoints are
-// read-only except POST /api/v1/messages (the contact form). See docs/API.md.
+// Package api serves the public, read-only JSON API under /api/v1. See
+// docs/API.md.
 package api
 
 import (
-	"encoding/json"
-	"io"
 	"log/slog"
 	"net/http"
-	"net/mail"
-	"strings"
-	"time"
-	"unicode/utf8"
 
 	"portfolio/backend/internal/httpx"
 	"portfolio/backend/internal/schema"
@@ -19,14 +13,13 @@ import (
 
 // Handler holds the API's dependencies.
 type Handler struct {
-	store   *store.Store
-	log     *slog.Logger
-	limiter *rateLimiter
+	store *store.Store
+	log   *slog.Logger
 }
 
 // New constructs the API handler.
 func New(st *store.Store, log *slog.Logger) *Handler {
-	return &Handler{store: st, log: log, limiter: newRateLimiter(5, time.Minute)}
+	return &Handler{store: st, log: log}
 }
 
 // Routes registers every endpoint on mux.
@@ -40,7 +33,6 @@ func (h *Handler) Routes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/v1/experience", h.experience)
 	mux.HandleFunc("GET /api/v1/projects", h.projects)
 	mux.HandleFunc("GET /api/v1/papers", h.papers)
-	mux.HandleFunc("POST /api/v1/messages", h.createMessage)
 	mux.HandleFunc("/api/", func(w http.ResponseWriter, r *http.Request) {
 		httpx.Error(w, http.StatusNotFound, "no such endpoint")
 	})
@@ -140,68 +132,4 @@ func (h *Handler) papers(w http.ResponseWriter, r *http.Request) {
 	}
 	cacheable(w)
 	httpx.JSON(w, http.StatusOK, v)
-}
-
-// messageInput is the contact form payload. `website` is a honeypot: real
-// users never see it, bots fill it, and we silently drop those.
-type messageInput struct {
-	Name    string `json:"name"`
-	Email   string `json:"email"`
-	Message string `json:"message"`
-	Website string `json:"website"`
-}
-
-func (h *Handler) createMessage(w http.ResponseWriter, r *http.Request) {
-	if !h.limiter.Allow(httpx.ClientIP(r)) {
-		httpx.Error(w, http.StatusTooManyRequests, "too many messages, try again in a minute")
-		return
-	}
-
-	var in messageInput
-	body, err := io.ReadAll(io.LimitReader(r.Body, 64<<10))
-	if err != nil || json.Unmarshal(body, &in) != nil {
-		httpx.Error(w, http.StatusBadRequest, "invalid JSON body")
-		return
-	}
-	in.Name = strings.TrimSpace(in.Name)
-	in.Email = strings.TrimSpace(in.Email)
-	in.Message = strings.TrimSpace(in.Message)
-
-	if problem := validateMessage(in); problem != "" {
-		httpx.Error(w, http.StatusUnprocessableEntity, problem)
-		return
-	}
-	if in.Website != "" {
-		// Honeypot tripped: pretend it worked.
-		httpx.JSON(w, http.StatusCreated, map[string]bool{"ok": true})
-		return
-	}
-
-	id, err := h.store.CreateMessage(r.Context(), in.Name, in.Email, in.Message)
-	if err != nil {
-		h.fail(w, "message", err)
-		return
-	}
-	httpx.JSON(w, http.StatusCreated, map[string]any{"ok": true, "id": id})
-}
-
-func validateMessage(in messageInput) string {
-	switch {
-	case in.Name == "":
-		return "name is required"
-	case utf8.RuneCountInString(in.Name) > 120:
-		return "name is too long (max 120 characters)"
-	case in.Email == "":
-		return "email is required"
-	case utf8.RuneCountInString(in.Email) > 254:
-		return "email is too long"
-	case in.Message == "":
-		return "message is required"
-	case utf8.RuneCountInString(in.Message) > 5000:
-		return "message is too long (max 5000 characters)"
-	}
-	if _, err := mail.ParseAddress(in.Email); err != nil {
-		return "email is not a valid address"
-	}
-	return ""
 }

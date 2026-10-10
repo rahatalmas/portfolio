@@ -5,8 +5,8 @@ by a small Go backend that also provides the content API and an admin panel
 for editing every text, image, project, paper and section.
 
 There is no database. All content is one JSON file, `backend/data/content.json`,
-which you can edit in the admin panel or by hand. Contact-form messages and the
-admin account are two more JSON files next to it.
+which you can edit in the admin panel or by hand. The admin account is one more
+JSON file next to it.
 
 ```
 frontend/   React app — the public site; renders GET /api/v1/portfolio
@@ -65,10 +65,9 @@ Everything is in the admin, or in `backend/data/content.json`:
 | --- | --- |
 | Settings → Identity | Name, handle, role, bio, photo, email, location, GitHub, CV |
 | Settings → SEO | Browser title, meta description |
-| Settings → Sections | Show/hide About, Work, Research, Contact, the experience card, the form |
+| Settings → Sections | Show/hide About, Work, Research, Contact and the experience card |
 | Settings → Navbar / Hero / About / Work / Research / Contact / Footer | Every label and micro-text |
 | Education, Skills, Profiles, Experience, Projects, Papers | Add, edit, delete, reorder |
-| Messages | Contact-form inbox |
 | Media | Upload images and PDFs |
 
 The site also bundles `content.json` at build time, so it renders even if the

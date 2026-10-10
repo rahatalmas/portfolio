@@ -1,5 +1,5 @@
 // Package admin is the HTML management UI at /admin: login, settings editor,
-// generic CRUD for every schema.Resource, the message inbox and the media
+// generic CRUD for every schema.Resource and the media
 // library. Templates are embedded from web/.
 package admin
 
@@ -16,7 +16,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"portfolio/backend/internal/media"
-	"portfolio/backend/internal/models"
 	"portfolio/backend/internal/schema"
 	"portfolio/backend/internal/store"
 )
@@ -55,18 +54,13 @@ func (h *Handler) Routes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /admin/password", h.auth(h.passwordForm))
 	mux.HandleFunc("POST /admin/password", h.auth(h.passwordSave))
 
-	mux.HandleFunc("GET /admin/messages", h.auth(h.messages))
-	mux.HandleFunc("GET /admin/messages/{id}", h.auth(h.message))
-	mux.HandleFunc("POST /admin/messages/{id}/read", h.auth(h.messageToggleRead))
-	mux.HandleFunc("POST /admin/messages/{id}/delete", h.auth(h.messageDelete))
-
 	mux.HandleFunc("GET /admin/media", h.auth(h.mediaList))
 	mux.HandleFunc("POST /admin/media/upload", h.auth(h.mediaUpload))
 	mux.HandleFunc("POST /admin/media/delete", h.auth(h.mediaDelete))
 
 	// One explicit route set per resource. Literal segments keep the patterns
 	// unambiguous for ServeMux (a `{res}` wildcard would clash with
-	// /admin/messages/{id} and /admin/assets/{file}).
+	// /admin/{resource}/{id} and /admin/assets/{file}).
 	for i := range schema.Resources {
 		res := &schema.Resources[i]
 		p := "/admin/" + res.Key
@@ -126,7 +120,6 @@ func (h *Handler) page(w http.ResponseWriter, r *http.Request, title, active str
 	}
 	v.FlashKind, v.Flash = h.sessions.takeFlash(w, r)
 	if v.User != "" {
-		v.Unread, _ = h.store.UnreadMessages(r.Context())
 		if s, err := h.store.Settings(r.Context()); err == nil {
 			v.Handle = s["handle"]
 		}
@@ -194,9 +187,7 @@ func (h *Handler) logout(w http.ResponseWriter, r *http.Request) {
 // --- dashboard -------------------------------------------------------------
 
 type dashboardData struct {
-	Counts   []resourceCount
-	Messages []messageRow
-	Unread   int
+	Counts []resourceCount
 }
 
 type resourceCount struct {
@@ -214,13 +205,6 @@ func (h *Handler) dashboard(w http.ResponseWriter, r *http.Request) {
 		}
 		d.Counts = append(d.Counts, resourceCount{Res: schema.Resources[i], Count: n})
 	}
-	msgs, err := h.store.Messages(r.Context(), 5)
-	if err != nil {
-		h.serverError(w, r, "loading messages", err)
-		return
-	}
-	d.Messages = messageRows(msgs)
-	d.Unread, _ = h.store.UnreadMessages(r.Context())
 	h.tmpl.render(w, http.StatusOK, "dashboard", h.page(w, r, "Dashboard", "dashboard", d))
 }
 
@@ -560,87 +544,6 @@ func (h *Handler) moveResource(res *schema.Resource, w http.ResponseWriter, r *h
 		return
 	}
 	h.redirect(w, r, "/admin/"+res.Key, "", "")
-}
-
-// --- messages --------------------------------------------------------------
-
-type messageRow struct {
-	ID      int64
-	Name    string
-	Email   string
-	Body    string
-	Read    bool
-	Created string
-}
-
-func messageRows(msgs []models.Message) []messageRow {
-	out := make([]messageRow, len(msgs))
-	for i, m := range msgs {
-		created := m.CreatedAt
-		if t, err := time.Parse(time.RFC3339, m.CreatedAt); err == nil {
-			created = t.Local().Format("2 Jan 2006, 15:04")
-		}
-		out[i] = messageRow{ID: m.ID, Name: m.Name, Email: m.Email, Body: m.Body, Read: m.Read, Created: created}
-	}
-	return out
-}
-
-func (h *Handler) messages(w http.ResponseWriter, r *http.Request) {
-	msgs, err := h.store.Messages(r.Context(), 200)
-	if err != nil {
-		h.serverError(w, r, "loading messages", err)
-		return
-	}
-	h.tmpl.render(w, http.StatusOK, "messages", h.page(w, r, "Messages", "messages", messageRows(msgs)))
-}
-
-func (h *Handler) message(w http.ResponseWriter, r *http.Request) {
-	id, ok := pathID(r)
-	if !ok {
-		http.NotFound(w, r)
-		return
-	}
-	m, err := h.store.Message(r.Context(), id)
-	if errors.Is(err, store.ErrNotFound) {
-		http.NotFound(w, r)
-		return
-	}
-	if err != nil {
-		h.serverError(w, r, "loading message", err)
-		return
-	}
-	if !m.Read {
-		_ = h.store.MarkMessageRead(r.Context(), id, true)
-		m.Read = true
-	}
-	h.tmpl.render(w, http.StatusOK, "message", h.page(w, r, "Message from "+m.Name, "messages", messageRows([]models.Message{m})[0]))
-}
-
-func (h *Handler) messageToggleRead(w http.ResponseWriter, r *http.Request) {
-	id, ok := pathID(r)
-	if !ok {
-		http.NotFound(w, r)
-		return
-	}
-	read := r.FormValue("read") == "1"
-	if err := h.store.MarkMessageRead(r.Context(), id, read); err != nil {
-		h.serverError(w, r, "updating message", err)
-		return
-	}
-	h.redirect(w, r, "/admin/messages", "", "")
-}
-
-func (h *Handler) messageDelete(w http.ResponseWriter, r *http.Request) {
-	id, ok := pathID(r)
-	if !ok {
-		http.NotFound(w, r)
-		return
-	}
-	if err := h.store.DeleteMessage(r.Context(), id); err != nil && !errors.Is(err, store.ErrNotFound) {
-		h.serverError(w, r, "deleting message", err)
-		return
-	}
-	h.redirect(w, r, "/admin/messages", "ok", "Message deleted.")
 }
 
 // --- media -----------------------------------------------------------------

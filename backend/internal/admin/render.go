@@ -25,7 +25,6 @@ type view struct {
 	Active    string            // sidebar key to highlight
 	Flash     string            // one-time notice
 	FlashKind string            // "ok" | "error"
-	Unread    int               // unread messages, for the sidebar badge
 	Resources []schema.Resource // sidebar content links
 	CSRF      string            // token for forms
 	Data      any

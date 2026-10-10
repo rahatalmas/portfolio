@@ -11,28 +11,6 @@
     <span class="stat-label">{{.Res.Plural}}</span>
   </a>
   {{end}}
-  <a class="card stat{{if .Data.Unread}} highlight{{end}}" href="/admin/messages">
-    <span class="stat-value">{{.Data.Unread}}</span>
-    <span class="stat-label">Unread messages</span>
-  </a>
-</section>
-
-<section>
-  <h2>Recent messages</h2>
-  {{if .Data.Messages}}
-  <table>
-    <thead><tr><th>From</th><th>Message</th><th>Received</th></tr></thead>
-    <tbody>
-    {{range .Data.Messages}}
-      <tr class="{{if not .Read}}unread{{end}}">
-        <td><a href="/admin/messages/{{.ID}}">{{.Name}}</a><br><span class="muted small">{{.Email}}</span></td>
-        <td>{{truncate .Body 90}}</td>
-        <td class="muted small nowrap">{{.Created}}</td>
-      </tr>
-    {{end}}
-    </tbody>
-  </table>
-  {{else}}<p class="muted">No messages yet.</p>{{end}}
 </section>
 
 <section>

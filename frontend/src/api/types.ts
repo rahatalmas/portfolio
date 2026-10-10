@@ -26,7 +26,6 @@ export interface Site {
   show_work: boolean;
   show_research: boolean;
   show_contact: boolean;
-  show_contact_form: boolean;
   // navbar
   nav_about: string;
   nav_work: string;
@@ -59,16 +58,6 @@ export interface Site {
   contact_title: string;
   contact_email_label: string;
   contact_location_label: string;
-  form_title: string;
-  form_subtitle: string;
-  form_name_placeholder: string;
-  form_email_placeholder: string;
-  form_message_placeholder: string;
-  form_submit_label: string;
-  form_sending_label: string;
-  form_success_title: string;
-  form_success_text: string;
-  form_error_text: string;
   // footer
   footer_updated: string;
   footer_back_to_top: string;
@@ -137,13 +126,4 @@ export interface Portfolio {
   experience: Role[];
   projects: Project[];
   papers: Paper[];
-}
-
-/** POST /api/v1/messages body. */
-export interface MessageInput {
-  name: string;
-  email: string;
-  message: string;
-  /** Honeypot — leave empty. */
-  website?: string;
 }

@@ -89,16 +89,6 @@ type Portfolio struct {
 	Papers     []Paper        `json:"papers"`
 }
 
-// Message is a contact-form submission.
-type Message struct {
-	ID        int64  `json:"id"`
-	Name      string `json:"name"`
-	Email     string `json:"email"`
-	Body      string `json:"body"`
-	Read      bool   `json:"read"`
-	CreatedAt string `json:"created_at"`
-}
-
 // User is an admin account. It is never returned by the API.
 type User struct {
 	ID           int64

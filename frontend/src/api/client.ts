@@ -1,4 +1,4 @@
-import type { MessageInput, Portfolio } from "./types";
+import type { Portfolio } from "./types";
 
 /**
  * Origin of the Go backend. Empty means same origin, which is the normal
@@ -65,13 +65,4 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 /** Fetch everything the page renders in one call. */
 export async function fetchPortfolio(): Promise<Portfolio> {
   return absolutizeUploads(await request<Portfolio>("/api/v1/portfolio"));
-}
-
-/** Submit the contact form. */
-export function sendMessage(input: MessageInput): Promise<{ ok: boolean; id?: number }> {
-  return request("/api/v1/messages", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
-  });
 }

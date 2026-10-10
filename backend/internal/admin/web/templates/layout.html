@@ -18,8 +18,6 @@
       <div class="nav-group">Content</div>
       {{range .Resources}}<a href="/admin/{{.Key}}" class="{{if eq $.Active .Key}}active{{end}}">{{.Plural}}</a>
       {{end}}
-      <div class="nav-group">Inbox</div>
-      <a href="/admin/messages" class="{{if eq .Active "messages"}}active{{end}}">Messages{{if .Unread}} <span class="badge">{{.Unread}}</span>{{end}}</a>
       <a href="/admin/media" class="{{if eq .Active "media"}}active{{end}}">Media</a>
     </nav>
     <div class="sidebar-foot">

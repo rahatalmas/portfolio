@@ -202,56 +202,28 @@ func TestLoadTolerantHandEdits(t *testing.T) {
 	}
 }
 
-func TestMessagesAndUsers(t *testing.T) {
+func TestUsers(t *testing.T) {
 	ctx := context.Background()
 	dir := t.TempDir()
 	s, _ := Open(dir)
-
-	id, err := s.CreateMessage(ctx, "Ada", "ada@example.com", "Hi")
-	if err != nil {
+	if n, _ := s.UserCount(ctx); n != 0 {
+		t.Fatalf("users: %d", n)
+	}
+	if err := s.CreateUser(ctx, "admin", "hash1"); err != nil {
 		t.Fatal(err)
 	}
-	id2, _ := s.CreateMessage(ctx, "Bob", "bob@example.com", "Yo")
-	if n, _ := s.UnreadMessages(ctx); n != 2 {
-		t.Fatalf("unread: %d", n)
+	if err := s.CreateUser(ctx, "admin", "hash2"); !errors.Is(err, ErrDuplicate) {
+		t.Fatalf("duplicate user: %v", err)
 	}
-	msgs, _ := s.Messages(ctx, 0)
-	if len(msgs) != 2 || msgs[0].ID != id2 {
-		t.Fatalf("newest first: %+v", msgs)
-	}
-	if err := s.MarkMessageRead(ctx, id, true); err != nil {
+	if err := s.UpdatePassword(ctx, "admin", "hash3"); err != nil {
 		t.Fatal(err)
 	}
 	s2, _ := Open(dir)
-	m, err := s2.Message(ctx, id)
-	if err != nil || !m.Read || m.CreatedAt == "" {
-		t.Fatalf("persisted message: %+v %v", m, err)
-	}
-	if err := s2.DeleteMessage(ctx, id); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := s2.Message(ctx, id); !errors.Is(err, ErrNotFound) {
-		t.Fatalf("deleted message: %v", err)
-	}
-
-	if n, _ := s2.UserCount(ctx); n != 0 {
-		t.Fatalf("users: %d", n)
-	}
-	if err := s2.CreateUser(ctx, "admin", "hash1"); err != nil {
-		t.Fatal(err)
-	}
-	if err := s2.CreateUser(ctx, "admin", "hash2"); !errors.Is(err, ErrDuplicate) {
-		t.Fatalf("duplicate user: %v", err)
-	}
-	if err := s2.UpdatePassword(ctx, "admin", "hash3"); err != nil {
-		t.Fatal(err)
-	}
-	s3, _ := Open(dir)
-	u, err := s3.UserByUsername(ctx, "admin")
+	u, err := s2.UserByUsername(ctx, "admin")
 	if err != nil || u.PasswordHash != "hash3" {
 		t.Fatalf("persisted user: %+v %v", u, err)
 	}
-	if _, err := s3.UserByUsername(ctx, "nobody"); !errors.Is(err, ErrNotFound) {
+	if _, err := s2.UserByUsername(ctx, "nobody"); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("missing user: %v", err)
 	}
 }

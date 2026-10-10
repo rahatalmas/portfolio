@@ -1,7 +1,7 @@
 # Portfolio API
 
 Base path: `/api/v1`. All responses are JSON (`application/json; charset=utf-8`).
-Every endpoint is public and read-only except `POST /messages`.
+Every endpoint is public and read-only.
 
 GET responses carry `Cache-Control: public, max-age=30`.
 
@@ -18,7 +18,6 @@ Errors are always `{"error": "<message>"}` with an appropriate status code.
 | `GET /experience` | Roles for the hero timeline card |
 | `GET /projects` | Projects (`?featured=1` for featured only) |
 | `GET /papers` | Publications |
-| `POST /messages` | Contact-form submission |
 
 ---
 
@@ -77,7 +76,6 @@ A flat object. Keys are the setting keys defined in
   "show_work": true,
   "show_research": true,
   "show_contact": true,
-  "show_contact_form": true,
 
   "nav_about": "About", "nav_work": "Work", "nav_research": "Research",
   "nav_contact": "Contact", "nav_cv_label": "CV",
@@ -100,14 +98,6 @@ A flat object. Keys are the setting keys defined in
 
   "contact_title": "Contact",
   "contact_email_label": "Email", "contact_location_label": "Location",
-  "form_title": "Send a message",
-  "form_subtitle": "Questions, collaborations, or opportunities.",
-  "form_name_placeholder": "Name", "form_email_placeholder": "Email",
-  "form_message_placeholder": "Message",
-  "form_submit_label": "Send message", "form_sending_label": "Sending…",
-  "form_success_title": "Message sent",
-  "form_success_text": "Thanks — I'll get back to you soon.",
-  "form_error_text": "Couldn't send. Email me instead.",
 
   "footer_updated": "October 2026",
   "footer_back_to_top": "Back to top"
@@ -199,42 +189,6 @@ Newest year first, then admin order.
 
 `status` is `published`, `preprint` or `in progress`. `links` keys (`pdf`,
 `code`, `poster`, `slides`) are omitted when empty.
-
-## `POST /messages`
-
-Contact-form submission. Appended to `data/messages.json` and shown in the admin inbox.
-
-Request (`Content-Type: application/json`):
-
-```json
-{ "name": "Ada Lovelace", "email": "ada@example.com", "message": "Hello!", "website": "" }
-```
-
-| Field | Rules |
-| --- | --- |
-| `name` | required, ≤ 120 characters |
-| `email` | required, valid address, ≤ 254 characters |
-| `message` | required, ≤ 5000 characters |
-| `website` | honeypot — must be empty or absent; bots that fill it get a fake success |
-
-Responses:
-
-| Status | Body |
-| --- | --- |
-| `201 Created` | `{ "ok": true, "id": 12 }` |
-| `400 Bad Request` | `{ "error": "invalid JSON body" }` |
-| `422 Unprocessable Entity` | `{ "error": "email is not a valid address" }` |
-| `429 Too Many Requests` | `{ "error": "too many messages, try again in a minute" }` — 5 per minute per IP |
-
-Example:
-
-```sh
-curl -X POST http://localhost:8080/api/v1/messages \
-  -H 'Content-Type: application/json' \
-  -d '{"name":"Ada","email":"ada@example.com","message":"Hi!"}'
-```
-
----
 
 ## CORS
 

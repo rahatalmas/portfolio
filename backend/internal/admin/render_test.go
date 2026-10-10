@@ -19,7 +19,7 @@ func TestAllPagesRender(t *testing.T) {
 		t.Fatal(err)
 	}
 	proj, _ := schema.ResourceByKey("projects")
-	base := view{Title: "T", User: "admin", Handle: "rahat", CSRF: "tok", Resources: schema.Resources, Flash: "hi", FlashKind: "ok", Unread: 2}
+	base := view{Title: "T", User: "admin", Handle: "rahat", CSRF: "tok", Resources: schema.Resources, Flash: "hi", FlashKind: "ok"}
 
 	fields := func(values map[string]string) []fieldView {
 		var out []fieldView
@@ -46,14 +46,12 @@ func TestAllPagesRender(t *testing.T) {
 
 	cases := map[string]any{
 		"login":     map[string]string{"Username": "x"},
-		"dashboard": dashboardData{Counts: []resourceCount{{Res: *proj, Count: 3}}, Messages: []messageRow{{ID: 1, Name: "A", Email: "a@b.co", Body: "hi", Created: "now"}}, Unread: 1},
+		"dashboard": dashboardData{Counts: []resourceCount{{Res: *proj, Count: 3}}},
 		"settings":  settingsData{Groups: groups, Media: []string{"/uploads/a.jpg"}},
 		"list": listData{Res: *proj, Columns: proj.Fields[:2], Rows: []listRow{
 			{ID: 1, Cells: []string{"One", "one"}, First: true}, {ID: 2, Cells: []string{"Two", "two"}, Last: true},
 		}},
 		"form":     formData{Res: *proj, ID: 7, Fields: fields(map[string]string{"title": "T", "tags": "AI,Backend", "featured": "1"}), Media: []string{"/uploads/a.jpg"}},
-		"messages": []messageRow{{ID: 1, Name: "A", Email: "a@b.co", Body: "hello", Created: "now"}},
-		"message":  messageRow{ID: 1, Name: "A", Email: "a@b.co", Body: "hello\nworld", Created: "now"},
 		"media":    []media.File{{Name: "a.jpg", URL: "/uploads/a.jpg", Size: 2048, IsImage: true}, {Name: "cv.pdf", URL: "/uploads/cv.pdf", Size: 5 << 20}},
 		"password": nil,
 	}

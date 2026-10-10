@@ -1,7 +1,7 @@
 // Command server runs the whole portfolio from one process: the built React
 // site at /, the public JSON API, the HTML admin, and uploaded media.
 //
-// Content, messages and the admin account are JSON files in DATA_DIR; there
+// Content and the admin account are JSON files in DATA_DIR; there
 // is no database. Configuration comes from the environment or a .env file;
 // see backend/.env.example and backend/README.md.
 package main

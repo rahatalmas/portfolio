@@ -1,9 +1,8 @@
-// Package store is the data layer. Everything lives in three JSON files in
+// Package store is the data layer. Everything lives in two JSON files in
 // DATA_DIR, hand-editable and small enough to keep whole in memory:
 //
-//   - content.json  — settings plus every list resource (education, projects, …)
-//   - messages.json — contact-form submissions
-//   - admin.json    — admin accounts (bcrypt hashes)
+//   - content.json — settings plus every list resource (education, projects, …)
+//   - admin.json   — admin accounts (bcrypt hashes)
 //
 // Reads come from memory; every write re-serialises the affected file and
 // replaces it atomically (write temp, rename), so a crash mid-save cannot
@@ -14,7 +13,7 @@
 //
 //   - Generic, spec-driven CRUD over any schema.Resource (records.go section)
 //   - Typed reads for the public API (lists.go)
-//   - Messages and admin users (messages.go)
+//   - Admin users (users.go)
 package store
 
 import (
@@ -40,9 +39,8 @@ var ErrNotFound = errors.New("not found")
 var ErrDuplicate = errors.New("duplicate value")
 
 const (
-	contentFile  = "content.json"
-	messagesFile = "messages.json"
-	adminFile    = "admin.json"
+	contentFile = "content.json"
+	adminFile   = "admin.json"
 )
 
 // Record is one entry of a list resource with every field as a string, the
@@ -61,7 +59,6 @@ type Store struct {
 	mu       sync.RWMutex
 	settings map[string]string
 	lists    map[string][]Record // resource key → records in display order
-	messages []message
 	users    []user
 }
 
@@ -78,9 +75,6 @@ func Open(dir string) (*Store, error) {
 	s := &Store{dir: abs, lists: map[string][]Record{}}
 	if err := s.loadContent(); err != nil {
 		return nil, fmt.Errorf("%s: %w", contentFile, err)
-	}
-	if err := s.loadJSON(messagesFile, &s.messages); err != nil {
-		return nil, fmt.Errorf("%s: %w", messagesFile, err)
 	}
 	if err := s.loadJSON(adminFile, &s.users); err != nil {
 		return nil, fmt.Errorf("%s: %w", adminFile, err)

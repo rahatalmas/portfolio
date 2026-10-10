@@ -11,8 +11,7 @@ origin. There is no database.
   │           ├──────────────▶│  /api/v1/*    JSON API ─────┐                         │
   │           │  GET /api/…   │  /admin/*     HTML admin ───┼─▶ store ─▶ DATA_DIR/     │
   └───────────┘  same origin  │  /uploads/*   media on disk │      content.json        │
-                              └─────────────────────────────┘      messages.json       │
-                                                                   admin.json          │
+                              └─────────────────────────────┘      admin.json          │
 ```
 
 * The React app (`frontend/`) is built to `dist/` and served by the Go server
@@ -46,12 +45,12 @@ portfolio/
 │   └── dist/                 Build output — served by the Go server at /
 ├── backend/
 │   ├── cmd/server/main.go    Wiring: config → store.Open → routes → serve
-│   ├── data/content.json     THE content, tracked in git (messages.json, admin.json appear at runtime)
+│   ├── data/content.json     THE content, tracked in git (admin.json appears at runtime)
 │   └── internal/
 │       ├── schema/           THE content model (fields, resources, settings)
-│       ├── store/            JSON files held in memory; CRUD, typed reads, messages, users
+│       ├── store/            JSON files held in memory; CRUD, typed reads, users
 │       ├── models/           JSON shapes returned by the API
-│       ├── api/              /api/v1 handlers + contact-form rate limit
+│       ├── api/              /api/v1 read-only handlers
 │       ├── admin/            /admin handlers, sessions, templates (web/)
 │       ├── site/             Serves the built React app with SPA fallback
 │       ├── media/            Upload directory
@@ -106,10 +105,10 @@ Everything else is generic over these specs:
   strings, rows without an `id` (or with a duplicate) get a fresh one, and
   unknown fields are dropped on the next save. Saving is strict: the file is
   regenerated in schema order and replaced atomically (temp file + rename).
-* `messages.json` is an array of submissions; `admin.json` an array of
-  accounts with bcrypt hashes. Both are written the same way.
-* The store keeps all three files in memory behind one `sync.RWMutex`;
-  reads never touch the disk.
+* `admin.json` is an array of accounts with bcrypt hashes, written the same
+  way.
+* The store keeps both files in memory behind one `sync.RWMutex`; reads
+  never touch the disk.
 
 ## Request flow
 
@@ -124,11 +123,6 @@ assembles the typed shape from memory → JSON → components re-render.
 `POST /admin/projects/3` → CSRF check → `Field.Clean` on every field → on
 errors re-render with messages, else `UpdateRecord` rewrites `content.json`
 → redirect with a flash.
-
-**Contact form**
-`POST /api/v1/messages` → per-IP rate limit (5/min) → JSON validation →
-honeypot check → `CreateMessage` appends to `messages.json` → appears in
-`/admin/messages` with an unread badge.
 
 ## Security notes
 
@@ -174,14 +168,14 @@ honeypot check → `CreateMessage` appends to `messages.json` → appears in
 
 ### Add an admin page that isn't a resource
 
-Follow `messages` in `admin/handlers.go`: a handler, a template in
+Follow `media` in `admin/handlers.go`: a handler, a template in
 `web/templates/pages/`, routes in `Routes`, and a sidebar link in
 `layout.html`. Add a case to `TestAllPagesRender`.
 
 ## Testing
 
 ```sh
-cd backend  && go test ./...    # store round-trips, shipped content.json validity, schema, media, sessions, templates, routes, API validation
+cd backend  && go test ./...    # store round-trips, shipped content.json validity, schema, media, sessions, templates, routes
 cd frontend && npx tsc -b       # frontend types
 ```
 
