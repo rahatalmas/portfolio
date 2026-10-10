@@ -24,21 +24,22 @@ from a single origin, so there is no CORS and nothing to host separately.
 You need Node 20+ and Go 1.26+. Nothing else.
 
 ```sh
-# Backend (terminal 1)
-cd backend
-cp .env.example .env         # optional; set SESSION_SECRET to keep sessions across restarts
-go run ./cmd/server          # http://localhost:8080/admin — password is printed on first run
-
-# Frontend (terminal 2)
-cd frontend
-npm install
-npm run dev                  # http://localhost:5173 — proxies /api and /uploads to :8080
+cd frontend && npm install && npm run build   # once, and again after changing frontend code
+cd ../backend && go run ./cmd/server          # http://localhost:8080 — admin password is printed on first run
 ```
 
-Log in at `http://localhost:8080/admin`, upload your photo and CV under
-*Media*, then edit *Settings* and the content sections. The site updates on
-reload. Every save rewrites `backend/data/content.json`, so you can commit
-your content like code.
+That is the whole site: `http://localhost:8080` is the page, `/admin` is the
+editor, `/api/v1/portfolio` is the JSON. Log in, upload your photo and CV
+under *Media*, then edit *Settings* and the content sections. The site
+updates on reload. Every save rewrites `backend/data/content.json`, so you
+can commit your content like code.
+
+Only when you are editing the React code itself, also run the dev server in
+a second terminal for hot reload:
+
+```sh
+cd frontend && npm run dev   # http://localhost:5173 — proxies /api and /uploads to :8080
+```
 
 ## Deploying
 
