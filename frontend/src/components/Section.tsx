@@ -21,7 +21,7 @@ export default function Section({ id, title, children, action, tone = "plain" }:
     <section
       id={id}
       ref={ref}
-      className={`reveal scroll-mt-20 ${band ? "band band-glow relative mt-8 py-14 md:py-20" : "py-8 md:py-10"}`}
+      className={`reveal scroll-mt-20 ${band ? "band relative mt-8 py-14 md:py-20" : "py-8 md:py-10"}`}
     >
       <div className="relative mx-auto max-w-[960px] px-6">
         {title && (
