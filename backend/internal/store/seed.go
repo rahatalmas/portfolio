@@ -46,7 +46,8 @@ var demoContent = map[string][]map[string]string{
 	"papers": {
 		{"title": "Length-Aware Scheduling for Memory-Efficient LLM Inference", "authors": "Rahat Almas\nCo Author\nAdvisor Name", "venue": "Workshop on ML Systems, NeurIPS", "year": "2025", "status": "published", "pdf_url": "https://arxiv.org/abs/0000.00000", "code_url": "https://github.com/yourhandle/kv-scheduler"},
 		{"title": "Hybrid Retrieval for Long-Context Question Answering", "authors": "Rahat Almas\nAdvisor Name", "venue": "arXiv preprint", "year": "2025", "status": "preprint", "pdf_url": "https://arxiv.org/abs/0000.00001"},
-		{"title": "Efficient Retrieval for Long-Context LLMs", "authors": "Rahat Almas", "venue": "B.Sc. Thesis, University Name", "year": "2024", "status": "published", "pdf_url": "/thesis.pdf"},
+		// No pdf_url: upload the thesis under Media and set it in the admin.
+		{"title": "Efficient Retrieval for Long-Context LLMs", "authors": "Rahat Almas", "venue": "B.Sc. Thesis, University Name", "year": "2024", "status": "published"},
 	},
 }
 
