@@ -15,8 +15,8 @@ export default function Hero() {
   return (
     <section id="top">
       <div
-        className={`mx-auto grid w-full max-w-[960px] items-stretch gap-8 px-6 pt-20 pb-6 md:gap-10 md:pt-24 ${
-          showCard ? "md:grid-cols-[1fr_280px]" : ""
+        className={`mx-auto grid w-full max-w-[960px] items-start gap-8 px-6 pt-20 pb-6 md:gap-10 md:pt-24 ${
+          showCard ? "md:grid-cols-[1fr_260px]" : ""
         }`}
       >
         <div>

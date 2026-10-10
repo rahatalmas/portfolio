@@ -44,7 +44,7 @@ var SettingsGroups = []Group{
 			{Key: "show_about", Label: "Show About", Kind: Bool, Default: "1"},
 			{Key: "show_work", Label: "Show Work", Kind: Bool, Default: "1"},
 			{Key: "show_research", Label: "Show Research", Kind: Bool, Default: "1"},
-			{Key: "show_contact", Label: "Show Profiles", Kind: Bool, Default: "1"},
+			{Key: "show_contact", Label: "Show Connect", Kind: Bool, Default: "1"},
 		},
 	},
 	{
@@ -53,7 +53,7 @@ var SettingsGroups = []Group{
 			{Key: "nav_about", Label: "About link", Kind: Text, Required: true, Default: "About"},
 			{Key: "nav_work", Label: "Work link", Kind: Text, Required: true, Default: "Work"},
 			{Key: "nav_research", Label: "Research link", Kind: Text, Required: true, Default: "Research"},
-			{Key: "nav_contact", Label: "Profiles link", Kind: Text, Required: true, Default: "Profiles"},
+			{Key: "nav_contact", Label: "Connect link", Kind: Text, Required: true, Default: "Connect"},
 			{Key: "nav_cv_label", Label: "CV button", Kind: Text, Required: true, Default: "CV"},
 		},
 	},
@@ -67,7 +67,6 @@ var SettingsGroups = []Group{
 			{Key: "stat_years_label", Label: "Stat: years label", Kind: Text, Required: true, Default: "Years"},
 			{Key: "stat_papers_label", Label: "Stat: papers label", Kind: Text, Required: true, Default: "Papers"},
 			{Key: "stat_projects_label", Label: "Stat: projects label", Kind: Text, Required: true, Default: "Projects"},
-			{Key: "full_cv_label", Label: "Full CV link", Kind: Text, Required: true, Default: "Full CV"},
 		},
 	},
 	{
@@ -96,9 +95,9 @@ var SettingsGroups = []Group{
 		},
 	},
 	{
-		Key: "contact", Title: "Profiles section & footer", Description: "The profile-links section, and the email/location shown in the footer.",
+		Key: "contact", Title: "Connect section & footer", Description: "The profile-links section, and the email/location shown in the footer.",
 		Fields: []Field{
-			{Key: "contact_title", Label: "Section title", Kind: Text, Required: true, Default: "Profiles"},
+			{Key: "contact_title", Label: "Section title", Kind: Text, Required: true, Default: "Connect"},
 			{Key: "contact_email_label", Label: "Email label (screen readers)", Kind: Text, Required: true, Default: "Email"},
 			{Key: "contact_location_label", Label: "Location label (screen readers)", Kind: Text, Required: true, Default: "Location"},
 		},

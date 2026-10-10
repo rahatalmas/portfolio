@@ -40,7 +40,6 @@ export interface Site {
   stat_years_label: string;
   stat_papers_label: string;
   stat_projects_label: string;
-  full_cv_label: string;
   // about
   about_title: string;
   education_label: string;

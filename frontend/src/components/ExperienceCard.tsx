@@ -1,4 +1,3 @@
-import { ArrowUpRight } from "lucide-react";
 import { usePortfolio } from "../api/PortfolioContext";
 import type { Role } from "../api/types";
 
@@ -17,7 +16,11 @@ function yearsOfExperience(experience: Role[]) {
   return new Date().getFullYear() - Math.min(...starts);
 }
 
-/** Compact timeline card for the hero: roles on top, quick stats + CV link at the bottom. */
+/**
+ * The hero's right-hand column: roles as a plain list, then one line of
+ * numbers. No box, just a hairline separating it from the bio so it reads as
+ * part of the hero rather than a widget placed on it.
+ */
 export default function ExperienceCard({ className = "" }: { className?: string }) {
   const { site, experience, papers, projects } = usePortfolio();
   const stats = [
@@ -27,17 +30,11 @@ export default function ExperienceCard({ className = "" }: { className?: string 
   ];
 
   return (
-    <div id="experience" className={`flex h-full flex-col rounded-2xl border border-line bg-card p-4 ${className}`}>
+    <div id="experience" className={`border-t border-line pt-5 md:border-t-0 md:border-l md:pt-0 md:pl-8 ${className}`}>
       <h2 className="mb-3 font-mono text-xs font-medium uppercase tracking-wider text-muted">{site.experience_title}</h2>
-      <ol className="relative ml-1 flex flex-col gap-4 border-l border-line">
-        {experience.map((r, i) => (
-          <li key={r.id} className="relative pl-5">
-            <span
-              aria-hidden
-              className={`absolute top-1.5 -left-[5px] h-2.5 w-2.5 rounded-full border-2 ${
-                i === 0 ? "border-accent bg-accent" : "border-line bg-card"
-              }`}
-            />
+      <ol className="space-y-3">
+        {experience.map((r) => (
+          <li key={r.id}>
             <div className="flex items-baseline justify-between gap-3">
               <span className="truncate text-sm font-medium">{r.title}</span>
               <span className="shrink-0 font-mono text-[11px] text-muted">{shortPeriod(r.period)}</span>
@@ -47,29 +44,14 @@ export default function ExperienceCard({ className = "" }: { className?: string 
         ))}
       </ol>
 
-      {/* Bottom: stats + CV, pinned to the card's base */}
-      <div className="mt-auto pt-4">
-        <dl className="grid grid-cols-3 divide-x divide-line border-y border-line py-2 text-center">
-          {stats.map((s) => (
-            <div key={s.label}>
-              <dt className="sr-only">{s.label}</dt>
-              <dd className="text-lg font-semibold tracking-tight">{s.value}</dd>
-              <dd className="font-mono text-[10px] uppercase tracking-wider text-muted">{s.label}</dd>
-            </div>
-          ))}
-        </dl>
-        {site.cv_url && (
-          <a
-            href={site.cv_url}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-2.5 flex items-center justify-between text-sm text-muted"
-          >
-            {site.full_cv_label}
-            <ArrowUpRight size={15} />
-          </a>
-        )}
-      </div>
+      <dl className="mt-4 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-3 font-mono text-[11px] text-muted">
+        {stats.map((s) => (
+          <div key={s.label} className="flex items-baseline gap-1">
+            <dd className="font-medium text-fg">{s.value}</dd>
+            <dt className="lowercase">{s.label}</dt>
+          </div>
+        ))}
+      </dl>
     </div>
   );
 }

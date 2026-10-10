@@ -83,7 +83,6 @@ A flat object. Keys are the setting keys defined in
   "hero_cv_label": "CV", "hero_github_label": "GitHub", "hero_email_label": "Email",
   "experience_title": "Experience",
   "stat_years_label": "Years", "stat_papers_label": "Papers", "stat_projects_label": "Projects",
-  "full_cv_label": "Full CV",
 
   "about_title": "About", "education_label": "Education", "skills_label": "Skills",
 
