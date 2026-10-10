@@ -2,119 +2,191 @@ package store
 
 import (
 	"context"
-	"database/sql"
-	"errors"
+	"sort"
 	"time"
 
 	"portfolio/backend/internal/models"
 )
 
-// CreateMessage stores a contact-form submission.
-func (s *Store) CreateMessage(ctx context.Context, name, email, body string) (int64, error) {
-	res, err := s.db.ExecContext(ctx, "INSERT INTO messages (name, email, body) VALUES (?, ?, ?)", name, email, body)
-	if err != nil {
-		return 0, err
-	}
-	return res.LastInsertId()
+// message is the on-disk shape of a contact-form submission (messages.json).
+type message struct {
+	ID        int64     `json:"id"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	Body      string    `json:"body"`
+	Read      bool      `json:"read"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
-// Messages returns submissions newest first.
+func (m message) model() models.Message {
+	return models.Message{
+		ID: m.ID, Name: m.Name, Email: m.Email, Body: m.Body, Read: m.Read,
+		CreatedAt: m.CreatedAt.UTC().Format(time.RFC3339),
+	}
+}
+
+// CreateMessage stores a contact-form submission and returns its id.
+func (s *Store) CreateMessage(ctx context.Context, name, email, body string) (int64, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	var maxID int64
+	for _, m := range s.messages {
+		if m.ID > maxID {
+			maxID = m.ID
+		}
+	}
+	m := message{ID: maxID + 1, Name: name, Email: email, Body: body, CreatedAt: time.Now().UTC()}
+	s.messages = append(s.messages, m)
+	if err := s.saveJSON(messagesFile, s.messages); err != nil {
+		s.messages = s.messages[:len(s.messages)-1]
+		return 0, err
+	}
+	return m.ID, nil
+}
+
+// Messages returns submissions newest first, at most limit (default 200).
 func (s *Store) Messages(ctx context.Context, limit int) ([]models.Message, error) {
 	if limit <= 0 {
 		limit = 200
 	}
-	rows, err := s.db.QueryContext(ctx, "SELECT id, name, email, body, is_read, created_at FROM messages ORDER BY created_at DESC, id DESC LIMIT ?", limit)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	out := []models.Message{}
-	for rows.Next() {
-		m, err := scanMessage(rows)
-		if err != nil {
-			return nil, err
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	sorted := make([]message, len(s.messages))
+	copy(sorted, s.messages)
+	sort.SliceStable(sorted, func(i, j int) bool {
+		if !sorted[i].CreatedAt.Equal(sorted[j].CreatedAt) {
+			return sorted[i].CreatedAt.After(sorted[j].CreatedAt)
 		}
-		out = append(out, m)
+		return sorted[i].ID > sorted[j].ID
+	})
+	out := []models.Message{}
+	for i, m := range sorted {
+		if i >= limit {
+			break
+		}
+		out = append(out, m.model())
 	}
-	return out, rows.Err()
+	return out, nil
 }
 
 // Message returns one submission.
 func (s *Store) Message(ctx context.Context, id int64) (models.Message, error) {
-	rows, err := s.db.QueryContext(ctx, "SELECT id, name, email, body, is_read, created_at FROM messages WHERE id = ?", id)
-	if err != nil {
-		return models.Message{}, err
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	if i := s.messageIndex(id); i >= 0 {
+		return s.messages[i].model(), nil
 	}
-	defer rows.Close()
-	if !rows.Next() {
-		return models.Message{}, ErrNotFound
-	}
-	return scanMessage(rows)
+	return models.Message{}, ErrNotFound
 }
 
 // MarkMessageRead flags a submission as read or unread.
 func (s *Store) MarkMessageRead(ctx context.Context, id int64, read bool) error {
-	_, err := s.db.ExecContext(ctx, "UPDATE messages SET is_read = ? WHERE id = ?", read, id)
-	return err
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	i := s.messageIndex(id)
+	if i < 0 {
+		return ErrNotFound
+	}
+	if s.messages[i].Read == read {
+		return nil
+	}
+	s.messages[i].Read = read
+	return s.saveJSON(messagesFile, s.messages)
 }
 
 // DeleteMessage removes a submission.
 func (s *Store) DeleteMessage(ctx context.Context, id int64) error {
-	res, err := s.db.ExecContext(ctx, "DELETE FROM messages WHERE id = ?", id)
-	if err != nil {
-		return err
-	}
-	if n, _ := res.RowsAffected(); n == 0 {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	i := s.messageIndex(id)
+	if i < 0 {
 		return ErrNotFound
 	}
-	return nil
+	s.messages = append(s.messages[:i:i], s.messages[i+1:]...)
+	return s.saveJSON(messagesFile, s.messages)
 }
 
 // UnreadMessages counts submissions not yet read.
 func (s *Store) UnreadMessages(ctx context.Context) (int, error) {
-	var n int
-	err := s.db.QueryRowContext(ctx, "SELECT COUNT(*) FROM messages WHERE is_read = 0").Scan(&n)
-	return n, err
-}
-
-func scanMessage(rows *sql.Rows) (models.Message, error) {
-	var m models.Message
-	var created time.Time
-	if err := rows.Scan(&m.ID, &m.Name, &m.Email, &m.Body, &m.Read, &created); err != nil {
-		return m, err
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	n := 0
+	for _, m := range s.messages {
+		if !m.Read {
+			n++
+		}
 	}
-	m.CreatedAt = created.UTC().Format(time.RFC3339)
-	return m, nil
+	return n, nil
 }
 
-// --- admin users ---------------------------------------------------------
+// messageIndex returns the position of id, or -1. Caller holds mu.
+func (s *Store) messageIndex(id int64) int {
+	for i, m := range s.messages {
+		if m.ID == id {
+			return i
+		}
+	}
+	return -1
+}
+
+// --- admin users (admin.json) ----------------------------------------------
+
+// user is the on-disk shape of an admin account.
+type user struct {
+	ID           int64  `json:"id"`
+	Username     string `json:"username"`
+	PasswordHash string `json:"password_hash"`
+}
 
 // UserByUsername returns the admin account with that username.
 func (s *Store) UserByUsername(ctx context.Context, username string) (models.User, error) {
-	var u models.User
-	err := s.db.QueryRowContext(ctx, "SELECT id, username, password_hash FROM admin_users WHERE username = ?", username).
-		Scan(&u.ID, &u.Username, &u.PasswordHash)
-	if errors.Is(err, sql.ErrNoRows) {
-		return u, ErrNotFound
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	for _, u := range s.users {
+		if u.Username == username {
+			return models.User{ID: u.ID, Username: u.Username, PasswordHash: u.PasswordHash}, nil
+		}
 	}
-	return u, err
+	return models.User{}, ErrNotFound
 }
 
 // CreateUser adds an admin account.
 func (s *Store) CreateUser(ctx context.Context, username, passwordHash string) error {
-	_, err := s.db.ExecContext(ctx, "INSERT INTO admin_users (username, password_hash) VALUES (?, ?)", username, passwordHash)
-	return wrapDuplicate(err)
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	var maxID int64
+	for _, u := range s.users {
+		if u.Username == username {
+			return ErrDuplicate
+		}
+		if u.ID > maxID {
+			maxID = u.ID
+		}
+	}
+	s.users = append(s.users, user{ID: maxID + 1, Username: username, PasswordHash: passwordHash})
+	if err := s.saveJSON(adminFile, s.users); err != nil {
+		s.users = s.users[:len(s.users)-1]
+		return err
+	}
+	return nil
 }
 
 // UpdatePassword replaces an account's password hash.
 func (s *Store) UpdatePassword(ctx context.Context, username, passwordHash string) error {
-	_, err := s.db.ExecContext(ctx, "UPDATE admin_users SET password_hash = ? WHERE username = ?", passwordHash, username)
-	return err
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for i := range s.users {
+		if s.users[i].Username == username {
+			s.users[i].PasswordHash = passwordHash
+			return s.saveJSON(adminFile, s.users)
+		}
+	}
+	return ErrNotFound
 }
 
 // UserCount returns how many admin accounts exist.
 func (s *Store) UserCount(ctx context.Context) (int, error) {
-	var n int
-	err := s.db.QueryRowContext(ctx, "SELECT COUNT(*) FROM admin_users").Scan(&n)
-	return n, err
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	return len(s.users), nil
 }

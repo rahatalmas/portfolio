@@ -47,7 +47,7 @@ func (h *Handler) Routes(mux *http.ServeMux) {
 }
 
 // cacheable marks a public GET response as briefly cacheable so a burst of
-// visitors does not hit MySQL for every request.
+// visitors is served from the browser cache instead of a new request.
 func cacheable(w http.ResponseWriter) {
 	w.Header().Set("Cache-Control", "public, max-age=30")
 }

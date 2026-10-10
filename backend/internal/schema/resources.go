@@ -1,11 +1,11 @@
 package schema
 
-// Resource describes one list-type content table (projects, papers, …).
-// Every resource table has the implicit columns `id` and `sort_order`; the
-// Fields are its remaining columns, in admin form order.
+// Resource describes one list-type content type (projects, papers, …).
+// Every entry has an implicit id and a position in display order; the Fields
+// are its editable values, in admin form order. Entries are stored under Key
+// in content.json.
 type Resource struct {
-	Key      string  // URL segment in the admin and the public API, e.g. "projects"
-	Table    string  // MySQL table name
+	Key      string  // URL segment in the admin and API, and the key in content.json
 	Singular string  // "Project"
 	Plural   string  // "Projects"
 	Fields   []Field // editable columns
@@ -24,11 +24,11 @@ var ProjectTags = []string{"AI", "Backend", "Research"}
 // PaperStatuses are the publication states a paper can be in.
 var PaperStatuses = []string{"published", "preprint", "in progress"}
 
-// Resources lists every list-type content table, in the order the admin
+// Resources lists every list-type content type, in the order the admin
 // sidebar shows them. Field order is form order; List marks list columns.
 var Resources = []Resource{
 	{
-		Key: "education", Table: "education", Singular: "Education entry", Plural: "Education",
+		Key: "education", Singular: "Education entry", Plural: "Education",
 		Fields: []Field{
 			{Key: "degree", Label: "Degree", Kind: Text, Required: true, List: true, Help: "e.g. B.Sc. Computer Science"},
 			{Key: "school", Label: "School", Kind: Text, Required: true, List: true},
@@ -37,14 +37,14 @@ var Resources = []Resource{
 		},
 	},
 	{
-		Key: "skills", Table: "skill_groups", Singular: "Skill group", Plural: "Skills",
+		Key: "skills", Singular: "Skill group", Plural: "Skills",
 		Fields: []Field{
 			{Key: "name", Label: "Group name", Kind: Text, Required: true, List: true, Help: "e.g. AI, Backend, Tools"},
 			{Key: "items", Label: "Skills", Kind: Lines, Required: true, List: true, Help: "One skill per line, in display order"},
 		},
 	},
 	{
-		Key: "profiles", Table: "profiles", Singular: "Profile link", Plural: "Profiles",
+		Key: "profiles", Singular: "Profile link", Plural: "Profiles",
 		Fields: []Field{
 			{Key: "group_name", Label: "Group", Kind: Text, Required: true, List: true, Help: "Links with the same group name are shown on one row, e.g. Professional, Academic, Coding"},
 			{Key: "label", Label: "Label", Kind: Text, Required: true, List: true},
@@ -53,7 +53,7 @@ var Resources = []Resource{
 		},
 	},
 	{
-		Key: "experience", Table: "experience", Singular: "Role", Plural: "Experience",
+		Key: "experience", Singular: "Role", Plural: "Experience",
 		Fields: []Field{
 			{Key: "title", Label: "Title", Kind: Text, Required: true, List: true, Help: "Keep it short; the hero card is narrow"},
 			{Key: "company", Label: "Company", Kind: Text, Required: true, List: true},
@@ -61,7 +61,7 @@ var Resources = []Resource{
 		},
 	},
 	{
-		Key: "projects", Table: "projects", Singular: "Project", Plural: "Projects",
+		Key: "projects", Singular: "Project", Plural: "Projects",
 		Fields: []Field{
 			{Key: "title", Label: "Title", Kind: Text, Required: true, List: true},
 			{Key: "slug", Label: "Slug", Kind: Slug, Required: true, Help: "Stable identifier, lowercase-with-dashes"},
@@ -75,7 +75,7 @@ var Resources = []Resource{
 		},
 	},
 	{
-		Key: "papers", Table: "papers", Singular: "Paper", Plural: "Papers",
+		Key: "papers", Singular: "Paper", Plural: "Papers",
 		Fields: []Field{
 			{Key: "title", Label: "Title", Kind: Text, Required: true, List: true},
 			{Key: "authors", Label: "Authors", Kind: Lines, Required: true, Help: "One author per line; your own name is highlighted automatically"},
@@ -98,15 +98,6 @@ func ResourceByKey(key string) (*Resource, bool) {
 		}
 	}
 	return nil, false
-}
-
-// Columns returns the editable column names in field order.
-func (r Resource) Columns() []string {
-	cols := make([]string, len(r.Fields))
-	for i, f := range r.Fields {
-		cols[i] = f.Key
-	}
-	return cols
 }
 
 // Field returns the field with the given key.

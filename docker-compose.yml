@@ -1,41 +1,22 @@
-# MySQL + the portfolio server (React site, API, admin, uploads) on port 8080.
-# Everything is served from one origin, so no CORS or VITE_API_BASE is needed.
+# The portfolio server (React site, API, admin, uploads) on port 8080.
+# No database: content, messages and the admin account are JSON files in the
+# `data` volume; uploaded media is in the `uploads` volume. Back up by copying
+# those two volumes.
 services:
-  db:
-    image: mysql:8.4
-    environment:
-      MYSQL_DATABASE: portfolio
-      MYSQL_USER: portfolio
-      MYSQL_PASSWORD: change-me-db
-      MYSQL_ROOT_PASSWORD: change-me-root
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    volumes:
-      - db-data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uportfolio", "-pchange-me-db"]
-      interval: 5s
-      timeout: 3s
-      retries: 20
-
   app:
     build: .
-    depends_on:
-      db:
-        condition: service_healthy
     ports:
       - "8080:8080"
     environment:
-      DB_HOST: db
-      DB_USER: portfolio
-      DB_PASSWORD: change-me-db
-      DB_NAME: portfolio
       ADMIN_USERNAME: admin
       ADMIN_PASSWORD: change-me-admin
       SESSION_SECRET: change-me-to-a-long-random-string
       SECURE_COOKIES: "false" # set "true" behind an HTTPS proxy
     volumes:
+      - data:/app/data
       - uploads:/app/uploads
+    restart: unless-stopped
 
 volumes:
-  db-data:
+  data:
   uploads:

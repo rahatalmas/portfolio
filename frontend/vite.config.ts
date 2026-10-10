@@ -14,5 +14,8 @@ export default defineConfig({
       "/api": backend,
       "/uploads": backend,
     },
+    // src/api/fallback.ts imports ../backend/data/content.json, which is
+    // outside this package; allow the dev server to serve it.
+    fs: { allow: [".", "../backend/data"] },
   },
 });

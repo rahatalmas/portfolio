@@ -1,8 +1,9 @@
 // Package schema describes the portfolio's content model: the editable
 // settings (single values such as the site name or a section title) and the
-// list resources (projects, papers, …). Both the admin UI and the data layer
-// are driven by these specs, so adding a field means editing one place here
-// plus the SQL migration that adds its column.
+// list resources (projects, papers, …). The admin UI, the data layer and the
+// API are all driven by these specs, so adding a field means editing one
+// place here. Existing content.json files simply gain the field (empty, or
+// the Default for settings) on the next save.
 package schema
 
 import (
@@ -31,16 +32,16 @@ const (
 	Media    Kind = "media"    // path to an uploaded file (/uploads/…) or any URL
 )
 
-// Field is one editable value: a column of a resource table, or one key of
-// the settings table.
+// Field is one editable value: a field of a resource entry, or one key of
+// the settings.
 type Field struct {
-	Key      string   // column name / settings key / form input name
+	Key      string   // key in content.json / form input name
 	Label    string   // shown in the admin
 	Kind     Kind     // see Kind
 	Help     string   // optional hint under the input
 	Required bool     // reject empty values
 	Options  []string // for Select and Tags
-	Default  string   // settings only: value seeded on first run
+	Default  string   // settings only: value used until one is saved
 	List     bool     // resources only: show as a column in the admin list
 }
 

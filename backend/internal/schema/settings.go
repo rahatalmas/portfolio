@@ -9,13 +9,11 @@ type Group struct {
 }
 
 // SettingsGroups lists every single-value setting the site uses, grouped the
-// way the admin shows them. Keys are the `settings.key` column and the JSON
-// property names of GET /api/v1/site.
+// way the admin shows them. Keys are the keys under "settings" in
+// content.json and the JSON property names of GET /api/v1/site.
 //
-// Add a setting: append a Field here (with a Default). It is seeded into the
-// database on the next start, editable in the admin, and returned by the API.
-// Mirror the default in frontend/src/api/fallback.ts, which the site renders
-// when the API is unavailable.
+// Add a setting: append a Field here (with a Default). It appears in the
+// admin and the API immediately; content.json gains it on the next save.
 var SettingsGroups = []Group{
 	{
 		Key: "identity", Title: "Identity", Description: "Who the site is about.",
@@ -144,7 +142,8 @@ func SettingField(key string) (Field, bool) {
 	return Field{}, false
 }
 
-// SettingDefaults returns key → default value for seeding.
+// SettingDefaults returns key → default value, used for keys that have not
+// been saved yet.
 func SettingDefaults() map[string]string {
 	out := make(map[string]string)
 	for _, f := range SettingFields() {

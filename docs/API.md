@@ -202,7 +202,7 @@ Newest year first, then admin order.
 
 ## `POST /messages`
 
-Contact-form submission. Stored in the database and shown in the admin inbox.
+Contact-form submission. Appended to `data/messages.json` and shown in the admin inbox.
 
 Request (`Content-Type: application/json`):
 

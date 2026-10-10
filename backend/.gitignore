@@ -2,3 +2,7 @@
 uploads/
 /server
 /server.exe
+# Runtime data; content.json is tracked on purpose
+/data/messages.json
+/data/admin.json
+/data/*.tmp

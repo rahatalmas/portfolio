@@ -1,8 +1,9 @@
 // Command server runs the whole portfolio from one process: the built React
 // site at /, the public JSON API, the HTML admin, and uploaded media.
 //
-// Configuration comes from the environment or a .env file; see
-// backend/.env.example and backend/README.md.
+// Content, messages and the admin account are JSON files in DATA_DIR; there
+// is no database. Configuration comes from the environment or a .env file;
+// see backend/.env.example and backend/README.md.
 package main
 
 import (
@@ -23,7 +24,6 @@ import (
 	"portfolio/backend/internal/admin"
 	"portfolio/backend/internal/api"
 	"portfolio/backend/internal/config"
-	"portfolio/backend/internal/db"
 	"portfolio/backend/internal/httpx"
 	"portfolio/backend/internal/media"
 	"portfolio/backend/internal/site"
@@ -46,34 +46,12 @@ func run(log *slog.Logger) error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	// --- database ----------------------------------------------------------
-	conn, err := db.Open(ctx, cfg.DSN)
+	// --- data --------------------------------------------------------------
+	st, err := store.Open(cfg.DataDir)
 	if err != nil {
 		return err
 	}
-	defer conn.Close()
-
-	applied, err := db.Migrate(ctx, conn)
-	if err != nil {
-		return err
-	}
-	if applied > 0 {
-		log.Info("migrations applied", "count", applied)
-	}
-
-	st := store.New(conn)
-	if err := st.SeedSettings(ctx); err != nil {
-		return err
-	}
-	if cfg.SeedDemo {
-		seeded, err := st.SeedDemoContent(ctx)
-		if err != nil {
-			return err
-		}
-		if seeded {
-			log.Info("seeded demo content (all content tables were empty)")
-		}
-	}
+	log.Info("data loaded", "dir", st.Dir())
 	if err := ensureAdminUser(ctx, st, cfg, log); err != nil {
 		return err
 	}

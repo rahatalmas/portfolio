@@ -1,36 +1,31 @@
 # Portfolio backend
 
-Go + MySQL server that runs the whole portfolio: it serves the built React
-site from `../frontend/dist` at `/`, plus the JSON API, HTML admin and media
-uploads. No framework — the standard library's `net/http`, `database/sql`
-with the MySQL driver, and `bcrypt`.
+Go server that runs the whole portfolio: it serves the built React site from
+`../frontend/dist` at `/`, plus the JSON API, HTML admin and media uploads.
+No database and no framework — the standard library's `net/http`, JSON files
+on disk, and `bcrypt`.
 
 ## Quick start
 
 ```sh
-# 1. A MySQL 8 / MariaDB 10.6+ database
-mysql -u root -p -e "CREATE DATABASE portfolio CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-                     CREATE USER 'portfolio'@'%' IDENTIFIED BY 'secret';
-                     GRANT ALL ON portfolio.* TO 'portfolio'@'%';"
+# 1. Configure (optional; everything has a default)
+cp .env.example .env            # set SESSION_SECRET so logins survive restarts
 
-# 2. Configure
-cp .env.example .env            # edit DB_* and set SESSION_SECRET
-
-# 3. Build the site once (or skip this; / then redirects to /admin)
+# 2. Build the site once (or skip this; / then redirects to /admin)
 (cd ../frontend && npm install && npm run build)
 
-# 4. Run
+# 3. Run
 go run ./cmd/server
 ```
 
 On first start the server:
 
-1. Applies the migrations in `internal/db/migrations/`.
-2. Seeds every setting's default value.
-3. Seeds demo content if all content tables are empty (`SEED_DEMO=true`).
-4. Creates the admin user from `ADMIN_USERNAME` / `ADMIN_PASSWORD`. If the
-   password is empty it generates one and **prints it in the log** — copy it
-   and change it under *Password* once logged in.
+1. Loads `data/content.json` (shipped with the repo). If it is missing, a
+   fresh one with the schema defaults and empty lists is written.
+2. Creates the admin user from `ADMIN_USERNAME` / `ADMIN_PASSWORD` when
+   `data/admin.json` has none. If the password is empty it generates one and
+   **prints it in the log** — copy it and change it under *Password* once
+   logged in.
 
 Then open:
 
@@ -41,6 +36,26 @@ Then open:
 | `http://localhost:8080/api/v1/portfolio` | The JSON the site renders from |
 | `http://localhost:8080/uploads/<file>` | Uploaded media |
 
+## Data files
+
+Everything lives in `DATA_DIR` (default `./data`):
+
+| File | Holds | In git? |
+| --- | --- | --- |
+| `content.json` | Settings and every list (education, skills, profiles, experience, projects, papers) | Yes — it *is* your content |
+| `messages.json` | Contact-form submissions | No |
+| `admin.json` | Admin accounts (bcrypt hashes) | No |
+
+`content.json` is written by the admin and is safe to edit by hand: values
+are strings as the admin stores them (`"1"`/`"0"` for checkboxes, one item
+per line for lists, comma-separated tags), but plain JSON booleans and
+numbers are accepted too and rows without an `id` get one on load. Every
+save rewrites the file completely, pretty-printed in schema order, via a
+temp file and rename so a crash cannot leave it half-written.
+
+Back up by copying the directory. Reset to the shipped content with
+`git checkout data/content.json`.
+
 ## Configuration
 
 Environment variables, or a `.env` file in the working directory
@@ -49,9 +64,7 @@ Environment variables, or a `.env` file in the working directory
 | Variable | Default | Meaning |
 | --- | --- | --- |
 | `ADDR` | `:8080` | Listen address |
-| `DB_DSN` | — | Full MySQL DSN; overrides the `DB_*` parts |
-| `DB_HOST` / `DB_PORT` | `127.0.0.1` / `3306` | |
-| `DB_USER` / `DB_PASSWORD` / `DB_NAME` | `portfolio` / — / `portfolio` | |
+| `DATA_DIR` | `./data` | Directory holding the three JSON files |
 | `ADMIN_USERNAME` | `admin` | First admin, created only when none exists |
 | `ADMIN_PASSWORD` | generated | First admin's password |
 | `SESSION_SECRET` | random per start | ≥ 16 chars; set it so sessions survive restarts |
@@ -59,7 +72,6 @@ Environment variables, or a `.env` file in the working directory
 | `FRONTEND_DIR` | `../frontend/dist` | Built React site served at `/`; skipped if it has no `index.html` |
 | `CORS_ORIGINS` | — | Extra origins allowed to call the API; only needed if the site is hosted elsewhere |
 | `SECURE_COOKIES` | `false` | Set `true` behind HTTPS |
-| `SEED_DEMO` | `true` | Insert demo content into empty content tables |
 
 ## Admin
 
@@ -85,15 +97,15 @@ CSRF tokens on every form, `SameSite=Lax`.
 
 ```
 cmd/server/main.go         wiring and startup
+data/content.json          the content (tracked); messages.json and admin.json appear at runtime
 internal/
   schema/                  content model: fields, resources, settings (edit here to add fields)
-  db/                      connection + embedded migrations/NNNN_name.sql
-  store/                   SQL: typed reads, generic CRUD, messages, users, demo seed
+  store/                   JSON files in memory: generic CRUD, typed reads, messages, users
   models/                  API response types
   api/                     /api/v1 handlers, rate limiter
   admin/                   /admin handlers, auth, renderer, web/templates, web/static
-  media/                   upload directory
   site/                    serves the built React app with SPA fallback
+  media/                   upload directory
   httpx/                   JSON helpers, middleware
   config/                  env + .env loading
 ```
@@ -104,20 +116,23 @@ and `../docs/API.md` for the endpoint reference.
 ## Development
 
 ```sh
-go test ./...        # unit tests (no database needed)
+go test ./...        # unit tests, including a check that data/content.json is valid
 go vet ./...
 go build -o server ./cmd/server
 ```
 
-Migrations: add `internal/db/migrations/0002_description.sql` with plain SQL
-statements ending in `;`. They are embedded in the binary and applied in
-order on start; applied versions are tracked in `schema_migrations`.
+Adding a field is a one-line change in `internal/schema`; there are no
+migrations. Existing `content.json` files simply gain the new key on the
+next save (empty, or the setting's `Default`).
 
 ## Deploying
 
 Build the site (`npm run build` in `../frontend`) and the binary
 (`go build -o server ./cmd/server`), then run the binary with `FRONTEND_DIR`
-pointing at the built `dist/`, `UPLOAD_DIR` on persistent storage,
-`SESSION_SECRET` set, and `SECURE_COOKIES=true` behind an HTTPS reverse proxy
-(Caddy, nginx). The `Dockerfile` and `docker-compose.yml` in the repo root do
-all of this in one image.
+pointing at the built `dist/`, `DATA_DIR` and `UPLOAD_DIR` on persistent
+storage, `SESSION_SECRET` set, and `SECURE_COOKIES=true` behind an HTTPS
+reverse proxy (Caddy, nginx). The `Dockerfile` and `docker-compose.yml` in
+the repo root do all of this in one image, with `data` and `uploads` as
+named volumes. The image ships the repo's `content.json`; the `data` volume
+is seeded from it the first time it is created and is the source of truth
+after that.

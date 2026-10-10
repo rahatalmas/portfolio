@@ -99,7 +99,7 @@ type Message struct {
 	CreatedAt string `json:"created_at"`
 }
 
-// User is an admin account. PasswordHash is never serialised.
+// User is an admin account. It is never returned by the API.
 type User struct {
 	ID           int64
 	Username     string

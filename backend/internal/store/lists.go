@@ -2,170 +2,124 @@ package store
 
 import (
 	"context"
-	"fmt"
+	"sort"
+	"strconv"
 
 	"portfolio/backend/internal/models"
 	"portfolio/backend/internal/schema"
 )
 
+// snapshot returns a copy of one resource's records in display order.
+func (s *Store) snapshot(key string) []Record {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	recs := s.lists[key]
+	out := make([]Record, len(recs))
+	for i, r := range recs {
+		out[i] = cloneRecord(r)
+	}
+	return out
+}
+
 // Education returns all degrees in display order.
 func (s *Store) Education(ctx context.Context) ([]models.Education, error) {
-	rows, err := s.db.QueryContext(ctx, "SELECT id, degree, school, years, note FROM education ORDER BY sort_order, id")
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
 	out := []models.Education{}
-	for rows.Next() {
-		var e models.Education
-		if err := rows.Scan(&e.ID, &e.Degree, &e.School, &e.Years, &e.Note); err != nil {
-			return nil, err
-		}
-		out = append(out, e)
+	for _, r := range s.snapshot("education") {
+		out = append(out, models.Education{
+			ID: r.ID, Degree: r.Values["degree"], School: r.Values["school"],
+			Years: r.Values["years"], Note: r.Values["note"],
+		})
 	}
-	return out, rows.Err()
+	return out, nil
 }
 
 // Skills returns all skill groups with their items split into a slice.
 func (s *Store) Skills(ctx context.Context) ([]models.SkillGroup, error) {
-	rows, err := s.db.QueryContext(ctx, "SELECT id, name, items FROM skill_groups ORDER BY sort_order, id")
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
 	out := []models.SkillGroup{}
-	for rows.Next() {
-		var g models.SkillGroup
-		var items string
-		if err := rows.Scan(&g.ID, &g.Name, &items); err != nil {
-			return nil, err
-		}
-		g.Items = schema.SplitLines(items)
-		out = append(out, g)
+	for _, r := range s.snapshot("skills") {
+		out = append(out, models.SkillGroup{ID: r.ID, Name: r.Values["name"], Items: schema.SplitLines(r.Values["items"])})
 	}
-	return out, rows.Err()
+	return out, nil
 }
 
 // Profiles returns profile links grouped by group_name. Groups appear in the
 // order of their first link; links keep their own order within a group.
 func (s *Store) Profiles(ctx context.Context) ([]models.ProfileGroup, error) {
-	rows, err := s.db.QueryContext(ctx, "SELECT id, group_name, label, href, icon FROM profiles ORDER BY sort_order, id")
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
 	out := []models.ProfileGroup{}
 	index := map[string]int{}
-	for rows.Next() {
-		var p models.Profile
-		var group string
-		if err := rows.Scan(&p.ID, &group, &p.Label, &p.Href, &p.Icon); err != nil {
-			return nil, err
-		}
+	for _, r := range s.snapshot("profiles") {
+		group := r.Values["group_name"]
 		i, ok := index[group]
 		if !ok {
 			i = len(out)
 			index[group] = i
 			out = append(out, models.ProfileGroup{Name: group, Items: []models.Profile{}})
 		}
-		out[i].Items = append(out[i].Items, p)
+		out[i].Items = append(out[i].Items, models.Profile{
+			ID: r.ID, Label: r.Values["label"], Href: r.Values["href"], Icon: r.Values["icon"],
+		})
 	}
-	return out, rows.Err()
+	return out, nil
 }
 
 // Experience returns roles in display order (newest first by convention).
 func (s *Store) Experience(ctx context.Context) ([]models.Role, error) {
-	rows, err := s.db.QueryContext(ctx, "SELECT id, title, company, period FROM experience ORDER BY sort_order, id")
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
 	out := []models.Role{}
-	for rows.Next() {
-		var r models.Role
-		if err := rows.Scan(&r.ID, &r.Title, &r.Company, &r.Period); err != nil {
-			return nil, err
-		}
-		out = append(out, r)
+	for _, r := range s.snapshot("experience") {
+		out = append(out, models.Role{ID: r.ID, Title: r.Values["title"], Company: r.Values["company"], Period: r.Values["period"]})
 	}
-	return out, rows.Err()
+	return out, nil
 }
 
 // Projects returns projects in display order; featuredOnly limits to
 // featured ones.
 func (s *Store) Projects(ctx context.Context, featuredOnly bool) ([]models.Project, error) {
-	q := "SELECT id, slug, title, summary, tags, stack, featured, github_url, live_url, paper_url FROM projects"
-	if featuredOnly {
-		q += " WHERE featured = 1"
-	}
-	q += " ORDER BY sort_order, id"
-	rows, err := s.db.QueryContext(ctx, q)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
 	out := []models.Project{}
-	for rows.Next() {
-		var p models.Project
-		var tags, stack string
-		if err := rows.Scan(&p.ID, &p.Slug, &p.Title, &p.Summary, &tags, &stack, &p.Featured,
-			&p.Links.GitHub, &p.Links.Live, &p.Links.Paper); err != nil {
-			return nil, err
+	for _, r := range s.snapshot("projects") {
+		featured := r.Values["featured"] == "1"
+		if featuredOnly && !featured {
+			continue
 		}
-		p.Tags = schema.SplitComma(tags)
-		p.Stack = schema.SplitLines(stack)
-		out = append(out, p)
+		out = append(out, models.Project{
+			ID: r.ID, Slug: r.Values["slug"], Title: r.Values["title"], Summary: r.Values["summary"],
+			Tags: schema.SplitComma(r.Values["tags"]), Stack: schema.SplitLines(r.Values["stack"]),
+			Featured: featured,
+			Links: models.ProjectLinks{
+				GitHub: r.Values["github_url"], Live: r.Values["live_url"], Paper: r.Values["paper_url"],
+			},
+		})
 	}
-	return out, rows.Err()
+	return out, nil
 }
 
 // Papers returns publications newest first, then by display order.
 func (s *Store) Papers(ctx context.Context) ([]models.Paper, error) {
-	rows, err := s.db.QueryContext(ctx, "SELECT id, title, authors, venue, year, status, pdf_url, code_url, poster_url, slides_url FROM papers ORDER BY year DESC, sort_order, id")
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
 	out := []models.Paper{}
-	for rows.Next() {
-		var p models.Paper
-		var authors string
-		if err := rows.Scan(&p.ID, &p.Title, &authors, &p.Venue, &p.Year, &p.Status,
-			&p.Links.PDF, &p.Links.Code, &p.Links.Poster, &p.Links.Slides); err != nil {
-			return nil, err
-		}
-		p.Authors = schema.SplitLines(authors)
-		out = append(out, p)
+	for _, r := range s.snapshot("papers") {
+		year, _ := strconv.Atoi(r.Values["year"])
+		out = append(out, models.Paper{
+			ID: r.ID, Title: r.Values["title"], Authors: schema.SplitLines(r.Values["authors"]),
+			Venue: r.Values["venue"], Year: year, Status: r.Values["status"],
+			Links: models.PaperLinks{
+				PDF: r.Values["pdf_url"], Code: r.Values["code_url"],
+				Poster: r.Values["poster_url"], Slides: r.Values["slides_url"],
+			},
+		})
 	}
-	return out, rows.Err()
+	sort.SliceStable(out, func(i, j int) bool { return out[i].Year > out[j].Year })
+	return out, nil
 }
 
 // Portfolio aggregates everything the frontend renders.
 func (s *Store) Portfolio(ctx context.Context) (models.Portfolio, error) {
 	var p models.Portfolio
-	var err error
-	settings, err := s.Settings(ctx)
-	if err != nil {
-		return p, err
-	}
+	settings, _ := s.Settings(ctx)
 	p.Site = schema.TypedSettings(settings)
-	if p.Education, err = s.Education(ctx); err != nil {
-		return p, fmt.Errorf("education: %w", err)
-	}
-	if p.Skills, err = s.Skills(ctx); err != nil {
-		return p, fmt.Errorf("skills: %w", err)
-	}
-	if p.Profiles, err = s.Profiles(ctx); err != nil {
-		return p, fmt.Errorf("profiles: %w", err)
-	}
-	if p.Experience, err = s.Experience(ctx); err != nil {
-		return p, fmt.Errorf("experience: %w", err)
-	}
-	if p.Projects, err = s.Projects(ctx, false); err != nil {
-		return p, fmt.Errorf("projects: %w", err)
-	}
-	if p.Papers, err = s.Papers(ctx); err != nil {
-		return p, fmt.Errorf("papers: %w", err)
-	}
+	p.Education, _ = s.Education(ctx)
+	p.Skills, _ = s.Skills(ctx)
+	p.Profiles, _ = s.Profiles(ctx)
+	p.Experience, _ = s.Experience(ctx)
+	p.Projects, _ = s.Projects(ctx, false)
+	p.Papers, _ = s.Papers(ctx)
 	return p, nil
 }

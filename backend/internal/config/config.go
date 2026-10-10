@@ -5,7 +5,6 @@ package config
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -14,7 +13,7 @@ import (
 // Config is everything the server needs to start.
 type Config struct {
 	Addr          string   // listen address, e.g. ":8080"
-	DSN           string   // MySQL DSN for go-sql-driver/mysql
+	DataDir       string   // where content.json, messages.json and admin.json live
 	AdminUsername string   // seeded on first run when no admin user exists
 	AdminPassword string   // seeded on first run; generated and logged if empty
 	SessionSecret string   // HMAC key for admin session cookies
@@ -22,7 +21,6 @@ type Config struct {
 	FrontendDir   string   // built React app (frontend/dist) served at /; skipped if missing
 	CORSOrigins   []string // extra origins allowed to call the API; empty = same-origin only
 	SecureCookies bool     // set the Secure flag on cookies (enable behind HTTPS)
-	SeedDemo      bool     // insert demo content when the content tables are empty
 }
 
 // Load reads .env (if present) then the process environment.
@@ -31,14 +29,13 @@ func Load() (Config, error) {
 
 	c := Config{
 		Addr:          env("ADDR", ":8080"),
-		DSN:           os.Getenv("DB_DSN"),
+		DataDir:       env("DATA_DIR", "./data"),
 		AdminUsername: env("ADMIN_USERNAME", "admin"),
 		AdminPassword: os.Getenv("ADMIN_PASSWORD"),
 		SessionSecret: os.Getenv("SESSION_SECRET"),
 		UploadDir:     env("UPLOAD_DIR", "./uploads"),
 		FrontendDir:   env("FRONTEND_DIR", "../frontend/dist"),
 		SecureCookies: envBool("SECURE_COOKIES", false),
-		SeedDemo:      envBool("SEED_DEMO", true),
 	}
 	if o := strings.TrimSpace(os.Getenv("CORS_ORIGINS")); o != "" {
 		for _, s := range strings.Split(o, ",") {
@@ -47,23 +44,6 @@ func Load() (Config, error) {
 			}
 		}
 	}
-
-	if c.DSN == "" {
-		// Build a DSN from the individual DB_* variables.
-		host := env("DB_HOST", "127.0.0.1")
-		port := env("DB_PORT", "3306")
-		user := env("DB_USER", "portfolio")
-		pass := os.Getenv("DB_PASSWORD")
-		name := env("DB_NAME", "portfolio")
-		c.DSN = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, pass, host, port, name)
-	}
-	// Options the server relies on: timestamps as time.Time, utf8mb4 everywhere.
-	if !strings.Contains(c.DSN, "?") {
-		c.DSN += "?"
-	} else if !strings.HasSuffix(c.DSN, "&") && !strings.HasSuffix(c.DSN, "?") {
-		c.DSN += "&"
-	}
-	c.DSN += "parseTime=true&charset=utf8mb4&collation=utf8mb4_unicode_ci"
 
 	if len(c.SessionSecret) > 0 && len(c.SessionSecret) < 16 {
 		return c, errors.New("SESSION_SECRET must be at least 16 characters")
