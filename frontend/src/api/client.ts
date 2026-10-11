@@ -3,7 +3,7 @@ import type { Portfolio } from "./types";
 /**
  * Origin of the Go backend. Empty means same origin, which is the normal
  * case: the Go server serves this built site at /, and in development the
- * Vite proxy forwards /api and /uploads to :8080. Set VITE_API_BASE only when
+ * Vite proxy forwards /api and /uploads to :8085. Set VITE_API_BASE only when
  * hosting the site on another origin (see .env.example).
  */
 const BASE = (import.meta.env.VITE_API_BASE as string | undefined)?.replace(/\/$/, "") ?? "";

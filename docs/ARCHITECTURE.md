@@ -16,15 +16,17 @@ origin. There is no database.
 
 * The React app (`frontend/`) is built to `dist/` and served by the Go server
   at `/` (`internal/site`: real files as-is, hashed `/assets/*` cached for a
-  year, everything else falls back to `index.html`). It makes **one** request,
+  year, everything else falls back to `index.html` — with a 404 status for
+  anything but `/`, which the bundle renders as its not-found page). It makes **one** request,
   `GET /api/v1/portfolio`, same-origin, and renders from it. It first paints
   content bundled at build time from `backend/data/content.json`
   (`src/api/fallback.ts`) and swaps in the API response when it arrives; if
   the API fails, the bundled content stays and no error is shown. In
-  development `npm run dev` serves it from Vite with a proxy to `:8080`
-  instead. If no build is present the server still runs and `/` redirects to
-  `/admin`.
-* The admin (`/admin`) is server-rendered Go templates. Editing there rewrites
+  development `npm run dev` serves it from Vite with a proxy to `:8085`
+  instead. If no build is present the server still runs and `/` says so.
+* The admin (`/admin`) is server-rendered Go templates. It is registered on a
+  second, loopback-only listener (`ADMIN_ADDR`), not on the public one, so it
+  cannot be reached through the reverse proxy. Editing there rewrites
   `content.json`; the site reflects it on the next load (API responses are
   cached for 30 s by `Cache-Control`).
 * Uploads (photo, CV, images) are files in `UPLOAD_DIR`, served at `/uploads/`.
@@ -39,9 +41,9 @@ portfolio/
 │   │   ├── api/              types.ts (API shapes), client.ts (fetch), fallback.ts (bundled content), PortfolioContext.tsx (loader)
 │   │   ├── components/       One file per UI piece; all read from usePortfolio()
 │   │   ├── hooks/            useTheme, useScrollSpy, useReveal
-│   │   └── pages/Home.tsx    Section order and visibility
+│   │   └── pages/            Home.tsx (section order and visibility), NotFound.tsx
 │   ├── public/               Static files (placeholder photo)
-│   ├── index.html, vite.config.ts (dev proxy → :8080), tsconfig.json
+│   ├── index.html, vite.config.ts (dev proxy → :8085), tsconfig.json
 │   └── dist/                 Build output — served by the Go server at /
 ├── backend/
 │   ├── cmd/server/main.go    Wiring: config → store.Open → routes → serve
@@ -52,7 +54,7 @@ portfolio/
 │       ├── models/           JSON shapes returned by the API
 │       ├── api/              /api/v1 read-only handlers
 │       ├── admin/            /admin handlers, sessions, templates (web/)
-│       ├── site/             Serves the built React app with SPA fallback
+│       ├── site/             Serves the built React app; unknown paths → 404 + bundle
 │       ├── media/            Upload directory
 │       ├── httpx/            JSON helpers + middleware
 │       └── config/           Environment / .env loading
@@ -119,6 +121,12 @@ Everything else is generic over these specs:
 `GET /` → `site.Handler` serves `index.html` → React boots and renders the
 bundled content → `GET /api/v1/portfolio` (same origin) → `store.Portfolio`
 assembles the typed shape from memory → JSON → components re-render.
+
+**Unknown path**
+`GET /acb` → `site.Handler` finds no such file, and the path is not `/`, so it
+serves `index.html` with **404** → `App` sees a pathname it does not know and
+renders `pages/NotFound.tsx` instead of `Home` (there is no router: the site is
+one page plus in-page anchors).
 
 **Admin edit**
 `GET /admin/projects/3` → `auth` middleware verifies the signed session cookie

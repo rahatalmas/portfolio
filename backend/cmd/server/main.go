@@ -11,7 +11,9 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"log/slog"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -84,32 +86,32 @@ func run(log *slog.Logger) error {
 	}
 
 	// --- routes ------------------------------------------------------------
-	mux := newMux(apiH, adminH, lib, siteH)
+	// Two listeners, deliberately: the public one carries the site, the API
+	// and uploads, and the admin lives on its own loopback-only address so
+	// it is unreachable through the reverse proxy whatever headers a caller
+	// sends. Reach it over an SSH tunnel:
+	//
+	//	ssh -L 8081:127.0.0.1:8081 user@host
+	adminURL := "http://localhost" + portOf(cfg.AdminAddr) + "/admin"
+	publicH := chain(newPublicMux(apiH, lib, siteH, adminURL), cfg, log)
+	adminSrvH := chain(newAdminMux(adminH, lib), cfg, log)
 
-	handler := httpx.Chain(mux,
-		httpx.Recover(log),
-		httpx.Logger(log),
-		httpx.SecurityHeaders(),
-		httpx.CORS(cfg.CORSOrigins),
-		httpx.MaxBody(media.MaxUploadBytes+1<<20),
-	)
+	pub := newServer(cfg.Addr, publicH)
+	adm := newServer(cfg.AdminAddr, adminSrvH)
 
-	srv := &http.Server{
-		Addr:              cfg.Addr,
-		Handler:           handler,
-		ReadHeaderTimeout: 10 * time.Second,
-		ReadTimeout:       60 * time.Second,
-		WriteTimeout:      60 * time.Second,
-		IdleTimeout:       120 * time.Second,
-	}
-
-	errCh := make(chan error, 1)
-	go func() {
-		log.Info("listening", "addr", cfg.Addr, "admin", "http://localhost"+portOf(cfg.Addr)+"/admin")
+	errCh := make(chan error, 2)
+	serve := func(srv *http.Server, what string) {
+		log.Info("listening", "what", what, "addr", srv.Addr)
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			errCh <- err
+			errCh <- fmt.Errorf("%s listener: %w", what, err)
 		}
-	}()
+	}
+	go serve(pub, "public")
+	go serve(adm, "admin")
+	log.Info("admin is loopback-only", "url", adminURL)
+	if !isLoopback(cfg.AdminAddr) {
+		log.Warn("ADMIN_ADDR is not a loopback address: the admin is reachable from the network", "addr", cfg.AdminAddr)
+	}
 
 	select {
 	case err := <-errCh:
@@ -118,8 +120,51 @@ func run(log *slog.Logger) error {
 		log.Info("shutting down")
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		return srv.Shutdown(shutdownCtx)
+		err := pub.Shutdown(shutdownCtx)
+		if err2 := adm.Shutdown(shutdownCtx); err == nil {
+			err = err2
+		}
+		return err
 	}
+}
+
+func newServer(addr string, h http.Handler) *http.Server {
+	return &http.Server{
+		Addr:              addr,
+		Handler:           h,
+		ReadHeaderTimeout: 10 * time.Second,
+		ReadTimeout:       60 * time.Second,
+		WriteTimeout:      60 * time.Second,
+		IdleTimeout:       120 * time.Second,
+	}
+}
+
+// chain wraps a mux in the middleware both listeners share.
+func chain(mux http.Handler, cfg config.Config, log *slog.Logger) http.Handler {
+	return httpx.Chain(mux,
+		httpx.Recover(log),
+		httpx.Logger(log),
+		httpx.SecurityHeaders(),
+		httpx.CORS(cfg.CORSOrigins),
+		httpx.MaxBody(media.MaxUploadBytes+1<<20),
+	)
+}
+
+// isLoopback reports whether addr's host part is a loopback address, so a
+// misconfigured ADMIN_ADDR can be called out at startup.
+func isLoopback(addr string) bool {
+	host, _, err := net.SplitHostPort(addr)
+	if err != nil {
+		host = addr
+	}
+	switch host {
+	case "localhost":
+		return true
+	case "":
+		return false // ":8081" listens on every interface
+	}
+	ip := net.ParseIP(strings.Trim(host, "[]"))
+	return ip != nil && ip.IsLoopback()
 }
 
 // ensureAdminUser creates the first admin account when none exists, using
@@ -154,21 +199,30 @@ func ensureAdminUser(ctx context.Context, st *store.Store, cfg config.Config, lo
 	return nil
 }
 
-// newMux assembles the route table: API, admin, uploads, and the React site
-// on everything else. When no built site is available (siteH == nil) the
-// root redirects to the admin and other paths are 404.
-func newMux(apiH *api.Handler, adminH *admin.Handler, lib *media.Library, siteH *site.Handler) *http.ServeMux {
+// newPublicMux assembles the public route table: the API, uploads, and the
+// React site on everything else. The admin is not registered here. When no
+// built site is available (siteH == nil) the root explains where to find the
+// admin instead of redirecting to a route this listener does not serve.
+func newPublicMux(apiH *api.Handler, lib *media.Library, siteH *site.Handler, adminURL string) *http.ServeMux {
 	mux := http.NewServeMux()
 	apiH.Routes(mux)
-	adminH.Routes(mux)
 	mux.Handle("GET "+media.URLPrefix, lib.Handler())
 	if siteH != nil {
 		mux.Handle("/", siteH)
 		return mux
 	}
 	mux.HandleFunc("/{$}", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/admin", http.StatusFound)
+		http.Error(w, "no built site: run `npm run build` in frontend/ or set FRONTEND_DIR. The admin is loopback-only, at "+adminURL+".", http.StatusNotFound)
 	})
+	return mux
+}
+
+// newAdminMux assembles the admin route table. Uploads are served here too so
+// media previews work without reaching for the public listener.
+func newAdminMux(adminH *admin.Handler, lib *media.Library) *http.ServeMux {
+	mux := http.NewServeMux()
+	adminH.Routes(mux)
+	mux.Handle("GET "+media.URLPrefix, lib.Handler())
 	return mux
 }
 

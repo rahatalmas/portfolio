@@ -10,7 +10,7 @@ JSON file next to it.
 
 ```
 frontend/   React app — the public site; renders GET /api/v1/portfolio
-backend/    Go server — serves the built site at /, JSON API, admin UI (/admin), uploads
+backend/    Go server — serves the built site at /, JSON API, uploads; admin UI (/admin) on a separate loopback-only port
 backend/data/content.json   The content. Tracked in git; edit via /admin or a text editor.
 docs/       API.md (endpoints), ARCHITECTURE.md (how it fits together, how to extend)
 ```
@@ -24,11 +24,11 @@ You need Node 20+ and Go 1.26+. Nothing else.
 
 ```sh
 cd frontend && npm install && npm run build   # once, and again after changing frontend code
-cd ../backend && go run ./cmd/server          # http://localhost:8080 — admin password is printed on first run
+cd ../backend && go run ./cmd/server          # http://localhost:8085 — admin password is printed on first run
 ```
 
-That is the whole site: `http://localhost:8080` is the page, `/admin` is the
-editor, `/api/v1/portfolio` is the JSON. Log in, upload your photo and CV
+That is the whole site: `http://localhost:8085` is the page,
+`http://localhost:8081/admin` is the editor, `/api/v1/portfolio` is the JSON. Log in, upload your photo and CV
 under *Media*, then edit *Settings* and the content sections. The site
 updates on reload. Every save rewrites `backend/data/content.json`, so you
 can commit your content like code.
@@ -37,7 +37,7 @@ Only when you are editing the React code itself, also run the dev server in
 a second terminal for hot reload:
 
 ```sh
-cd frontend && npm run dev   # http://localhost:5173 — proxies /api and /uploads to :8080
+cd frontend && npm run dev   # http://localhost:5173 — proxies /api and /uploads to :8085
 ```
 
 ## Deploying
@@ -53,7 +53,11 @@ Copy `server`, `frontend/dist`, and `backend/data` to the machine, then run
 the binary with `FRONTEND_DIR` pointing at `dist`, `DATA_DIR` at `data`,
 `UPLOAD_DIR` somewhere persistent, `SESSION_SECRET` set, and
 `SECURE_COOKIES=true` behind an HTTPS reverse proxy (Caddy, nginx). Keep it
-running with a systemd unit. The site, API and admin are all on one port.
+running with a systemd unit. The site, API and uploads share one port; the
+admin listens separately on loopback (`ADMIN_ADDR`, default `127.0.0.1:8081`),
+so it is never exposed on your domain — proxy `ADDR` only and reach the admin
+through an SSH tunnel: `ssh -L 8081:127.0.0.1:8081 user@your-host`. See
+[`backend/README.md`](backend/README.md#keeping-the-admin-off-the-domain).
 
 Back up by copying the `data` and `uploads` directories.
 

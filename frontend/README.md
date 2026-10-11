@@ -8,7 +8,7 @@ never see an error screen, only a console warning.
 
 ```sh
 npm install
-npm run dev      # http://localhost:5173, proxies /api and /uploads to http://localhost:8080
+npm run dev      # http://localhost:5173, proxies /api and /uploads to http://localhost:8085
 npm run build    # → dist/, which the Go server serves at /
 ```
 

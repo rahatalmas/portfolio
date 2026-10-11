@@ -49,8 +49,11 @@ func TestServe(t *testing.T) {
 	if rec := get(h, "/"); rec.Code != 200 || rec.Header().Get("Content-Type") != "text/html; charset=utf-8" {
 		t.Fatalf("root: %d %q", rec.Code, rec.Header().Get("Content-Type"))
 	}
-	if rec := get(h, "/some/client/route"); rec.Code != 200 || rec.Body.String() == "" || rec.Header().Get("Cache-Control") != "no-cache" {
-		t.Fatalf("spa fallback: %d %q", rec.Code, rec.Header().Get("Cache-Control"))
+	// Unknown paths get the bundle (which renders its not-found page) under a
+	// 404 status, not a 200 that would claim the URL exists.
+	if rec := get(h, "/some/random/uri"); rec.Code != 404 || rec.Body.String() == "" ||
+		rec.Header().Get("Cache-Control") != "no-cache" || rec.Header().Get("Content-Type") != "text/html; charset=utf-8" {
+		t.Fatalf("unknown path: %d %q %q", rec.Code, rec.Header().Get("Cache-Control"), rec.Header().Get("Content-Type"))
 	}
 	if rec := get(h, "/assets/app-abc123.js"); rec.Code != 200 || rec.Header().Get("Cache-Control") != "public, max-age=31536000, immutable" {
 		t.Fatalf("asset: %d %q", rec.Code, rec.Header().Get("Cache-Control"))
@@ -61,13 +64,20 @@ func TestServe(t *testing.T) {
 	if rec := get(h, "/missing.png"); rec.Code != 404 {
 		t.Fatalf("missing file should be 404: %d", rec.Code)
 	}
-	if rec := get(h, "/assets/"); rec.Code != 200 || rec.Header().Get("Content-Type") != "text/html; charset=utf-8" {
-		t.Fatalf("directory should fall back to index, not list: %d", rec.Code)
+	if rec := get(h, "/assets/"); rec.Code != 404 || rec.Header().Get("Content-Type") != "text/html; charset=utf-8" {
+		t.Fatalf("directory should fall back to the not-found page, not list: %d", rec.Code)
 	}
 	if rec := get(h, "/../index.html"); rec.Code != 200 {
 		t.Fatalf("traversal is cleaned: %d", rec.Code)
 	}
+	// HEAD on an unknown path: the 404 and the length, no body.
 	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, httptest.NewRequest(http.MethodHead, "/nope", nil))
+	if rec.Code != 404 || rec.Body.Len() != 0 || rec.Header().Get("Content-Length") == "" {
+		t.Fatalf("HEAD on unknown path: %d body=%d len=%q", rec.Code, rec.Body.Len(), rec.Header().Get("Content-Length"))
+	}
+
+	rec = httptest.NewRecorder()
 	h.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/", nil))
 	if rec.Code != http.StatusMethodNotAllowed {
 		t.Fatalf("POST: %d", rec.Code)

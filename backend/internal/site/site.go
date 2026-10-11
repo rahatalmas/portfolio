@@ -9,13 +9,16 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strconv"
 	"strings"
 )
 
 // Handler serves a Vite build directory. Requests for existing files are
-// served as-is; every other GET that accepts HTML falls back to index.html so
-// client-side routes and refreshes work. Hashed files under /assets/ are
-// cached for a year; everything else (notably index.html) is revalidated.
+// served as-is; every other GET falls back to index.html. The fallback carries
+// a 404 status for anything but the root, because the site is one page and the
+// bundle renders its own not-found page there: the status and the page agree,
+// so crawlers are not told a missing URL is fine. Hashed files under /assets/
+// are cached for a year; everything else (notably index.html) is revalidated.
 type Handler struct {
 	root  fs.FS
 	files http.Handler
@@ -44,6 +47,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	name := strings.TrimPrefix(path.Clean("/"+r.URL.Path), "/")
+	root := name == "" || name == "index.html"
 	if name == "" {
 		name = "index.html"
 	}
@@ -64,10 +68,12 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	h.serveIndex(w, r)
+	h.serveIndex(w, r, root)
 }
 
-func (h *Handler) serveIndex(w http.ResponseWriter, r *http.Request) {
+// serveIndex writes index.html. ok serves it as the page it is; otherwise the
+// same bytes go out with a 404 status for the bundle's not-found page.
+func (h *Handler) serveIndex(w http.ResponseWriter, r *http.Request, ok bool) {
 	f, err := h.root.Open("index.html")
 	if err != nil {
 		http.Error(w, "site unavailable", http.StatusInternalServerError)
@@ -79,12 +85,27 @@ func (h *Handler) serveIndex(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "site unavailable", http.StatusInternalServerError)
 		return
 	}
-	rs, ok := f.(io.ReadSeeker)
-	if !ok {
+	rs, isSeeker := f.(io.ReadSeeker)
+	if !isSeeker {
 		http.Error(w, "site unavailable", http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	http.ServeContent(w, r, "index.html", st.ModTime(), rs)
+	if ok {
+		http.ServeContent(w, r, "index.html", st.ModTime(), rs)
+		return
+	}
+	// ServeContent cannot write a 404, and conditional requests and ranges are
+	// meaningless for an error page, so send it plainly.
+	body, err := io.ReadAll(rs)
+	if err != nil {
+		http.Error(w, "site unavailable", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Length", strconv.Itoa(len(body)))
+	w.WriteHeader(http.StatusNotFound)
+	if r.Method != http.MethodHead {
+		_, _ = w.Write(body)
+	}
 }

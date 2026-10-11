@@ -12,7 +12,8 @@ import (
 
 // Config is everything the server needs to start.
 type Config struct {
-	Addr          string   // listen address, e.g. ":8080"
+	Addr          string   // public listen address: site, API, uploads
+	AdminAddr     string   // admin listen address; keep it on loopback
 	DataDir       string   // where content.json and admin.json live
 	AdminUsername string   // seeded on first run when no admin user exists
 	AdminPassword string   // seeded on first run; generated and logged if empty
@@ -28,7 +29,8 @@ func Load() (Config, error) {
 	_ = loadDotEnv(".env")
 
 	c := Config{
-		Addr:          env("ADDR", ":8080"),
+		Addr:          env("ADDR", "127.0.0.1:8085"),
+		AdminAddr:     env("ADMIN_ADDR", "127.0.0.1:8081"),
 		DataDir:       env("DATA_DIR", "./data"),
 		AdminUsername: env("ADMIN_USERNAME", "admin"),
 		AdminPassword: os.Getenv("ADMIN_PASSWORD"),

@@ -11,7 +11,7 @@ on disk, and `bcrypt`.
 # 1. Configure (optional; everything has a default)
 cp .env.example .env            # set SESSION_SECRET so logins survive restarts
 
-# 2. Build the site once (or skip this; / then redirects to /admin)
+# 2. Build the site once (or skip this; / then explains it is missing)
 (cd ../frontend && npm install && npm run build)
 
 # 3. Run
@@ -31,10 +31,13 @@ Then open:
 
 | URL | What |
 | --- | --- |
-| `http://localhost:8080/` | The site (from `FRONTEND_DIR`); redirects to `/admin` if no build is found |
-| `http://localhost:8080/admin` | Admin (log in with the credentials above) |
-| `http://localhost:8080/api/v1/portfolio` | The JSON the site renders from |
-| `http://localhost:8080/uploads/<file>` | Uploaded media |
+| `http://localhost:8085/` | The site (from `FRONTEND_DIR`); 404 with a hint if no build is found |
+| `http://localhost:8085/api/v1/portfolio` | The JSON the site renders from |
+| `http://localhost:8085/uploads/<file>` | Uploaded media |
+| `http://localhost:8081/admin` | Admin (log in with the credentials above) |
+
+The admin is on its own listener, bound to loopback, and is not registered on
+the public one at all — see [Keeping the admin off the domain](#keeping-the-admin-off-the-domain).
 
 ## Data files
 
@@ -64,7 +67,8 @@ Environment variables, or a `.env` file in the working directory
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
-| `ADDR` | `:8080` | Listen address |
+| `ADDR` | `127.0.0.1:8085` | Public listen address (site, API, uploads); loopback-only by default, set `:8085` to expose it on every interface |
+| `ADMIN_ADDR` | `127.0.0.1:8081` | Admin listen address, a separate listener; keep it on loopback |
 | `DATA_DIR` | `./data` | Directory holding the three JSON files |
 | `ADMIN_USERNAME` | `admin` | First admin, created only when none exists |
 | `ADMIN_PASSWORD` | generated | First admin's password |
@@ -123,6 +127,34 @@ go build -o server ./cmd/server
 Adding a field is a one-line change in `internal/schema`; there are no
 migrations. Existing `content.json` files simply gain the new key on the
 next save (empty, or the setting's `Default`).
+
+## Keeping the admin off the domain
+
+The server opens two listeners:
+
+| Listener | Default | Serves |
+| --- | --- | --- |
+| public | `127.0.0.1:8085` (`ADDR`) | the site, `/api/v1/...`, `/uploads/...` |
+| admin | `127.0.0.1:8081` (`ADMIN_ADDR`) | `/admin...`, plus `/uploads/` for previews |
+
+`/admin` is registered only on the admin mux, so on the public listener those
+paths fall through to the React site like any unknown URL. Nothing a caller can
+set — `Host`, `X-Forwarded-For`, `X-Forwarded-Host` — reaches an admin handler
+through the public port, which is the point: a header check would not survive a
+reverse proxy, since proxied requests all arrive from `127.0.0.1`.
+
+Point the reverse proxy at `ADDR` only, never at `ADMIN_ADDR`. To edit content
+on the server, forward the admin port over SSH:
+
+```sh
+ssh -L 8081:127.0.0.1:8081 user@your-host
+# then open http://localhost:8081/admin in your own browser
+```
+
+The session cookie is issued for whatever host you reach the admin on, so a
+tunnelled `localhost:8081` login is independent of the public site. Leave
+`SECURE_COOKIES=false` unless you terminate HTTPS in front of the admin too —
+over a plain-HTTP tunnel a `Secure` cookie is dropped and the login loops.
 
 ## Deploying
 
