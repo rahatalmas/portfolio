@@ -21,7 +21,7 @@ export default function NotFound() {
       <div className="mt-6 flex flex-wrap items-center gap-4">
         <a
           href="/"
-          className="inline-flex items-center gap-2 rounded-md bg-accent px-3.5 py-1.5 text-sm font-medium text-white"
+          className="inline-flex items-center gap-2 rounded-md bg-accent px-3.5 py-1.5 text-sm font-medium text-on-accent"
         >
           <ArrowLeft size={16} aria-hidden />
           Back to {site.name}

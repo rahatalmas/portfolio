@@ -83,3 +83,42 @@ func TestServe(t *testing.T) {
 		t.Fatalf("POST: %d", rec.Code)
 	}
 }
+
+// The Route hook is what makes a client-side route return 200 while every
+// other invented path still returns 404 with the not-found page.
+func TestRouteHook(t *testing.T) {
+	h, err := Open(build(t))
+	if err != nil || h == nil {
+		t.Fatalf("open: %v %v", h, err)
+	}
+	var asked []string
+	h.Route = func(p string) bool {
+		asked = append(asked, p)
+		return p == "/projects/fast-rag"
+	}
+
+	if rec := get(h, "/projects/fast-rag"); rec.Code != 200 {
+		t.Fatalf("a known route should be 200: %d", rec.Code)
+	}
+	// Route is asked the cleaned path, so a trailing slash or a dot segment
+	// resolves to the same answer.
+	if rec := get(h, "/projects/fast-rag/"); rec.Code != 200 {
+		t.Fatalf("trailing slash should be 200: %d", rec.Code)
+	}
+	if rec := get(h, "/projects/nope"); rec.Code != 404 {
+		t.Fatalf("an unknown slug should be 404: %d", rec.Code)
+	}
+	if rec := get(h, "/"); rec.Code != 200 {
+		t.Fatalf("root does not need the hook: %d", rec.Code)
+	}
+	for _, p := range asked {
+		if p != "/projects/fast-rag" && p != "/projects/nope" {
+			t.Fatalf("hook asked about an unexpected path: %q", p)
+		}
+	}
+	// A missing file is still a plain 404: the hook is never consulted for
+	// something that looks like a file.
+	if rec := get(h, "/projects/fast-rag.png"); rec.Code != 404 {
+		t.Fatalf("missing file: %d", rec.Code)
+	}
+}

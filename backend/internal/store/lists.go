@@ -83,7 +83,9 @@ func (s *Store) Projects(ctx context.Context, featuredOnly bool) ([]models.Proje
 		}
 		out = append(out, models.Project{
 			ID: r.ID, Slug: r.Values["slug"], Title: r.Values["title"], Summary: r.Values["summary"],
-			Tags: schema.SplitComma(r.Values["tags"]), Stack: schema.SplitLines(r.Values["stack"]),
+			Image: r.Values["image"],
+			Body:  r.Values["body"],
+			Tags:  schema.SplitComma(r.Values["tags"]), Stack: schema.SplitLines(r.Values["stack"]),
 			Featured: featured,
 			Links: models.ProjectLinks{
 				GitHub: r.Values["github_url"], Live: r.Values["live_url"], Paper: r.Values["paper_url"],

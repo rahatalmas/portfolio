@@ -92,6 +92,10 @@ export interface Project {
   slug: string;
   title: string;
   summary: string;
+  /** Illustration for the card: /uploads/… or any URL. Optional. */
+  image?: string;
+  /** Markdown details. When present the project has a page at /projects/<slug>. */
+  body?: string;
   tags: string[];
   stack: string[];
   featured: boolean;

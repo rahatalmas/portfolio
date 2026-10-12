@@ -30,7 +30,7 @@
     "work_all_url": "https://github.com/yourhandle?tab=repositories",
     "research_title": "Research",
     "research_statement": "",
-    "interests_label": "Interests",
+    "interests_label": "Research interests",
     "interests": "LLM inference systems\nRetrieval-augmented generation\nDistributed storage\nML systems reliability",
     "contact_email_label": "Email",
     "contact_location_label": "Location",

@@ -68,7 +68,7 @@ export default function Nav() {
         <nav className="mx-auto flex h-full max-w-[960px] items-center justify-between gap-3 px-4 sm:px-6">
           {/* Monogram: the full name already leads the hero */}
           <a
-            href="#top"
+            href="/"
             aria-label={`${site.name} — back to top`}
             title={site.name}
             onClick={() => setOpen(false)}
@@ -82,7 +82,7 @@ export default function Nav() {
           {/* Desktop links */}
           <div className="hidden min-w-0 items-center gap-4 md:flex">
             {links.map((l) => (
-              <a key={l.id} href={`#${l.id}`} className={linkClass(l.id)}>
+              <a key={l.id} href={`/#${l.id}`} className={linkClass(l.id)}>
                 {l.label}
               </a>
             ))}
@@ -146,7 +146,7 @@ export default function Nav() {
           {links.map((l) => (
             <a
               key={l.id}
-              href={`#${l.id}`}
+              href={`/#${l.id}`}
               onClick={() => setOpen(false)}
               className={`border-b border-line py-4 text-2xl font-medium ${active === l.id ? "text-accent" : ""}`}
             >

@@ -55,8 +55,10 @@ var SettingsGroups = []Group{
 		},
 	},
 	{
-		Key: "hero", Title: "Hero", Description: "Buttons under the bio (CV, the first profile group, email) and the column on the right.",
+		Key: "hero", Title: "Hero", Description: "Research interests and the buttons under the bio (CV, the first profile group, email), plus the column on the right.",
 		Fields: []Field{
+			{Key: "interests_label", Label: "Interests label", Kind: Text, Default: "Research interests", Help: "Shown under the bio, before the list"},
+			{Key: "interests", Label: "Interests", Kind: Lines, Help: "One per line; rendered under the bio, separated by ·", Default: "LLM inference systems\nRetrieval-augmented generation\nDistributed storage\nML systems reliability"},
 			{Key: "hero_cv_label", Label: "CV button", Kind: Text, Required: true, Default: "CV"},
 			{Key: "hero_email_label", Label: "Email button", Kind: Text, Required: true, Default: "Email"},
 			{Key: "experience_title", Label: "Experience heading", Kind: Text, Required: true, Default: "Experience"},
@@ -83,8 +85,6 @@ var SettingsGroups = []Group{
 		Fields: []Field{
 			{Key: "research_title", Label: "Section title", Kind: Text, Required: true, Default: "Research"},
 			{Key: "research_statement", Label: "Research statement", Kind: Textarea, Help: "Optional paragraph shown above the papers", Default: ""},
-			{Key: "interests_label", Label: "Interests label", Kind: Text, Default: "Interests"},
-			{Key: "interests", Label: "Interests", Kind: Lines, Help: "One per line", Default: "LLM inference systems\nRetrieval-augmented generation\nDistributed storage\nML systems reliability"},
 		},
 	},
 	{

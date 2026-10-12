@@ -66,6 +66,8 @@ function projects(rows: Raw[] | undefined): Project[] {
     slug: str(r.slug),
     title: str(r.title),
     summary: str(r.summary),
+    ...(str(r.image) && { image: str(r.image) }),
+    ...(str(r.body) && { body: str(r.body) }),
     tags: comma(r.tags),
     stack: lines(r.stack),
     featured: bool(r.featured),

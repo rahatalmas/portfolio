@@ -85,6 +85,7 @@ input[type=text], input[type=email], input[type=number], input[type=password], i
 }
 input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 textarea { resize: vertical; }
+textarea.md { line-height: 1.55; tab-size: 2; min-height: 22rem; }
 .has-error input, .has-error textarea, .has-error select { border-color: var(--danger); }
 .help { color: var(--muted); font-size: 12px; margin: 0; }
 .error { color: var(--danger); font-size: 12px; margin: 0; }

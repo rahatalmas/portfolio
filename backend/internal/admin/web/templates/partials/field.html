@@ -10,6 +10,8 @@
     <label for="f-{{.F.Key}}">{{.F.Label}}{{if .F.Required}} <span class="req" title="Required">*</span>{{end}}</label>
     {{if eq .F.Kind "textarea"}}
       <textarea id="f-{{.F.Key}}" name="{{.F.Key}}" rows="4">{{.Value}}</textarea>
+    {{else if eq .F.Kind "markdown"}}
+      <textarea id="f-{{.F.Key}}" name="{{.F.Key}}" rows="20" class="mono md" spellcheck="true" placeholder="## Overview&#10;&#10;What it does and why.&#10;&#10;![screenshot](/uploads/shot.png)">{{.Value}}</textarea>
     {{else if eq .F.Kind "lines"}}
       <textarea id="f-{{.F.Key}}" name="{{.F.Key}}" rows="5" class="mono" placeholder="One per line">{{.Value}}</textarea>
     {{else if eq .F.Kind "select"}}

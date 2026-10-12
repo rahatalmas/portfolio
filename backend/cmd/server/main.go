@@ -85,6 +85,30 @@ func run(log *slog.Logger) error {
 		log.Warn("no built site found; / redirects to /admin (set FRONTEND_DIR or run `npm run build` in frontend/)", "dir", cfg.FrontendDir)
 	}
 
+	// Every project gets its own page at /projects/<slug>: the header always,
+	// plus the Markdown body when one has been written. The site handler asks
+	// this before falling back to index.html, so a real slug answers 200 and
+	// an invented one answers 404 with the not-found page, rather than every
+	// path pretending to exist.
+	if siteH != nil {
+		siteH.Route = func(p string) bool {
+			slug, ok := strings.CutPrefix(p, "/projects/")
+			if !ok || slug == "" || strings.Contains(slug, "/") {
+				return false
+			}
+			projects, err := st.Projects(ctx, false)
+			if err != nil {
+				return false
+			}
+			for _, pr := range projects {
+				if pr.Slug == slug {
+					return true
+				}
+			}
+			return false
+		}
+	}
+
 	// --- routes ------------------------------------------------------------
 	// Two listeners, deliberately: the public one carries the site, the API
 	// and uploads, and the admin lives on its own loopback-only address so

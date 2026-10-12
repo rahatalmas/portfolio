@@ -53,6 +53,8 @@ type Project struct {
 	Slug     string       `json:"slug"`
 	Title    string       `json:"title"`
 	Summary  string       `json:"summary"`
+	Image    string       `json:"image,omitempty"` // /uploads/… or any URL; empty is fine
+	Body     string       `json:"body,omitempty"`  // Markdown; empty means no details page
 	Tags     []string     `json:"tags"`
 	Stack    []string     `json:"stack"`
 	Featured bool         `json:"featured"`

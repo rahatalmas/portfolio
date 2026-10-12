@@ -15,13 +15,19 @@ import (
 
 // Handler serves a Vite build directory. Requests for existing files are
 // served as-is; every other GET falls back to index.html. The fallback carries
-// a 404 status for anything but the root, because the site is one page and the
-// bundle renders its own not-found page there: the status and the page agree,
-// so crawlers are not told a missing URL is fine. Hashed files under /assets/
-// are cached for a year; everything else (notably index.html) is revalidated.
+// a 200 for the root and for paths Route accepts, and a 404 for everything
+// else, where the bundle renders its own not-found page: the status and the
+// page agree, so crawlers are not told a missing URL is fine. Hashed files
+// under /assets/ are cached for a year; everything else (notably index.html)
+// is revalidated.
 type Handler struct {
 	root  fs.FS
 	files http.Handler
+
+	// Route reports whether a path is a real client-side route, so the
+	// fallback can answer 200 for it and 404 for everything else. Nil means
+	// only "/" is a route. Set by the caller, which knows the content.
+	Route func(path string) bool
 }
 
 // Open returns a handler for dir, or (nil, nil) when dir does not contain a
@@ -46,8 +52,9 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	name := strings.TrimPrefix(path.Clean("/"+r.URL.Path), "/")
-	root := name == "" || name == "index.html"
+	clean := path.Clean("/" + r.URL.Path)
+	name := strings.TrimPrefix(clean, "/")
+	known := name == "" || name == "index.html" || (h.Route != nil && h.Route(clean))
 	if name == "" {
 		name = "index.html"
 	}
@@ -68,12 +75,12 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	h.serveIndex(w, r, root)
+	h.serveIndex(w, r, known)
 }
 
-// serveIndex writes index.html. ok serves it as the page it is; otherwise the
-// same bytes go out with a 404 status for the bundle's not-found page.
-func (h *Handler) serveIndex(w http.ResponseWriter, r *http.Request, ok bool) {
+// serveIndex writes index.html. known serves it as the page it is; otherwise
+// the same bytes go out with a 404 status for the bundle's not-found page.
+func (h *Handler) serveIndex(w http.ResponseWriter, r *http.Request, known bool) {
 	f, err := h.root.Open("index.html")
 	if err != nil {
 		http.Error(w, "site unavailable", http.StatusInternalServerError)
@@ -92,7 +99,7 @@ func (h *Handler) serveIndex(w http.ResponseWriter, r *http.Request, ok bool) {
 	}
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if ok {
+	if known {
 		http.ServeContent(w, r, "index.html", st.ModTime(), rs)
 		return
 	}

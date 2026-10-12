@@ -14,12 +14,6 @@ export default function Research() {
           <PaperEntry key={p.id} paper={p} />
         ))}
       </ul>
-      {site.interests.length > 0 && (
-        <p className="mt-4 text-[13px]">
-          {site.interests_label && <span className="text-muted">{site.interests_label} — </span>}
-          {site.interests.join(" · ")}
-        </p>
-      )}
     </Section>
   );
 }

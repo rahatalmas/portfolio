@@ -21,6 +21,7 @@ type Kind string
 const (
 	Text     Kind = "text"     // single line
 	Textarea Kind = "textarea" // multi-line prose
+	Markdown Kind = "markdown" // long-form GitHub-flavoured Markdown
 	Lines    Kind = "lines"    // one item per line; API returns []string
 	Bool     Kind = "bool"     // checkbox; stored "1"/"0"; API returns bool
 	Number   Kind = "number"   // integer; API returns number
@@ -51,7 +52,7 @@ var slugRe = regexp.MustCompile(`^[a-z0-9]+(?:-[a-z0-9]+)*$`)
 // to store and a human-readable problem ("" when the value is fine).
 func (f Field) Clean(raw string) (string, string) {
 	v := strings.TrimSpace(raw)
-	if f.Kind == Textarea || f.Kind == Lines {
+	if f.Kind == Textarea || f.Kind == Lines || f.Kind == Markdown {
 		v = strings.ReplaceAll(raw, "\r\n", "\n")
 		v = strings.TrimSpace(v)
 	}

@@ -4,7 +4,7 @@ import Portrait from "./Portrait";
 import ExperienceCard from "./ExperienceCard";
 import { ICONS } from "./Profiles";
 
-const primary = "inline-flex items-center gap-2 rounded-md bg-accent px-3.5 py-1.5 text-sm font-medium text-white";
+const primary = "inline-flex items-center gap-2 rounded-md bg-accent px-3.5 py-1.5 text-sm font-medium text-on-accent";
 const secondary = "inline-flex items-center gap-2 rounded-md border border-line bg-card px-3.5 py-1.5 text-sm";
 
 export default function Hero() {
@@ -39,6 +39,13 @@ export default function Hero() {
             </div>
           </div>
           <p className="mt-4 leading-relaxed text-muted">{site.bio}</p>
+
+          {site.interests.length > 0 && (
+            <p className="mt-3 text-[13px] leading-relaxed">
+              {site.interests_label && <span className="text-muted">{site.interests_label} — </span>}
+              {site.interests.join(" · ")}
+            </p>
+          )}
 
           <div className="mt-5 flex flex-wrap gap-2">
             {site.cv_url && (
