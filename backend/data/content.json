@@ -19,6 +19,8 @@
     "nav_work": "Projects",
     "nav_research": "Research",
     "nav_cv_label": "CV",
+    "interests_label": "Research interests",
+    "interests": "LLM inference systems\nRetrieval-augmented generation\nDistributed storage\nML systems reliability",
     "hero_cv_label": "CV",
     "hero_email_label": "Email",
     "experience_title": "Experience",
@@ -30,8 +32,6 @@
     "work_all_url": "https://github.com/yourhandle?tab=repositories",
     "research_title": "Research",
     "research_statement": "",
-    "interests_label": "Research interests",
-    "interests": "LLM inference systems\nRetrieval-augmented generation\nDistributed storage\nML systems reliability",
     "contact_email_label": "Email",
     "contact_location_label": "Location",
     "footer_updated": "October 2026",
@@ -50,7 +50,7 @@
     {
       "id": 1,
       "name": "AI",
-      "items": "PyTorch\nTransformers\nvLLM\nRAG\nLangChain\nCUDA basics"
+      "items": "Python\nPyTorch\nTransformers\nvLLM\nRAG\nLangChain\nCUDA basics"
     },
     {
       "id": 2,
@@ -68,92 +68,50 @@
       "id": 1,
       "group_name": "Professional",
       "label": "GitHub",
-      "href": "https://github.com/yourhandle",
+      "href": "https://github.com/rahatalmas",
       "icon": "github"
     },
     {
       "id": 2,
       "group_name": "Professional",
       "label": "LinkedIn",
-      "href": "https://linkedin.com/in/yourhandle",
+      "href": "https://www.linkedin.com/in/rahatalmas/",
       "icon": "linkedin"
-    },
-    {
-      "id": 3,
-      "group_name": "Professional",
-      "label": "X",
-      "href": "https://x.com/yourhandle",
-      "icon": "x"
-    },
-    {
-      "id": 4,
-      "group_name": "Academic",
-      "label": "Google Scholar",
-      "href": "https://scholar.google.com/citations?user=XXXX",
-      "icon": "scholar"
-    },
-    {
-      "id": 5,
-      "group_name": "Academic",
-      "label": "ORCID",
-      "href": "https://orcid.org/0000-0000-0000-0000",
-      "icon": "orcid"
-    },
-    {
-      "id": 6,
-      "group_name": "Academic",
-      "label": "ResearchGate",
-      "href": "https://researchgate.net/profile/yourhandle",
-      "icon": "research"
     },
     {
       "id": 7,
       "group_name": "Coding",
       "label": "LeetCode",
-      "href": "https://leetcode.com/u/yourhandle",
+      "href": "https://leetcode.com/u/rahatalmas/",
       "icon": "code"
     },
     {
       "id": 8,
       "group_name": "Coding",
       "label": "Codeforces",
-      "href": "https://codeforces.com/profile/yourhandle",
+      "href": "https://codeforces.com/profile/rahat_almas",
       "icon": "trophy"
-    },
-    {
-      "id": 9,
-      "group_name": "Coding",
-      "label": "CodeChef",
-      "href": "https://codechef.com/users/yourhandle",
-      "icon": "chef"
     },
     {
       "id": 10,
       "group_name": "Coding",
       "label": "HackerRank",
-      "href": "https://hackerrank.com/profile/yourhandle",
+      "href": "https://www.hackerrank.com/profile/rahat_almas",
       "icon": "terminal"
-    },
-    {
-      "id": 11,
-      "group_name": "Coding",
-      "label": "Kaggle",
-      "href": "https://kaggle.com/yourhandle",
-      "icon": "chart"
     }
   ],
   "experience": [
     {
       "id": 1,
       "title": "Software Engineer",
-      "company": "Company A · ML Platform",
-      "period": "Jun 2024 – Present"
+      "company": "Studio Butterfly | AI \u0026 Backend",
+      "period": "Dec 2025 – Present"
     },
     {
       "id": 2,
-      "title": "Research Assistant",
-      "company": "Systems Lab, University Name",
-      "period": "Sep 2023 – May 2024"
+      "title": "Backend Developer",
+      "company": "6SenseHQ",
+      "period": "jun 2025 – Nov 2025"
     }
   ],
   "projects": [
@@ -165,77 +123,28 @@
       "image": "https://ii.rahatalmas.dev/assets/hero-art-aTNW9WYs.jpg",
       "tags": "AI,Backend",
       "stack": "Python\nFastAPI\npgvector\nRedis\nRabbitMQ",
+      "body": "",
       "featured": "1",
       "github_url": "",
       "live_url": "https://ii.rahatalmas.dev/",
       "paper_url": ""
     },
     {
-      "id": 2,
-      "title": "KV-Cache Scheduler",
-      "slug": "kv-cache-scheduler",
-      "summary": "Request scheduler for LLM serving that raised throughput 1.8× at equal latency.",
-      "image": "",
-      "tags": "AI,Research",
-      "stack": "Python\nPyTorch\nvLLM\nCUDA",
-      "featured": "1",
-      "github_url": "https://github.com/yourhandle/kv-scheduler",
-      "live_url": "https://kv-scheduler.example.com",
-      "paper_url": ""
-    },
-    {
       "id": 3,
-      "title": "Event Ledger",
+      "title": "CRM With Customer Support AI Agent",
       "slug": "event-ledger",
-      "summary": "Append-only event store in Go handling 50k writes/s with exactly-once consumers.",
+      "summary": "Autonomous Customer support chatbot",
       "image": "",
       "tags": "Backend",
       "stack": "Go\nPostgreSQL\nKafka\ngRPC",
+      "body": "",
       "featured": "1",
       "github_url": "https://github.com/yourhandle/event-ledger",
       "live_url": "https://event-ledger.example.com",
       "paper_url": ""
-    },
-    {
-      "id": 4,
-      "title": "Feature Store",
-      "slug": "ml-feature-store",
-      "summary": "Online/offline feature store that removed training–serving skew for three models.",
-      "image": "",
-      "tags": "AI,Backend",
-      "stack": "Python\nSpark\nRedis\nAirflow",
-      "featured": "1",
-      "github_url": "https://github.com/yourhandle/feature-store",
-      "live_url": "https://feature-store.example.com",
-      "paper_url": ""
-    },
-    {
-      "id": 5,
-      "title": "pyprof",
-      "slug": "cli-profiler",
-      "summary": "Sampling profiler CLI for Python async code with flame-graph output.",
-      "image": "",
-      "tags": "Backend",
-      "stack": "Python\nRust",
-      "featured": "0",
-      "github_url": "https://github.com/yourhandle/pyprof",
-      "live_url": "https://pyprof.example.com",
-      "paper_url": ""
     }
   ],
   "papers": [
-    {
-      "id": 1,
-      "title": "Length-Aware Scheduling for Memory-Efficient LLM Inference",
-      "authors": "Rahat Almas\nCo Author\nAdvisor Name",
-      "venue": "Workshop on ML Systems, NeurIPS",
-      "year": "2025",
-      "status": "published",
-      "pdf_url": "https://arxiv.org/abs/0000.00000",
-      "code_url": "https://github.com/yourhandle/kv-scheduler",
-      "poster_url": "",
-      "slides_url": ""
-    },
     {
       "id": 2,
       "title": "Hybrid Retrieval for Long-Context Question Answering",
@@ -252,9 +161,9 @@
       "id": 3,
       "title": "Efficient Retrieval for Long-Context LLMs",
       "authors": "Rahat Almas",
-      "venue": "B.Sc. Thesis, University Name",
+      "venue": "B.Sc. Thesis, Daffodil International University",
       "year": "2024",
-      "status": "published",
+      "status": "in progress",
       "pdf_url": "",
       "code_url": "",
       "poster_url": "",
